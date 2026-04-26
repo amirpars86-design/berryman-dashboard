@@ -5,15 +5,34 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>3967 Berryman — Home Dashboard</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
   body { font-family: 'Segoe UI', system-ui, sans-serif; }
   .serif { font-family: Georgia, 'Times New Roman', serif; }
   .sidebar { width: 220px; min-height: 100vh; }
   @media (max-width: 768px) { .sidebar { display: none; } .sidebar.open { display: flex; position: fixed; z-index: 50; } }
-  select { cursor: pointer; }
   .fade-in { animation: fadeIn 0.2s ease; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+  .badge-red { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:500;background:#fee2e2;color:#b91c1c; }
+  .badge-amber { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:500;background:#fef3c7;color:#b45309; }
+  .badge-green { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:500;background:#dcfce7;color:#15803d; }
+  .badge-blue { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:500;background:#dbeafe;color:#1d4ed8; }
+  .badge-purple { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:500;background:#ede9fe;color:#6d28d9; }
+  .badge-gray { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:500;background:#f3f4f6;color:#6b7280; }
+  .nav-active { background:#fffbeb;color:#92400e;font-weight:500; }
+  .field-label { display:block;font-size:11px;font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px; }
+  .field-input { width:100%;border:1px solid #e5e7eb;border-radius:8px;padding:8px 12px;font-size:13.5px;color:#1c1917;outline:none;font-family:inherit;background:white; }
+  .field-input:focus { border-color:#b45309; }
+  .btn-edit { color:#d1d5db;font-size:12px;padding:2px 5px;border-radius:4px;cursor:pointer;border:none;background:none;transition:all .15s; }
+  .btn-edit:hover { background:#dbeafe;color:#1d4ed8; }
+  .btn-del { color:#d1d5db;font-size:12px;padding:2px 5px;border-radius:4px;cursor:pointer;border:none;background:none;transition:all .15s; }
+  .btn-del:hover { background:#fee2e2;color:#b91c1c; }
+  .note-text { font-size:11px;color:#a8a29e;margin-top:2px;font-style:italic; }
+  .link-text { font-size:11px;color:#3b82f6;margin-top:2px; }
+  .link-text a { text-decoration:underline; }
+  .overdue { color:#b91c1c;font-weight:600; }
+  input[type=range] { -webkit-appearance:none;width:100%;height:6px;border-radius:3px;background:#e5e7eb;outline:none; }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:#b45309;cursor:pointer; }
 </style>
 </head>
 <body class="bg-stone-50 text-stone-800">
@@ -25,9 +44,10 @@
     <div class="px-5 pb-5 border-b border-stone-100 mb-4">
       <p class="serif text-sm font-semibold text-stone-800 leading-snug">3967 Berryman Ave</p>
       <p class="text-xs text-stone-400 mt-0.5">Los Angeles, CA 90066</p>
-      <div class="mt-2 flex items-center gap-1.5">
+      <div class="mt-2 flex items-center gap-2">
         <div id="db-dot" class="w-1.5 h-1.5 rounded-full bg-amber-400"></div>
         <p id="db-status" class="text-xs text-amber-600">Connecting...</p>
+        <button onclick="refreshAll()" title="Refresh" class="ml-auto text-stone-300 hover:text-amber-600 text-sm transition-colors">↻</button>
       </div>
     </div>
     <nav class="flex-1 px-3 space-y-0.5">
@@ -37,6 +57,7 @@
       <button onclick="switchTab('shopping')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-stone-500 hover:bg-stone-50 hover:text-stone-800 transition-all" data-tab="shopping">🛒 Shopping List</button>
       <button onclick="switchTab('projects')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-stone-500 hover:bg-stone-50 hover:text-stone-800 transition-all" data-tab="projects">🔨 Projects & Tasks</button>
       <button onclick="switchTab('budget')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-stone-500 hover:bg-stone-50 hover:text-stone-800 transition-all" data-tab="budget">💰 Budget</button>
+      <button onclick="switchTab('notes')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-stone-500 hover:bg-stone-50 hover:text-stone-800 transition-all" data-tab="notes">📝 Shared Notes</button>
       <button onclick="switchTab('contacts')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-stone-500 hover:bg-stone-50 hover:text-stone-800 transition-all" data-tab="contacts">📞 Contacts</button>
       <button onclick="switchTab('docs')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-stone-500 hover:bg-stone-50 hover:text-stone-800 transition-all" data-tab="docs">📁 Documents</button>
     </nav>
@@ -48,7 +69,6 @@
   <!-- Main -->
   <main class="flex-1 p-6 md:p-10 max-w-4xl fade-in">
 
-    <!-- Mobile header -->
     <div class="flex items-center gap-3 mb-6 md:hidden">
       <button onclick="document.getElementById('sidebar').classList.toggle('open')" class="text-stone-500 text-xl">☰</button>
       <p class="serif font-semibold">3967 Berryman</p>
@@ -56,43 +76,44 @@
 
     <!-- OVERVIEW -->
     <div id="tab-overview" class="tab-content">
-      <h2 class="serif text-3xl font-semibold mb-1">Welcome, Amir & Rose 👋</h2>
-      <p class="text-stone-400 text-sm mb-8">Your shared home dashboard — all changes sync in real time.</p>
+      <div class="flex items-start justify-between mb-1">
+        <h2 class="serif text-3xl font-semibold">Welcome, Amir & Rose 👋</h2>
+        <button onclick="refreshAll()" class="text-xs text-stone-400 hover:text-amber-600 border border-stone-200 px-3 py-1.5 rounded-lg transition-colors hidden md:block">↻ Refresh</button>
+      </div>
+      <p class="text-stone-400 text-sm mb-8">Your shared home dashboard — refresh to see each other's latest changes.</p>
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         <div class="bg-white rounded-xl border-l-4 border-amber-400 p-4 shadow-sm"><p class="text-xs font-semibold text-stone-400 uppercase tracking-wider mb-2">Purchase Price</p><p class="serif text-xl font-semibold">$1,133,000</p><p class="text-xs text-stone-400 mt-1">Closing Apr 28, 2026</p></div>
         <div class="bg-white rounded-xl border-l-4 border-green-400 p-4 shadow-sm"><p class="text-xs font-semibold text-stone-400 uppercase tracking-wider mb-2">Front House Budget</p><p class="serif text-xl font-semibold">$50,000</p><p class="text-xs text-stone-400 mt-1">Livability target</p></div>
         <div class="bg-white rounded-xl border-l-4 border-red-400 p-4 shadow-sm"><p class="text-xs font-semibold text-stone-400 uppercase tracking-wider mb-2">Monthly Payment</p><p class="serif text-xl font-semibold">$7,387</p><p class="text-xs text-stone-400 mt-1">Est. all-in</p></div>
         <div class="bg-white rounded-xl border-l-4 border-blue-400 p-4 shadow-sm"><p class="text-xs font-semibold text-stone-400 uppercase tracking-wider mb-2">ADU Project</p><p class="serif text-xl font-semibold">TBD</p><p class="text-xs text-stone-400 mt-1">Pending feasibility</p></div>
       </div>
-      <div class="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
+      <div class="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden mb-6">
         <div class="px-5 py-4 border-b border-stone-100"><p class="font-semibold text-sm">🚨 Urgent Action Items</p></div>
-        <table class="w-full text-sm">
-          <thead><tr class="bg-stone-50 text-xs text-stone-400 uppercase tracking-wider">
-            <th class="px-5 py-3 text-left">Item</th><th class="px-3 py-3 text-left">Priority</th><th class="px-3 py-3 text-left hidden md:table-cell">Owner</th>
-          </tr></thead>
-          <tbody>
-            <tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3">Pull LADBS permit history for garage</td><td class="px-3 py-3"><span class="badge-red">High</span></td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">Amir</td></tr>
-            <tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3">Schedule termite fumigation post-close</td><td class="px-3 py-3"><span class="badge-red">High</span></td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">Amir</td></tr>
-            <tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3">Confirm Bamboo insurance covers all structures</td><td class="px-3 py-3"><span class="badge-red">High</span></td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">Amir</td></tr>
-            <tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3">Review roof inspection report</td><td class="px-3 py-3"><span class="badge-amber">Medium</span></td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">Both</td></tr>
-            <tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3">Measure garage left-side clearance</td><td class="px-3 py-3"><span class="badge-amber">Medium</span></td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">Amir</td></tr>
-            <tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3">ADU architect feasibility consultation</td><td class="px-3 py-3"><span class="badge-gray">Low</span></td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">Both</td></tr>
-          </tbody>
-        </table>
+        <table class="w-full text-sm"><thead><tr class="bg-stone-50 text-xs text-stone-400 uppercase tracking-wider"><th class="px-5 py-3 text-left">Item</th><th class="px-3 py-3 text-left">Priority</th><th class="px-3 py-3 text-left hidden md:table-cell">Owner</th></tr></thead>
+        <tbody>
+          <tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3">Pull LADBS permit history for garage</td><td class="px-3 py-3"><span class="badge-red">High</span></td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">Amir</td></tr>
+          <tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3">Schedule termite fumigation post-close</td><td class="px-3 py-3"><span class="badge-red">High</span></td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">Amir</td></tr>
+          <tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3">Confirm Bamboo insurance covers all structures</td><td class="px-3 py-3"><span class="badge-red">High</span></td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">Amir</td></tr>
+          <tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3">Review roof inspection report</td><td class="px-3 py-3"><span class="badge-amber">Medium</span></td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">Both</td></tr>
+          <tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3">Measure garage left-side clearance</td><td class="px-3 py-3"><span class="badge-amber">Medium</span></td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">Amir</td></tr>
+          <tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3">ADU architect feasibility consultation</td><td class="px-3 py-3"><span class="badge-gray">Low</span></td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">Both</td></tr>
+        </tbody></table>
+      </div>
+      <!-- Phase summary on overview -->
+      <div class="bg-white rounded-2xl border border-stone-100 shadow-sm p-5">
+        <p class="font-semibold text-sm mb-4">📋 Project Phase Overview</p>
+        <div id="overview-phases" class="space-y-3"></div>
       </div>
     </div>
 
     <!-- PHASES -->
     <div id="tab-phases" class="tab-content hidden">
-      <h2 class="serif text-3xl font-semibold mb-1">Project Phases</h2>
-      <p class="text-stone-400 text-sm mb-8">The phased plan from closing to ADU completion.</p>
-      <div class="space-y-4">
-        <div class="bg-white rounded-xl border-l-4 border-amber-400 border border-stone-100 p-5 shadow-sm"><div class="flex items-center justify-between mb-2"><p class="font-semibold text-sm">Phase 1 — Closing & Due Diligence</p><span class="badge-amber">In Progress</span></div><p class="text-xs text-stone-400 mb-3">Confirm all inspection findings, finalize insurance, review all documents, pull permit history, confirm garage legality.</p><div class="h-1.5 bg-stone-100 rounded-full"><div class="h-full bg-amber-500 rounded-full" style="width:60%"></div></div></div>
-        <div class="bg-white rounded-xl border-l-4 border-amber-300 border border-stone-100 p-5 shadow-sm"><div class="flex items-center justify-between mb-2"><p class="font-semibold text-sm">Phase 2 — Pre-Move-In Work</p><span class="badge-gray">Up Next</span></div><p class="text-xs text-stone-400 mb-3">Termite fumigation → wood repairs → roof → foundation → water damage → deep clean → bathroom → kitchen → paint → move in.</p><div class="h-1.5 bg-stone-100 rounded-full"><div class="h-full bg-amber-500 rounded-full" style="width:0%"></div></div></div>
-        <div class="bg-white rounded-xl border-l-4 border-stone-200 border border-stone-100 p-5 shadow-sm"><div class="flex items-center justify-between mb-2"><p class="font-semibold text-sm">Phase 3 — Garage / ADU Feasibility</p><span class="badge-gray">Not Started</span></div><p class="text-xs text-stone-400 mb-3">Measure garage. Verify permits. Consult architect. Compare conversion vs. new build. Get cost estimates.</p><div class="h-1.5 bg-stone-100 rounded-full"><div class="h-full bg-amber-500 rounded-full" style="width:0%"></div></div></div>
-        <div class="bg-white rounded-xl border-l-4 border-stone-200 border border-stone-100 p-5 shadow-sm"><div class="flex items-center justify-between mb-2"><p class="font-semibold text-sm">Phase 4 — ADU Design & Budget</p><span class="badge-gray">Not Started</span></div><p class="text-xs text-stone-400 mb-3">Finalize layout, kitchen, bathroom. Choose finishes. Build budget with contingency. Submit permits.</p><div class="h-1.5 bg-stone-100 rounded-full"><div class="h-full bg-amber-500 rounded-full" style="width:0%"></div></div></div>
-        <div class="bg-white rounded-xl border-l-4 border-stone-200 border border-stone-100 p-5 shadow-sm"><div class="flex items-center justify-between mb-2"><p class="font-semibold text-sm">Phase 5 — ADU Construction</p><span class="badge-gray">Not Started</span></div><p class="text-xs text-stone-400 mb-3">Construction, inspections, certificate of occupancy, rental listing, income begins.</p><div class="h-1.5 bg-stone-100 rounded-full"><div class="h-full bg-amber-500 rounded-full" style="width:0%"></div></div></div>
+      <div class="flex items-center justify-between mb-1">
+        <h2 class="serif text-3xl font-semibold">Project Phases</h2>
+        <button onclick="openModal('phase')" class="bg-amber-700 text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-amber-800">+ Add Phase</button>
       </div>
+      <p class="text-stone-400 text-sm mb-8">Update progress and status as you move through the project.</p>
+      <div id="phases-list" class="space-y-4"></div>
     </div>
 
     <!-- DECISIONS -->
@@ -113,7 +134,14 @@
       </div>
       <p class="text-stone-400 text-sm mb-8">Appliances, furniture, and essentials.</p>
       <div class="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
-        <table class="w-full text-sm"><thead><tr class="bg-stone-50 text-xs text-stone-400 uppercase tracking-wider"><th class="px-5 py-3 text-left">Item</th><th class="px-3 py-3 text-left hidden md:table-cell">Category</th><th class="px-3 py-3 text-left">Priority</th><th class="px-3 py-3 text-left hidden md:table-cell">Cost</th><th class="px-3 py-3 text-left">Status</th><th class="px-3 py-3"></th></tr></thead>
+        <table class="w-full text-sm"><thead><tr class="bg-stone-50 text-xs text-stone-400 uppercase tracking-wider">
+          <th class="px-5 py-3 text-left">Item</th>
+          <th class="px-3 py-3 text-left hidden md:table-cell">Category</th>
+          <th class="px-3 py-3 text-left">Priority</th>
+          <th class="px-3 py-3 text-left hidden md:table-cell">Cost</th>
+          <th class="px-3 py-3 text-left">Status</th>
+          <th class="px-3 py-3"></th>
+        </tr></thead>
         <tbody id="shopping-tbody"></tbody></table>
       </div>
     </div>
@@ -124,9 +152,15 @@
         <h2 class="serif text-3xl font-semibold">Projects & Tasks</h2>
         <button onclick="openModal('project')" class="bg-amber-700 text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-amber-800">+ Add Task</button>
       </div>
-      <p class="text-stone-400 text-sm mb-8">Every renovation task tracked.</p>
+      <p class="text-stone-400 text-sm mb-8">Every renovation task with due date, owner, and notes.</p>
       <div class="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
-        <table class="w-full text-sm"><thead><tr class="bg-stone-50 text-xs text-stone-400 uppercase tracking-wider"><th class="px-5 py-3 text-left">Task</th><th class="px-3 py-3 text-left hidden md:table-cell">Area</th><th class="px-3 py-3 text-left hidden md:table-cell">Cost</th><th class="px-3 py-3 text-left">Status</th><th class="px-3 py-3"></th></tr></thead>
+        <table class="w-full text-sm"><thead><tr class="bg-stone-50 text-xs text-stone-400 uppercase tracking-wider">
+          <th class="px-5 py-3 text-left">Task</th>
+          <th class="px-3 py-3 text-left hidden md:table-cell">Due</th>
+          <th class="px-3 py-3 text-left hidden md:table-cell">Owner</th>
+          <th class="px-3 py-3 text-left">Status</th>
+          <th class="px-3 py-3"></th>
+        </tr></thead>
         <tbody id="projects-tbody"></tbody></table>
       </div>
     </div>
@@ -144,10 +178,30 @@
         <div class="bg-white rounded-xl border-l-4 border-blue-400 border border-stone-100 p-4 shadow-sm"><p class="text-xs font-semibold text-stone-400 uppercase tracking-wider mb-2">Remaining</p><p class="serif text-xl font-semibold" id="total-remaining">$50,000</p></div>
       </div>
       <div class="mb-6"><div class="flex justify-between text-xs text-stone-400 mb-1"><span>Progress</span><span id="budget-pct">0% spent</span></div><div class="h-2 bg-stone-100 rounded-full overflow-hidden"><div id="budget-bar" class="h-full bg-amber-500 rounded-full transition-all" style="width:0%"></div></div></div>
+      <div class="bg-white rounded-2xl border border-stone-100 shadow-sm p-5 mb-6">
+        <p class="text-sm font-semibold text-stone-700 mb-4">Spending by Category</p>
+        <div style="max-height:220px"><canvas id="budget-chart"></canvas></div>
+      </div>
       <div class="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
-        <table class="w-full text-sm"><thead><tr class="bg-stone-50 text-xs text-stone-400 uppercase tracking-wider"><th class="px-5 py-3 text-left">Description</th><th class="px-3 py-3 text-left hidden md:table-cell">Category</th><th class="px-3 py-3 text-left hidden md:table-cell">Date</th><th class="px-3 py-3 text-left">Amount</th><th class="px-3 py-3"></th></tr></thead>
+        <table class="w-full text-sm"><thead><tr class="bg-stone-50 text-xs text-stone-400 uppercase tracking-wider">
+          <th class="px-5 py-3 text-left">Description</th>
+          <th class="px-3 py-3 text-left hidden md:table-cell">Category</th>
+          <th class="px-3 py-3 text-left hidden md:table-cell">Date</th>
+          <th class="px-3 py-3 text-left">Amount</th>
+          <th class="px-3 py-3"></th>
+        </tr></thead>
         <tbody id="budget-tbody"></tbody></table>
       </div>
+    </div>
+
+    <!-- SHARED NOTES -->
+    <div id="tab-notes" class="tab-content hidden">
+      <div class="flex items-center justify-between mb-1">
+        <h2 class="serif text-3xl font-semibold">Shared Notes</h2>
+        <button onclick="openModal('note')" class="bg-amber-700 text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-amber-800">+ Add Note</button>
+      </div>
+      <p class="text-stone-400 text-sm mb-8">Contractor quotes, ideas, reminders — anything that doesn't fit elsewhere.</p>
+      <div id="notes-list" class="space-y-3"></div>
     </div>
 
     <!-- CONTACTS -->
@@ -158,7 +212,12 @@
       </div>
       <p class="text-stone-400 text-sm mb-8">Everyone involved in the project.</p>
       <div class="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
-        <table class="w-full text-sm"><thead><tr class="bg-stone-50 text-xs text-stone-400 uppercase tracking-wider"><th class="px-5 py-3 text-left">Name</th><th class="px-3 py-3 text-left">Role</th><th class="px-3 py-3 text-left hidden md:table-cell">Company</th><th class="px-3 py-3 text-left hidden md:table-cell">Contact</th><th class="px-3 py-3"></th></tr></thead>
+        <table class="w-full text-sm"><thead><tr class="bg-stone-50 text-xs text-stone-400 uppercase tracking-wider">
+          <th class="px-5 py-3 text-left">Name</th><th class="px-3 py-3 text-left">Role</th>
+          <th class="px-3 py-3 text-left hidden md:table-cell">Company</th>
+          <th class="px-3 py-3 text-left hidden md:table-cell">Contact</th>
+          <th class="px-3 py-3"></th>
+        </tr></thead>
         <tbody id="contacts-tbody"></tbody></table>
       </div>
     </div>
@@ -188,7 +247,7 @@
 
 <!-- MODAL -->
 <div id="modal-overlay" class="hidden fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
-  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 max-h-screen overflow-y-auto">
     <h3 id="modal-title" class="serif text-xl font-semibold mb-5"></h3>
     <div id="modal-body" class="space-y-3"></div>
     <div class="flex gap-3 justify-end mt-6">
@@ -198,231 +257,339 @@
   </div>
 </div>
 
-<style>
-.badge-red { display:inline-block; padding:2px 8px; border-radius:20px; font-size:11px; font-weight:500; background:#fee2e2; color:#b91c1c; }
-.badge-amber { display:inline-block; padding:2px 8px; border-radius:20px; font-size:11px; font-weight:500; background:#fef3c7; color:#b45309; }
-.badge-green { display:inline-block; padding:2px 8px; border-radius:20px; font-size:11px; font-weight:500; background:#dcfce7; color:#15803d; }
-.badge-blue { display:inline-block; padding:2px 8px; border-radius:20px; font-size:11px; font-weight:500; background:#dbeafe; color:#1d4ed8; }
-.badge-purple { display:inline-block; padding:2px 8px; border-radius:20px; font-size:11px; font-weight:500; background:#ede9fe; color:#6d28d9; }
-.badge-gray { display:inline-block; padding:2px 8px; border-radius:20px; font-size:11px; font-weight:500; background:#f3f4f6; color:#6b7280; }
-.nav-active { background:#fffbeb; color:#92400e; font-weight:500; }
-.field-label { display:block; font-size:11px; font-weight:600; color:#9ca3af; text-transform:uppercase; letter-spacing:.05em; margin-bottom:4px; }
-.field-input { width:100%; border:1px solid #e5e7eb; border-radius:8px; padding:8px 12px; font-size:13.5px; color:#1c1917; outline:none; font-family:inherit; }
-.field-input:focus { border-color:#b45309; }
-</style>
-
 <script>
-const SUPABASE_URL = "https://kaalfyhgaeiwfjannmci.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImthYWxmeWhnYWVpd2ZqYW5ubWNpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxNjU4MDYsImV4cCI6MjA5Mjc0MTgwNn0.N2rJLZwEk5dXS1qW_pBdPEnY8ahtABysCOoCTdZ-QD0";
+const SUPABASE_URL="https://kaalfyhgaeiwfjannmci.supabase.co";
+const SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImthYWxmeWhnYWVpd2ZqYW5ubWNpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxNjU4MDYsImV4cCI6MjA5Mjc0MTgwNn0.N2rJLZwEk5dXS1qW_pBdPEnY8ahtABysCOoCTdZ-QD0";
+const H={"Content-Type":"application/json","apikey":SUPABASE_KEY,"Authorization":`Bearer ${SUPABASE_KEY}`,"Prefer":"return=representation"};
 
-const H = { "Content-Type":"application/json", "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}`, "Prefer":"return=representation" };
+async function dbGet(t,order='created_at.asc'){try{const r=await fetch(`${SUPABASE_URL}/rest/v1/${t}?order=${order}`,{headers:H});return r.ok?await r.json():[]}catch{return[]}}
+async function dbInsert(t,d){try{const r=await fetch(`${SUPABASE_URL}/rest/v1/${t}`,{method:"POST",headers:H,body:JSON.stringify(d)});if(!r.ok)return null;const res=await r.json();return Array.isArray(res)?res[0]:res}catch{return null}}
+async function dbUpdate(t,id,d){try{await fetch(`${SUPABASE_URL}/rest/v1/${t}?id=eq.${id}`,{method:"PATCH",headers:H,body:JSON.stringify(d)})}catch{}}
+async function dbDelete(t,id){try{await fetch(`${SUPABASE_URL}/rest/v1/${t}?id=eq.${id}`,{method:"DELETE",headers:H})}catch{}}
 
-async function dbGet(table) {
-  try {
-    const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}?order=created_at.asc`, { headers: H });
-    return r.ok ? await r.json() : [];
-  } catch { return []; }
-}
+const DEFAULT_PHASES=[
+  {name:"Phase 1 — Closing & Due Diligence",status:"In Progress",description:"Confirm all inspection findings, finalize insurance, review all documents, pull permit history, confirm garage legality.",progress:60,sort_order:1},
+  {name:"Phase 2 — Pre-Move-In Work",status:"Not Started",description:"Termite fumigation → wood repairs → roof → foundation → water damage → deep clean → bathroom → kitchen → paint → move in.",progress:0,sort_order:2},
+  {name:"Phase 3 — Garage / ADU Feasibility",status:"Not Started",description:"Measure garage. Verify permits. Consult architect. Compare conversion vs. new build. Get cost estimates.",progress:0,sort_order:3},
+  {name:"Phase 4 — ADU Design & Budget",status:"Not Started",description:"Finalize layout, kitchen, bathroom. Choose finishes. Build budget with contingency. Submit permits.",progress:0,sort_order:4},
+  {name:"Phase 5 — ADU Construction",status:"Not Started",description:"Construction, inspections, certificate of occupancy, rental listing, income begins.",progress:0,sort_order:5},
+];
 
-async function dbInsert(table, data) {
-  try {
-    const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, { method:"POST", headers: H, body: JSON.stringify(data) });
-    if (!r.ok) return null;
-    const res = await r.json();
-    return Array.isArray(res) ? res[0] : res;
-  } catch { return null; }
-}
-
-async function dbUpdate(table, id, data) {
-  try {
-    await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${id}`, { method:"PATCH", headers: H, body: JSON.stringify(data) });
-  } catch {}
-}
-
-async function dbDelete(table, id) {
-  try {
-    await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${id}`, { method:"DELETE", headers: H });
-  } catch {}
-}
-
-const DEFAULT = {
-  shopping: [
-    {name:"Shower cabin replacement",category:"Bathroom",priority:"High",cost:"$800–1,200",status:"Research"},
-    {name:"Toilet replacement",category:"Bathroom",priority:"High",cost:"$300–500",status:"Research"},
-    {name:"Bathroom sink & faucet",category:"Bathroom",priority:"High",cost:"$250–500",status:"Research"},
-    {name:"Sliding bathroom door hardware",category:"Bathroom",priority:"Medium",cost:"$200–400",status:"Not Started"},
-    {name:"Refrigerator",category:"Kitchen",priority:"High",cost:"$1,000–2,000",status:"Not Started"},
-    {name:"Washer / Dryer",category:"Laundry",priority:"Medium",cost:"$1,200–2,000",status:"Not Started"},
+const DEFAULT={
+  shopping:[
+    {name:"Shower cabin replacement",category:"Bathroom",priority:"High",cost:"$800–1,200",status:"Research",link:"",notes:""},
+    {name:"Toilet replacement",category:"Bathroom",priority:"High",cost:"$300–500",status:"Research",link:"",notes:""},
+    {name:"Bathroom sink & faucet",category:"Bathroom",priority:"High",cost:"$250–500",status:"Research",link:"",notes:""},
+    {name:"Sliding bathroom door hardware",category:"Bathroom",priority:"Medium",cost:"$200–400",status:"Not Started",link:"",notes:""},
+    {name:"Refrigerator",category:"Kitchen",priority:"High",cost:"$1,000–2,000",status:"Not Started",link:"",notes:""},
+    {name:"Washer / Dryer",category:"Laundry",priority:"Medium",cost:"$1,200–2,000",status:"Not Started",link:"",notes:""},
   ],
-  projects: [
-    {name:"Termite fumigation (full structure)",area:"Whole Property",contractor:"MC Exterminating",cost:"$5,375+",status:"Pending"},
-    {name:"Termite wood repairs (porch, fascia, deck)",area:"Exterior",contractor:"TBD",cost:"$2,000–4,000",status:"Not Started"},
-    {name:"Roof assessment & urgent repairs",area:"Front House",contractor:"TBD",cost:"$5,000–13,000",status:"Not Started"},
-    {name:"Foundation / floor support repairs",area:"Front House",contractor:"TBD",cost:"$4,000–7,000",status:"Not Started"},
-    {name:"Deep clean entire property",area:"Whole Property",contractor:"TBD",cost:"$800–1,500",status:"Not Started"},
-    {name:"Interior painting — front house",area:"Front House",contractor:"TBD",cost:"$3,000–5,000",status:"Not Started"},
-    {name:"Bathroom full upgrade",area:"Front House",contractor:"TBD",cost:"$8,000–15,000",status:"Not Started"},
-    {name:"Kitchen basic improvements",area:"Front House",contractor:"TBD",cost:"$4,000–8,000",status:"Not Started"},
+  projects:[
+    {name:"Termite fumigation (full structure)",area:"Whole Property",contractor:"MC Exterminating",cost:"$5,375+",status:"Pending",due_date:"",assigned_to:"Amir",notes:""},
+    {name:"Termite wood repairs (porch, fascia, deck)",area:"Exterior",contractor:"TBD",cost:"$2,000–4,000",status:"Not Started",due_date:"",assigned_to:"Both",notes:""},
+    {name:"Roof assessment & urgent repairs",area:"Front House",contractor:"TBD",cost:"$5,000–13,000",status:"Not Started",due_date:"",assigned_to:"Amir",notes:""},
+    {name:"Foundation / floor support repairs",area:"Front House",contractor:"TBD",cost:"$4,000–7,000",status:"Not Started",due_date:"",assigned_to:"Both",notes:""},
+    {name:"Deep clean entire property",area:"Whole Property",contractor:"TBD",cost:"$800–1,500",status:"Not Started",due_date:"",assigned_to:"Both",notes:""},
+    {name:"Interior painting — front house",area:"Front House",contractor:"TBD",cost:"$3,000–5,000",status:"Not Started",due_date:"",assigned_to:"Both",notes:""},
+    {name:"Bathroom full upgrade",area:"Front House",contractor:"TBD",cost:"$8,000–15,000",status:"Not Started",due_date:"",assigned_to:"Both",notes:""},
+    {name:"Kitchen basic improvements",area:"Front House",contractor:"TBD",cost:"$4,000–8,000",status:"Not Started",due_date:"",assigned_to:"Both",notes:""},
   ],
-  contacts: [
+  contacts:[
     {name:"Paula Huling",role:"Escrow",company:"West Coast Escrow",contact:"—"},
     {name:"MC Exterminating / Jose Ceja",role:"Termite",company:"MC Exterminating",contact:"—"},
     {name:"New Wave Lending Group",role:"Lender",company:"New Wave Lending",contact:"—"},
   ],
-  decisions: [
+  decisions:[
     {date:"Apr 25, 2026",title:"Focus ADU investment on garage conversion + left-side expansion",notes:"Decided not to extend front house. Garage is the primary value-add opportunity.",status:"Agreed"},
     {date:"Apr 25, 2026",title:"Bamboo selected as homeowner's insurance for Year 1",notes:"Will review after first year. Need to verify coverage for unpermitted bonus room.",status:"Review Later"},
     {date:"Apr 25, 2026",title:"Accepted $10,000 seller credit (down from $30,000 ask)",notes:"Absorbed ~$20,000 in repair risk. Affects renovation budget.",status:"Noted"},
   ],
 };
 
-function badge(text) {
-  const map = {High:"badge-red",Medium:"badge-blue",Low:"badge-gray","Not Started":"badge-gray",Pending:"badge-amber",Research:"badge-amber","In Progress":"badge-blue",Done:"badge-green",Agreed:"badge-green","Review Later":"badge-amber",Noted:"badge-blue",Ordered:"badge-purple",Delivered:"badge-green",Escrow:"badge-blue",Termite:"badge-amber",Lender:"badge-purple",Agent:"badge-green",Contractor:"badge-amber",Inspector:"badge-red",Architect:"badge-purple",Other:"badge-gray"};
-  return `<span class="${map[text]||'badge-gray'}">${text}</span>`;
+let _cache={shopping:[],projects:[],expenses:[],contacts:[],decisions:[],notes:[],phases:[]};
+let budgetChart=null;
+
+function badge(t){const m={High:"badge-red",Medium:"badge-blue",Low:"badge-gray","Not Started":"badge-gray",Pending:"badge-amber",Research:"badge-amber","In Progress":"badge-blue",Done:"badge-green",Completed:"badge-green",Agreed:"badge-green","Review Later":"badge-amber",Noted:"badge-blue",Ordered:"badge-purple",Delivered:"badge-green",Escrow:"badge-blue",Termite:"badge-amber",Lender:"badge-purple",Agent:"badge-green",Contractor:"badge-amber",Inspector:"badge-red",Architect:"badge-purple",Other:"badge-gray"};return`<span class="${m[t]||'badge-gray'}">${t}</span>`}
+function assignedBadge(a){const m={Amir:"badge-blue",Rose:"badge-purple",Both:"badge-green"};return`<span class="${m[a]||'badge-gray'}">${a||'—'}</span>`}
+function statusSelect(table,id,current,options){return`<select onchange="updateStatus('${table}',${id},this.value)" class="text-xs border border-stone-200 rounded-md px-2 py-1 bg-white text-stone-600 focus:outline-none">${options.map(o=>`<option${o===current?' selected':''}>${o}</option>`).join('')}</select>`}
+function formatDue(d){if(!d)return'<span class="text-stone-300 text-xs">—</span>';const due=new Date(d),today=new Date();today.setHours(0,0,0,0);const diff=Math.ceil((due-today)/(1000*60*60*24));const str=due.toLocaleDateString('en-US',{month:'short',day:'numeric'});if(diff<0)return`<span class="text-xs overdue">⚠ ${str}</span>`;if(diff<=7)return`<span class="text-xs text-amber-600 font-semibold">${str}</span>`;return`<span class="text-xs text-stone-400">${str}</span>`}
+
+function phaseColor(status){const m={"In Progress":"border-amber-400","Completed":"border-green-400","Done":"border-green-400","Not Started":"border-stone-200"};return m[status]||"border-stone-200";}
+function phaseBadge(status){const m={"In Progress":"badge-amber","Completed":"badge-green","Done":"badge-green","Not Started":"badge-gray"};return`<span class="${m[status]||'badge-gray'}">${status}</span>`}
+
+// ---- PHASES ----
+function renderPhase(r,container){
+  _cache.phases=_cache.phases.filter(x=>x.id!==r.id).concat(r);
+  const color=phaseColor(r.status);
+  const html=`<div class="phase-card bg-white rounded-xl border-l-4 ${color} border border-stone-100 p-5 shadow-sm" id="phase-${r.id}">
+    <div class="flex items-start justify-between mb-2">
+      <p class="font-semibold text-sm text-stone-800 flex-1 mr-3">${r.name}</p>
+      <div class="flex items-center gap-2 shrink-0">
+        ${phaseBadge(r.status)}
+        <button class="btn-edit" onclick="editPhase(${r.id})">✏️</button>
+        <button class="btn-del" onclick="deletePhase(${r.id})">✕</button>
+      </div>
+    </div>
+    <p class="text-xs text-stone-400 mb-3">${r.description||''}</p>
+    <div class="flex items-center gap-3">
+      <div class="flex-1 h-1.5 bg-stone-100 rounded-full overflow-hidden">
+        <div class="h-full bg-amber-500 rounded-full transition-all" style="width:${r.progress||0}%"></div>
+      </div>
+      <span class="text-xs text-stone-400 font-mono w-8 text-right">${r.progress||0}%</span>
+    </div>
+  </div>`;
+  if(container){container.insertAdjacentHTML('beforeend',html);}
+  else{
+    const existing=document.getElementById('phase-'+r.id);
+    if(existing)existing.outerHTML=html;
+    else document.getElementById('phases-list').insertAdjacentHTML('beforeend',html);
+  }
 }
 
-function statusSelect(table, id, current, options) {
-  return `<select onchange="updateStatus('${table}',${id},this.value)" class="text-xs border border-stone-200 rounded-md px-2 py-1 bg-white text-stone-600 focus:outline-none">${options.map(o=>`<option${o===current?' selected':''}>${o}</option>`).join('')}</select>`;
+function renderOverviewPhases(phases){
+  const el=document.getElementById('overview-phases');
+  if(!el)return;
+  el.innerHTML='';
+  phases.sort((a,b)=>a.sort_order-b.sort_order).forEach(r=>{
+    el.insertAdjacentHTML('beforeend',`<div class="flex items-center gap-3">
+      <div class="w-32 text-xs text-stone-500 truncate">${r.name.replace(/Phase \d+ — /,'')}</div>
+      <div class="flex-1 h-1.5 bg-stone-100 rounded-full overflow-hidden"><div class="h-full bg-amber-500 rounded-full" style="width:${r.progress||0}%"></div></div>
+      <div class="w-16 text-right">${phaseBadge(r.status)}</div>
+    </div>`);
+  });
 }
 
-let currentModal = '';
+function editPhase(id){const r=_cache.phases.find(x=>x.id===id);if(r)openModal('phase',r);}
 
-function openModal(type) {
-  currentModal = type;
-  const titles = {shopping:'Add Shopping Item',project:'Add Renovation Task',expense:'Add Expense',contact:'Add Contact',decision:'Log a Decision'};
-  document.getElementById('modal-title').textContent = titles[type];
-  const forms = {
-    shopping:`<div><label class="field-label">Item Name</label><input class="field-input" id="f-name" placeholder="e.g. Refrigerator"></div><div><label class="field-label">Category</label><select class="field-input" id="f-cat"><option>Kitchen</option><option>Bathroom</option><option>Laundry</option><option>Bedroom</option><option>Living Room</option><option>Outdoor</option><option>Other</option></select></div><div><label class="field-label">Priority</label><select class="field-input" id="f-pri"><option>High</option><option>Medium</option><option>Low</option></select></div><div><label class="field-label">Estimated Cost</label><input class="field-input" id="f-cost" placeholder="e.g. $500–800"></div>`,
-    project:`<div><label class="field-label">Task Name</label><input class="field-input" id="f-name" placeholder="e.g. Paint living room"></div><div><label class="field-label">Area</label><select class="field-input" id="f-area"><option>Front House</option><option>Bathroom</option><option>Kitchen</option><option>Garage/ADU</option><option>Exterior</option><option>Whole Property</option></select></div><div><label class="field-label">Contractor</label><input class="field-input" id="f-contractor" placeholder="Name or TBD"></div><div><label class="field-label">Estimated Cost</label><input class="field-input" id="f-cost" placeholder="e.g. $2,000–4,000"></div>`,
-    expense:`<div><label class="field-label">Description</label><input class="field-input" id="f-name" placeholder="What was paid for"></div><div><label class="field-label">Category</label><select class="field-input" id="f-cat"><option>Renovation</option><option>Shopping</option><option>Inspection</option><option>Closing</option><option>Insurance</option><option>Other</option></select></div><div><label class="field-label">Date</label><input class="field-input" id="f-date" placeholder="e.g. Apr 28, 2026"></div><div><label class="field-label">Amount ($)</label><input class="field-input" type="number" id="f-amount" placeholder="0"></div>`,
-    contact:`<div><label class="field-label">Name</label><input class="field-input" id="f-name" placeholder="Full name"></div><div><label class="field-label">Role</label><select class="field-input" id="f-role"><option>Agent</option><option>Contractor</option><option>Escrow</option><option>Lender</option><option>Inspector</option><option>Architect</option><option>Other</option></select></div><div><label class="field-label">Company</label><input class="field-input" id="f-company" placeholder="Company name"></div><div><label class="field-label">Phone / Email</label><input class="field-input" id="f-contact" placeholder="Contact info"></div>`,
-    decision:`<div><label class="field-label">Decision</label><input class="field-input" id="f-name" placeholder="What was decided?"></div><div><label class="field-label">Notes</label><textarea class="field-input" id="f-notes" style="min-height:72px;resize:vertical" placeholder="Context or reasoning..."></textarea></div><div><label class="field-label">Status</label><select class="field-input" id="f-status"><option>Agreed</option><option>Review Later</option><option>Noted</option><option>Pending</option></select></div>`,
+async function deletePhase(id){
+  if(!confirm('Delete this phase?'))return;
+  await dbDelete('phases',id);
+  _cache.phases=_cache.phases.filter(x=>x.id!==id);
+  document.getElementById('phase-'+id)?.remove();
+}
+
+async function updatePhaseProgress(id,val){
+  await dbUpdate('phases',id,{progress:parseInt(val)});
+  _cache.phases=_cache.phases.map(x=>x.id===id?{...x,progress:parseInt(val)}:x);
+}
+
+// ---- MODAL ----
+let currentModal='',editingId=null;
+
+function openModal(type,data=null){
+  currentModal=type;editingId=data?data.id:null;
+  const titles={shopping:data?'Edit Item':'Add Shopping Item',project:data?'Edit Task':'Add Task',expense:data?'Edit Expense':'Add Expense',contact:data?'Edit Contact':'Add Contact',decision:data?'Edit Decision':'Log Decision',note:data?'Edit Note':'Add Note',phase:data?'Edit Phase':'Add Phase'};
+  document.getElementById('modal-title').textContent=titles[type];
+  const v=(k,def='')=>data?(data[k]??def)??def:def;
+  const sel=(id,opts,val)=>`<select class="field-input" id="${id}">${opts.map(o=>`<option${o===val?' selected':''}>${o}</option>`).join('')}</select>`;
+  const forms={
+    phase:`<div><label class="field-label">Phase Name</label><input class="field-input" id="f-name" value="${v('name')}" placeholder="e.g. Phase 1 — Closing"></div>
+    <div><label class="field-label">Status</label>${sel('f-status',['Not Started','In Progress','Completed'],v('status','Not Started'))}</div>
+    <div><label class="field-label">Description</label><textarea class="field-input" id="f-desc" style="min-height:72px;resize:vertical" placeholder="What does this phase involve?">${v('description')}</textarea></div>
+    <div><label class="field-label">Progress: <span id="prog-label">${v('progress',0)}%</span></label>
+    <input type="range" min="0" max="100" value="${v('progress',0)}" id="f-progress" oninput="document.getElementById('prog-label').textContent=this.value+'%'" class="mt-2"></div>`,
+    shopping:`<div><label class="field-label">Item Name</label><input class="field-input" id="f-name" value="${v('name')}" placeholder="e.g. Refrigerator"></div><div><label class="field-label">Category</label>${sel('f-cat',['Kitchen','Bathroom','Laundry','Bedroom','Living Room','Outdoor','Other'],v('category','Kitchen'))}</div><div><label class="field-label">Priority</label>${sel('f-pri',['High','Medium','Low'],v('priority','Medium'))}</div><div><label class="field-label">Estimated Cost</label><input class="field-input" id="f-cost" value="${v('cost')}" placeholder="e.g. $500–800"></div><div><label class="field-label">Product Link</label><input class="field-input" id="f-link" value="${v('link')}" placeholder="https://..."></div><div><label class="field-label">Notes</label><textarea class="field-input" id="f-notes" style="min-height:60px;resize:vertical">${v('notes')}</textarea></div>`,
+    project:`<div><label class="field-label">Task Name</label><input class="field-input" id="f-name" value="${v('name')}" placeholder="e.g. Paint living room"></div><div><label class="field-label">Area</label>${sel('f-area',['Front House','Bathroom','Kitchen','Garage/ADU','Exterior','Whole Property'],v('area','Front House'))}</div><div><label class="field-label">Contractor</label><input class="field-input" id="f-contractor" value="${v('contractor')}" placeholder="Name or TBD"></div><div><label class="field-label">Estimated Cost</label><input class="field-input" id="f-cost" value="${v('cost')}" placeholder="e.g. $2,000–4,000"></div><div><label class="field-label">Due Date</label><input class="field-input" type="date" id="f-due" value="${v('due_date')}"></div><div><label class="field-label">Assigned To</label>${sel('f-assigned',['Amir','Rose','Both'],v('assigned_to','Both'))}</div><div><label class="field-label">Notes</label><textarea class="field-input" id="f-notes" style="min-height:60px;resize:vertical">${v('notes')}</textarea></div>`,
+    expense:`<div><label class="field-label">Description</label><input class="field-input" id="f-name" value="${v('name')}" placeholder="What was paid for"></div><div><label class="field-label">Category</label>${sel('f-cat',['Renovation','Shopping','Inspection','Closing','Insurance','Other'],v('category','Renovation'))}</div><div><label class="field-label">Date</label><input class="field-input" id="f-date" value="${v('date')}" placeholder="e.g. Apr 28, 2026"></div><div><label class="field-label">Amount ($)</label><input class="field-input" type="number" id="f-amount" value="${v('amount','0')}"></div>`,
+    contact:`<div><label class="field-label">Name</label><input class="field-input" id="f-name" value="${v('name')}" placeholder="Full name"></div><div><label class="field-label">Role</label>${sel('f-role',['Agent','Contractor','Escrow','Lender','Inspector','Architect','Other'],v('role','Other'))}</div><div><label class="field-label">Company</label><input class="field-input" id="f-company" value="${v('company')}" placeholder="Company name"></div><div><label class="field-label">Phone / Email</label><input class="field-input" id="f-contact" value="${v('contact')}" placeholder="Contact info"></div>`,
+    decision:`<div><label class="field-label">Decision</label><input class="field-input" id="f-name" value="${v('title')}" placeholder="What was decided?"></div><div><label class="field-label">Notes</label><textarea class="field-input" id="f-notes" style="min-height:72px;resize:vertical">${v('notes')}</textarea></div><div><label class="field-label">Status</label>${sel('f-status',['Agreed','Review Later','Noted','Pending'],v('status','Agreed'))}</div>`,
+    note:`<div><label class="field-label">Title</label><input class="field-input" id="f-name" value="${v('title')}" placeholder="e.g. Contractor quote from John"></div><div><label class="field-label">Note</label><textarea class="field-input" id="f-notes" style="min-height:100px;resize:vertical">${v('content')}</textarea></div><div><label class="field-label">Tag</label>${sel('f-tag',['General','Contractor Quote','Idea','Reminder','ADU','Front House'],v('tag','General'))}</div>`,
   };
-  document.getElementById('modal-body').innerHTML = forms[type];
+  document.getElementById('modal-body').innerHTML=forms[type];
   document.getElementById('modal-overlay').classList.remove('hidden');
   document.getElementById('modal-overlay').classList.add('flex');
+  setTimeout(()=>document.getElementById('f-name')?.focus(),50);
 }
 
-function closeModal() {
-  document.getElementById('modal-overlay').classList.add('hidden');
-  document.getElementById('modal-overlay').classList.remove('flex');
-}
+function closeModal(){document.getElementById('modal-overlay').classList.add('hidden');document.getElementById('modal-overlay').classList.remove('flex');editingId=null;}
 
-async function saveModal() {
-  const name = document.getElementById('f-name')?.value?.trim();
-  if (!name) return;
-  document.getElementById('save-btn').textContent = 'Saving...';
-  const now = new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+async function saveModal(){
+  const name=document.getElementById('f-name')?.value?.trim();
+  if(!name)return;
+  document.getElementById('save-btn').textContent='Saving...';
+  const now=new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
 
-  if (currentModal === 'shopping') {
-    const row = await dbInsert('shopping',{name,category:document.getElementById('f-cat').value,priority:document.getElementById('f-pri').value,cost:document.getElementById('f-cost').value||'—',status:'Not Started'});
-    if (row) appendShopping(row);
+  if(currentModal==='phase'){
+    const d={name,status:document.getElementById('f-status').value,description:document.getElementById('f-desc').value||'',progress:parseInt(document.getElementById('f-progress').value)||0};
+    if(editingId){
+      await dbUpdate('phases',editingId,d);
+      const updated={..._cache.phases.find(x=>x.id===editingId),...d};
+      _cache.phases=_cache.phases.map(x=>x.id===editingId?updated:x);
+      document.getElementById('phase-'+editingId)?.remove();
+      renderPhase(updated,null);
+      renderOverviewPhases(_cache.phases);
+    } else {
+      const row=await dbInsert('phases',{...d,sort_order:_cache.phases.length+1});
+      if(row){renderPhase(row,document.getElementById('phases-list'));_cache.phases.push(row);renderOverviewPhases(_cache.phases);}
+    }
   }
-  if (currentModal === 'project') {
-    const row = await dbInsert('projects',{name,area:document.getElementById('f-area').value,contractor:document.getElementById('f-contractor').value||'TBD',cost:document.getElementById('f-cost').value||'—',status:'Not Started'});
-    if (row) appendProject(row);
+  if(currentModal==='shopping'){
+    const d={name,category:document.getElementById('f-cat').value,priority:document.getElementById('f-pri').value,cost:document.getElementById('f-cost').value||'—',link:document.getElementById('f-link').value||'',notes:document.getElementById('f-notes').value||''};
+    if(editingId){await dbUpdate('shopping',editingId,d);reloadTable('shopping');}
+    else{const row=await dbInsert('shopping',{...d,status:'Not Started'});if(row)appendShopping(row);}
   }
-  if (currentModal === 'expense') {
-    const amount = document.getElementById('f-amount').value||'0';
-    const row = await dbInsert('expenses',{name,category:document.getElementById('f-cat').value,date:document.getElementById('f-date').value||now,amount});
-    if (row) { appendExpense(row); updateBudget(); }
+  if(currentModal==='project'){
+    const d={name,area:document.getElementById('f-area').value,contractor:document.getElementById('f-contractor').value||'TBD',cost:document.getElementById('f-cost').value||'—',due_date:document.getElementById('f-due').value||'',assigned_to:document.getElementById('f-assigned').value,notes:document.getElementById('f-notes').value||''};
+    if(editingId){await dbUpdate('projects',editingId,d);reloadTable('projects');}
+    else{const row=await dbInsert('projects',{...d,status:'Not Started'});if(row)appendProject(row);}
   }
-  if (currentModal === 'contact') {
-    const row = await dbInsert('contacts',{name,role:document.getElementById('f-role').value,company:document.getElementById('f-company').value||'—',contact:document.getElementById('f-contact').value||'—'});
-    if (row) appendContact(row);
+  if(currentModal==='expense'){
+    const d={name,category:document.getElementById('f-cat').value,date:document.getElementById('f-date').value||now,amount:document.getElementById('f-amount').value||'0'};
+    if(editingId){await dbUpdate('expenses',editingId,d);reloadTable('expenses');}
+    else{const row=await dbInsert('expenses',d);if(row){_cache.expenses.push(row);appendExpense(row);updateBudget();}}
   }
-  if (currentModal === 'decision') {
-    const row = await dbInsert('decisions',{date:now,title:name,notes:document.getElementById('f-notes').value||'',status:document.getElementById('f-status').value});
-    if (row) prependDecision(row);
+  if(currentModal==='contact'){
+    const d={name,role:document.getElementById('f-role').value,company:document.getElementById('f-company').value||'—',contact:document.getElementById('f-contact').value||'—'};
+    if(editingId){await dbUpdate('contacts',editingId,d);reloadTable('contacts');}
+    else{const row=await dbInsert('contacts',d);if(row)appendContact(row);}
   }
-  document.getElementById('save-btn').textContent = 'Save';
+  if(currentModal==='decision'){
+    const d={title:name,notes:document.getElementById('f-notes').value||'',status:document.getElementById('f-status').value};
+    if(editingId){await dbUpdate('decisions',editingId,d);reloadTable('decisions');}
+    else{const row=await dbInsert('decisions',{...d,date:now});if(row)prependDecision(row);}
+  }
+  if(currentModal==='note'){
+    const d={title:name,content:document.getElementById('f-notes').value||'',tag:document.getElementById('f-tag').value,date:now};
+    if(editingId){await dbUpdate('notes',editingId,d);reloadTable('notes');}
+    else{const row=await dbInsert('notes',d);if(row)appendNote(row);}
+  }
+  document.getElementById('save-btn').textContent='Save';
   closeModal();
 }
 
-async function updateStatus(table, id, status) {
-  await dbUpdate(table, id, {status});
+async function reloadTable(table){
+  const data=await dbGet(table);_cache[table]=data;
+  if(table==='shopping'){document.getElementById('shopping-tbody').innerHTML='';data.forEach(appendShopping);}
+  if(table==='projects'){document.getElementById('projects-tbody').innerHTML='';data.forEach(appendProject);}
+  if(table==='expenses'){document.getElementById('budget-tbody').innerHTML='';_cache.expenses=data;data.forEach(appendExpense);updateBudget();}
+  if(table==='contacts'){document.getElementById('contacts-tbody').innerHTML='';data.forEach(appendContact);}
+  if(table==='decisions'){document.getElementById('decisions-list').innerHTML='';[...data].reverse().forEach(prependDecision);}
+  if(table==='notes'){document.getElementById('notes-list').innerHTML='';data.forEach(appendNote);}
 }
 
-async function deleteRow(table, id, el) {
-  await dbDelete(table, id);
-  el.closest('tr')?.remove() || el.closest('.decision-card')?.remove();
-  if (table === 'expenses') updateBudget();
+async function refreshAll(){
+  const [s,p,e,c,d,n,ph]=await Promise.all([dbGet('shopping'),dbGet('projects'),dbGet('expenses'),dbGet('contacts'),dbGet('decisions'),dbGet('notes'),dbGet('phases','sort_order.asc')]);
+  _cache={shopping:s,projects:p,expenses:e,contacts:c,decisions:d,notes:n||[],phases:ph||[]};
+  document.getElementById('shopping-tbody').innerHTML='';s.forEach(appendShopping);
+  document.getElementById('projects-tbody').innerHTML='';p.forEach(appendProject);
+  document.getElementById('budget-tbody').innerHTML='';e.forEach(appendExpense);updateBudget();
+  document.getElementById('contacts-tbody').innerHTML='';c.forEach(appendContact);
+  document.getElementById('decisions-list').innerHTML='';[...d].reverse().forEach(prependDecision);
+  document.getElementById('notes-list').innerHTML='';(n||[]).forEach(appendNote);
+  document.getElementById('phases-list').innerHTML='';(ph||[]).forEach(r=>renderPhase(r,document.getElementById('phases-list')));
+  renderOverviewPhases(ph||[]);
 }
 
-function appendShopping(r) {
-  const tb = document.getElementById('shopping-tbody');
-  tb.insertAdjacentHTML('beforeend',`<tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3 font-medium">${r.name}</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">${r.category}</td><td class="px-3 py-3">${badge(r.priority)}</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">${r.cost}</td><td class="px-3 py-3">${statusSelect('shopping',r.id,r.status,['Not Started','Research','Approved','Ordered','Delivered'])}</td><td class="px-3 py-3"><button onclick="deleteRow('shopping',${r.id},this)" class="text-stone-300 hover:text-red-400 text-xs">✕</button></td></tr>`);
+function editShopping(id){const r=_cache.shopping.find(x=>x.id===id);if(r)openModal('shopping',r);}
+function editProject(id){const r=_cache.projects.find(x=>x.id===id);if(r)openModal('project',r);}
+function editExpense(id){const r=_cache.expenses.find(x=>x.id===id);if(r)openModal('expense',r);}
+function editContact(id){const r=_cache.contacts.find(x=>x.id===id);if(r)openModal('contact',r);}
+function editDecision(id){const r=_cache.decisions.find(x=>x.id===id);if(r)openModal('decision',r);}
+function editNote(id){const r=_cache.notes.find(x=>x.id===id);if(r)openModal('note',r);}
+
+async function updateStatus(table,id,status){await dbUpdate(table,id,{status});}
+
+async function deleteRow(table,id,el){
+  if(!confirm('Delete this item?'))return;
+  await dbDelete(table,id);
+  _cache[table]=_cache[table].filter(x=>x.id!==id);
+  el.closest('tr')?.remove()||el.closest('.card-item')?.remove();
+  if(table==='expenses')updateBudget();
 }
 
-function appendProject(r) {
-  const tb = document.getElementById('projects-tbody');
-  tb.insertAdjacentHTML('beforeend',`<tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3 font-medium">${r.name}<div class="text-xs text-stone-400 font-normal">${r.contractor}</div></td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">${r.area}</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">${r.cost}</td><td class="px-3 py-3">${statusSelect('projects',r.id,r.status,['Not Started','Pending','In Progress','Done'])}</td><td class="px-3 py-3"><button onclick="deleteRow('projects',${r.id},this)" class="text-stone-300 hover:text-red-400 text-xs">✕</button></td></tr>`);
+function appendShopping(r){
+  _cache.shopping=_cache.shopping.filter(x=>x.id!==r.id).concat(r);
+  const noteHtml=r.notes?`<div class="note-text">${r.notes}</div>`:'';
+  const linkHtml=r.link?`<div class="link-text"><a href="${r.link}" target="_blank">🔗 View product</a></div>`:'';
+  document.getElementById('shopping-tbody').insertAdjacentHTML('beforeend',`<tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3 font-medium">${r.name}${noteHtml}${linkHtml}</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">${r.category}</td><td class="px-3 py-3">${badge(r.priority)}</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">${r.cost}</td><td class="px-3 py-3">${statusSelect('shopping',r.id,r.status,['Not Started','Research','Approved','Ordered','Delivered'])}</td><td class="px-3 py-3"><div class="flex gap-1"><button class="btn-edit" onclick="editShopping(${r.id})">✏️</button><button class="btn-del" onclick="deleteRow('shopping',${r.id},this)">✕</button></div></td></tr>`);
 }
 
-function appendExpense(r) {
-  const tb = document.getElementById('budget-tbody');
-  tb.insertAdjacentHTML('beforeend',`<tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3 font-medium">${r.name}</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">${r.category}</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">${r.date}</td><td class="px-3 py-3 font-semibold">$${parseFloat(r.amount).toLocaleString()}</td><td class="px-3 py-3"><button onclick="deleteRow('expenses',${r.id},this)" class="text-stone-300 hover:text-red-400 text-xs">✕</button></td></tr>`);
+function appendProject(r){
+  _cache.projects=_cache.projects.filter(x=>x.id!==r.id).concat(r);
+  const noteHtml=r.notes?`<div class="note-text">${r.notes}</div>`:'';
+  document.getElementById('projects-tbody').insertAdjacentHTML('beforeend',`<tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3 font-medium">${r.name}<div class="text-xs text-stone-400 font-normal">${r.contractor||''} · ${r.cost||''}</div>${noteHtml}</td><td class="px-3 py-3 hidden md:table-cell">${formatDue(r.due_date)}</td><td class="px-3 py-3 hidden md:table-cell">${assignedBadge(r.assigned_to)}</td><td class="px-3 py-3">${statusSelect('projects',r.id,r.status,['Not Started','Pending','In Progress','Done'])}</td><td class="px-3 py-3"><div class="flex gap-1"><button class="btn-edit" onclick="editProject(${r.id})">✏️</button><button class="btn-del" onclick="deleteRow('projects',${r.id},this)">✕</button></div></td></tr>`);
 }
 
-function appendContact(r) {
-  const tb = document.getElementById('contacts-tbody');
-  tb.insertAdjacentHTML('beforeend',`<tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3 font-medium">${r.name}</td><td class="px-3 py-3">${badge(r.role)}</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">${r.company}</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">${r.contact}</td><td class="px-3 py-3"><button onclick="deleteRow('contacts',${r.id},this)" class="text-stone-300 hover:text-red-400 text-xs">✕</button></td></tr>`);
+function appendExpense(r){
+  _cache.expenses=_cache.expenses.filter(x=>x.id!==r.id).concat(r);
+  document.getElementById('budget-tbody').insertAdjacentHTML('beforeend',`<tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3 font-medium">${r.name}</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">${r.category}</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">${r.date}</td><td class="px-3 py-3 font-semibold">$${parseFloat(r.amount||0).toLocaleString()}</td><td class="px-3 py-3"><div class="flex gap-1"><button class="btn-edit" onclick="editExpense(${r.id})">✏️</button><button class="btn-del" onclick="deleteRow('expenses',${r.id},this)">✕</button></div></td></tr>`);
 }
 
-function prependDecision(r) {
-  const list = document.getElementById('decisions-list');
-  const statusMap = {Agreed:'badge-green','Review Later':'badge-amber',Noted:'badge-blue',Pending:'badge-red'};
-  list.insertAdjacentHTML('afterbegin',`<div class="decision-card bg-white rounded-xl border border-stone-100 p-4 shadow-sm flex gap-4 items-start"><p class="text-xs font-mono text-stone-300 whitespace-nowrap pt-0.5 min-w-[90px]">${r.date}</p><div class="flex-1"><p class="text-sm font-medium text-stone-800 mb-1">${r.title}</p>${r.notes?`<p class="text-xs text-stone-400">${r.notes}</p>`:''}</div><div class="flex items-center gap-2 shrink-0"><span class="${statusMap[r.status]||'badge-gray'}">${r.status}</span><button onclick="deleteRow('decisions',${r.id},this)" class="text-stone-300 hover:text-red-400 text-xs">✕</button></div></div>`);
+function appendContact(r){
+  _cache.contacts=_cache.contacts.filter(x=>x.id!==r.id).concat(r);
+  document.getElementById('contacts-tbody').insertAdjacentHTML('beforeend',`<tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3 font-medium">${r.name}</td><td class="px-3 py-3">${badge(r.role)}</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">${r.company}</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">${r.contact}</td><td class="px-3 py-3"><div class="flex gap-1"><button class="btn-edit" onclick="editContact(${r.id})">✏️</button><button class="btn-del" onclick="deleteRow('contacts',${r.id},this)">✕</button></div></td></tr>`);
 }
 
-function updateBudget() {
-  const rows = document.querySelectorAll('#budget-tbody tr');
-  let total = 0;
-  rows.forEach(r => {
-    const amtCell = r.querySelector('td:nth-child(4)');
-    if (amtCell) total += parseFloat(amtCell.textContent.replace(/[$,]/g,''))||0;
-  });
-  document.getElementById('total-spent').textContent = '$'+total.toLocaleString();
-  document.getElementById('total-remaining').textContent = '$'+Math.max(0,50000-total).toLocaleString();
-  const pct = Math.min(100,Math.round((total/50000)*100));
-  document.getElementById('budget-pct').textContent = pct+'% spent';
-  document.getElementById('budget-bar').style.width = pct+'%';
+function prependDecision(r){
+  _cache.decisions=_cache.decisions.filter(x=>x.id!==r.id).concat(r);
+  const sm={Agreed:'badge-green','Review Later':'badge-amber',Noted:'badge-blue',Pending:'badge-red'};
+  document.getElementById('decisions-list').insertAdjacentHTML('afterbegin',`<div class="card-item bg-white rounded-xl border border-stone-100 p-4 shadow-sm flex gap-4 items-start"><p class="text-xs font-mono text-stone-300 whitespace-nowrap pt-0.5 min-w-[90px]">${r.date}</p><div class="flex-1"><p class="text-sm font-medium text-stone-800 mb-1">${r.title}</p>${r.notes?`<p class="text-xs text-stone-400">${r.notes}</p>`:''}</div><div class="flex items-center gap-2 shrink-0"><span class="${sm[r.status]||'badge-gray'}">${r.status}</span><button class="btn-edit" onclick="editDecision(${r.id})">✏️</button><button class="btn-del" onclick="deleteRow('decisions',${r.id},this)">✕</button></div></div>`);
 }
 
-function switchTab(name) {
-  document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('nav-active'));
+function appendNote(r){
+  _cache.notes=_cache.notes.filter(x=>x.id!==r.id).concat(r);
+  const tc={General:'badge-gray','Contractor Quote':'badge-amber',Idea:'badge-blue',Reminder:'badge-red',ADU:'badge-purple','Front House':'badge-green'};
+  document.getElementById('notes-list').insertAdjacentHTML('beforeend',`<div class="card-item bg-white rounded-xl border border-stone-100 p-5 shadow-sm"><div class="flex items-start justify-between mb-2"><div><p class="text-sm font-semibold text-stone-800">${r.title}</p><p class="text-xs text-stone-300 font-mono mt-0.5">${r.date||''}</p></div><div class="flex items-center gap-2"><span class="${tc[r.tag]||'badge-gray'}">${r.tag||'General'}</span><button class="btn-edit" onclick="editNote(${r.id})">✏️</button><button class="btn-del" onclick="deleteRow('notes',${r.id},this)">✕</button></div></div>${r.content?`<p class="text-sm text-stone-500 leading-relaxed whitespace-pre-wrap">${r.content}</p>`:''}</div>`);
+}
+
+function updateBudget(){
+  let total=0,cats={};
+  _cache.expenses.forEach(e=>{const a=parseFloat(e.amount||0);total+=a;cats[e.category]=(cats[e.category]||0)+a;});
+  document.getElementById('total-spent').textContent='$'+total.toLocaleString();
+  document.getElementById('total-remaining').textContent='$'+Math.max(0,50000-total).toLocaleString();
+  const pct=Math.min(100,Math.round((total/50000)*100));
+  document.getElementById('budget-pct').textContent=pct+'% spent';
+  document.getElementById('budget-bar').style.width=pct+'%';
+  const ctx=document.getElementById('budget-chart');
+  if(ctx){if(budgetChart)budgetChart.destroy();const labels=Object.keys(cats),vals=Object.values(cats);if(labels.length>0){budgetChart=new Chart(ctx,{type:'doughnut',data:{labels,datasets:[{data:vals,backgroundColor:['#f59e0b','#3b82f6','#10b981','#f43f5e','#8b5cf6','#64748b'],borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{font:{size:11},padding:12}}}}});}}
+}
+
+function switchTab(name){
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.add('hidden'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('nav-active'));
   document.getElementById('tab-'+name).classList.remove('hidden');
   document.querySelector(`[data-tab="${name}"]`)?.classList.add('nav-active');
 }
 
-async function init() {
+async function init(){
   switchTab('overview');
-  try {
-    const [s,p,e,c,d] = await Promise.all([dbGet('shopping'),dbGet('projects'),dbGet('expenses'),dbGet('contacts'),dbGet('decisions')]);
-    
-    // Seed if empty
-    if (s.length===0 && p.length===0) {
+  try{
+    let [s,p,e,c,d,n,ph]=await Promise.all([dbGet('shopping'),dbGet('projects'),dbGet('expenses'),dbGet('contacts'),dbGet('decisions'),dbGet('notes'),dbGet('phases','sort_order.asc')]);
+    if(!Array.isArray(n))n=[];
+    if(!Array.isArray(ph))ph=[];
+
+    // Seed default data if empty
+    if(s.length===0&&p.length===0){
       await Promise.all([
         ...DEFAULT.shopping.map(i=>dbInsert('shopping',i)),
         ...DEFAULT.projects.map(i=>dbInsert('projects',i)),
         ...DEFAULT.contacts.map(i=>dbInsert('contacts',i)),
         ...DEFAULT.decisions.map(i=>dbInsert('decisions',i)),
       ]);
-      const [s2,p2,e2,c2,d2] = await Promise.all([dbGet('shopping'),dbGet('projects'),dbGet('expenses'),dbGet('contacts'),dbGet('decisions')]);
-      s2.forEach(appendShopping); p2.forEach(appendProject); e2.forEach(appendExpense); c2.forEach(appendContact); d2.forEach(prependDecision);
-    } else {
-      s.forEach(appendShopping); p.forEach(appendProject); e.forEach(appendExpense); c.forEach(appendContact); d.forEach(prependDecision);
+      [s,p,e,c,d]=await Promise.all([dbGet('shopping'),dbGet('projects'),dbGet('expenses'),dbGet('contacts'),dbGet('decisions')]);
     }
 
-    document.getElementById('db-dot').className = 'w-1.5 h-1.5 rounded-full bg-green-400';
-    document.getElementById('db-status').textContent = 'Live — synced';
-    document.getElementById('db-status').className = 'text-xs text-green-600';
+    // Seed phases if empty
+    if(ph.length===0){
+      await Promise.all(DEFAULT_PHASES.map(i=>dbInsert('phases',i)));
+      ph=await dbGet('phases','sort_order.asc');
+    }
+
+    _cache={shopping:s,projects:p,expenses:e,contacts:c,decisions:d,notes:n,phases:ph};
+    s.forEach(appendShopping);p.forEach(appendProject);e.forEach(appendExpense);c.forEach(appendContact);
+    [...d].reverse().forEach(prependDecision);n.forEach(appendNote);
+    const phList=document.getElementById('phases-list');
+    ph.forEach(r=>renderPhase(r,phList));
+    renderOverviewPhases(ph);
     updateBudget();
-  } catch(err) {
-    document.getElementById('db-dot').className = 'w-1.5 h-1.5 rounded-full bg-red-400';
-    document.getElementById('db-status').textContent = 'Connection error';
-    document.getElementById('db-status').className = 'text-xs text-red-500';
+
+    document.getElementById('db-dot').className='w-1.5 h-1.5 rounded-full bg-green-400';
+    document.getElementById('db-status').textContent='Live — synced';
+    document.getElementById('db-status').className='text-xs text-green-600';
+  }catch(err){
+    document.getElementById('db-dot').className='w-1.5 h-1.5 rounded-full bg-red-400';
+    document.getElementById('db-status').textContent='Connection error';
+    document.getElementById('db-status').className='text-xs text-red-500';
   }
 }
 
