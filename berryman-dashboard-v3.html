@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3967 Berryman — Home Dashboard</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  body { font-family: 'Segoe UI', system-ui, sans-serif; }
+  .serif { font-family: Georgia, 'Times New Roman', serif; }
+  .sidebar { width: 220px; min-height: 100vh; }
+  @media (max-width: 768px) { .sidebar { display: none; } .sidebar.open { display: flex; position: fixed; z-index: 50; } }
+  select { cursor: pointer; }
+  .fade-in { animation: fadeIn 0.2s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body class="bg-stone-50 text-stone-800">
+
+<div class="flex min-h-screen">
+
+  <!-- Sidebar -->
+  <aside id="sidebar" class="sidebar bg-white border-r border-stone-100 flex flex-col py-6 shrink-0">
+    <div class="px-5 pb-5 border-b border-stone-100 mb-4">
+      <p class="serif text-sm font-semibold text-stone-800 leading-snug">3967 Berryman Ave</p>
+      <p class="text-xs text-stone-400 mt-0.5">Los Angeles, CA 90066</p>
+      <div class="mt-2 flex items-center gap-1.5">
+        <div id="db-dot" class="w-1.5 h-1.5 rounded-full bg-amber-400"></div>
+        <p id="db-status" class="text-xs text-amber-600">Connecting...</p>
+      </div>
+    </div>
+    <nav class="flex-1 px-3 space-y-0.5">
+      <button onclick="switchTab('overview')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-stone-500 hover:bg-stone-50 hover:text-stone-800 transition-all" data-tab="overview">🏠 Dashboard</button>
+      <button onclick="switchTab('phases')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-stone-500 hover:bg-stone-50 hover:text-stone-800 transition-all" data-tab="phases">📋 Project Phases</button>
+      <button onclick="switchTab('decisions')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-stone-500 hover:bg-stone-50 hover:text-stone-800 transition-all" data-tab="decisions">✅ Decisions Log</button>
+      <button onclick="switchTab('shopping')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-stone-500 hover:bg-stone-50 hover:text-stone-800 transition-all" data-tab="shopping">🛒 Shopping List</button>
+      <button onclick="switchTab('projects')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-stone-500 hover:bg-stone-50 hover:text-stone-800 transition-all" data-tab="projects">🔨 Projects & Tasks</button>
+      <button onclick="switchTab('budget')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-stone-500 hover:bg-stone-50 hover:text-stone-800 transition-all" data-tab="budget">💰 Budget</button>
+      <button onclick="switchTab('contacts')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-stone-500 hover:bg-stone-50 hover:text-stone-800 transition-all" data-tab="contacts">📞 Contacts</button>
+      <button onclick="switchTab('docs')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-stone-500 hover:bg-stone-50 hover:text-stone-800 transition-all" data-tab="docs">📁 Documents</button>
+    </nav>
+    <div class="px-5 pt-4 border-t border-stone-100">
+      <p class="text-xs text-stone-300">Amir & Rose · 2026</p>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="flex-1 p-6 md:p-10 max-w-4xl fade-in">
+
+    <!-- Mobile header -->
+    <div class="flex items-center gap-3 mb-6 md:hidden">
+      <button onclick="document.getElementById('sidebar').classList.toggle('open')" class="text-stone-500 text-xl">☰</button>
+      <p class="serif font-semibold">3967 Berryman</p>
+    </div>
+
+    <!-- OVERVIEW -->
+    <div id="tab-overview" class="tab-content">
+      <h2 class="serif text-3xl font-semibold mb-1">Welcome, Amir & Rose 👋</h2>
+      <p class="text-stone-400 text-sm mb-8">Your shared home dashboard — all changes sync in real time.</p>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div class="bg-white rounded-xl border-l-4 border-amber-400 p-4 shadow-sm"><p class="text-xs font-semibold text-stone-400 uppercase tracking-wider mb-2">Purchase Price</p><p class="serif text-xl font-semibold">$1,133,000</p><p class="text-xs text-stone-400 mt-1">Closing Apr 28, 2026</p></div>
+        <div class="bg-white rounded-xl border-l-4 border-green-400 p-4 shadow-sm"><p class="text-xs font-semibold text-stone-400 uppercase tracking-wider mb-2">Front House Budget</p><p class="serif text-xl font-semibold">$50,000</p><p class="text-xs text-stone-400 mt-1">Livability target</p></div>
+        <div class="bg-white rounded-xl border-l-4 border-red-400 p-4 shadow-sm"><p class="text-xs font-semibold text-stone-400 uppercase tracking-wider mb-2">Monthly Payment</p><p class="serif text-xl font-semibold">$7,387</p><p class="text-xs text-stone-400 mt-1">Est. all-in</p></div>
+        <div class="bg-white rounded-xl border-l-4 border-blue-400 p-4 shadow-sm"><p class="text-xs font-semibold text-stone-400 uppercase tracking-wider mb-2">ADU Project</p><p class="serif text-xl font-semibold">TBD</p><p class="text-xs text-stone-400 mt-1">Pending feasibility</p></div>
+      </div>
+      <div class="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
+        <div class="px-5 py-4 border-b border-stone-100"><p class="font-semibold text-sm">🚨 Urgent Action Items</p></div>
+        <table class="w-full text-sm">
+          <thead><tr class="bg-stone-50 text-xs text-stone-400 uppercase tracking-wider">
+            <th class="px-5 py-3 text-left">Item</th><th class="px-3 py-3 text-left">Priority</th><th class="px-3 py-3 text-left hidden md:table-cell">Owner</th>
+          </tr></thead>
+          <tbody>
+            <tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3">Pull LADBS permit history for garage</td><td class="px-3 py-3"><span class="badge-red">High</span></td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">Amir</td></tr>
+            <tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3">Schedule termite fumigation post-close</td><td class="px-3 py-3"><span class="badge-red">High</span></td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">Amir</td></tr>
+            <tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3">Confirm Bamboo insurance covers all structures</td><td class="px-3 py-3"><span class="badge-red">High</span></td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">Amir</td></tr>
+            <tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3">Review roof inspection report</td><td class="px-3 py-3"><span class="badge-amber">Medium</span></td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">Both</td></tr>
+            <tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3">Measure garage left-side clearance</td><td class="px-3 py-3"><span class="badge-amber">Medium</span></td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">Amir</td></tr>
+            <tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3">ADU architect feasibility consultation</td><td class="px-3 py-3"><span class="badge-gray">Low</span></td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">Both</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- PHASES -->
+    <div id="tab-phases" class="tab-content hidden">
+      <h2 class="serif text-3xl font-semibold mb-1">Project Phases</h2>
+      <p class="text-stone-400 text-sm mb-8">The phased plan from closing to ADU completion.</p>
+      <div class="space-y-4">
+        <div class="bg-white rounded-xl border-l-4 border-amber-400 border border-stone-100 p-5 shadow-sm"><div class="flex items-center justify-between mb-2"><p class="font-semibold text-sm">Phase 1 — Closing & Due Diligence</p><span class="badge-amber">In Progress</span></div><p class="text-xs text-stone-400 mb-3">Confirm all inspection findings, finalize insurance, review all documents, pull permit history, confirm garage legality.</p><div class="h-1.5 bg-stone-100 rounded-full"><div class="h-full bg-amber-500 rounded-full" style="width:60%"></div></div></div>
+        <div class="bg-white rounded-xl border-l-4 border-amber-300 border border-stone-100 p-5 shadow-sm"><div class="flex items-center justify-between mb-2"><p class="font-semibold text-sm">Phase 2 — Pre-Move-In Work</p><span class="badge-gray">Up Next</span></div><p class="text-xs text-stone-400 mb-3">Termite fumigation → wood repairs → roof → foundation → water damage → deep clean → bathroom → kitchen → paint → move in.</p><div class="h-1.5 bg-stone-100 rounded-full"><div class="h-full bg-amber-500 rounded-full" style="width:0%"></div></div></div>
+        <div class="bg-white rounded-xl border-l-4 border-stone-200 border border-stone-100 p-5 shadow-sm"><div class="flex items-center justify-between mb-2"><p class="font-semibold text-sm">Phase 3 — Garage / ADU Feasibility</p><span class="badge-gray">Not Started</span></div><p class="text-xs text-stone-400 mb-3">Measure garage. Verify permits. Consult architect. Compare conversion vs. new build. Get cost estimates.</p><div class="h-1.5 bg-stone-100 rounded-full"><div class="h-full bg-amber-500 rounded-full" style="width:0%"></div></div></div>
+        <div class="bg-white rounded-xl border-l-4 border-stone-200 border border-stone-100 p-5 shadow-sm"><div class="flex items-center justify-between mb-2"><p class="font-semibold text-sm">Phase 4 — ADU Design & Budget</p><span class="badge-gray">Not Started</span></div><p class="text-xs text-stone-400 mb-3">Finalize layout, kitchen, bathroom. Choose finishes. Build budget with contingency. Submit permits.</p><div class="h-1.5 bg-stone-100 rounded-full"><div class="h-full bg-amber-500 rounded-full" style="width:0%"></div></div></div>
+        <div class="bg-white rounded-xl border-l-4 border-stone-200 border border-stone-100 p-5 shadow-sm"><div class="flex items-center justify-between mb-2"><p class="font-semibold text-sm">Phase 5 — ADU Construction</p><span class="badge-gray">Not Started</span></div><p class="text-xs text-stone-400 mb-3">Construction, inspections, certificate of occupancy, rental listing, income begins.</p><div class="h-1.5 bg-stone-100 rounded-full"><div class="h-full bg-amber-500 rounded-full" style="width:0%"></div></div></div>
+      </div>
+    </div>
+
+    <!-- DECISIONS -->
+    <div id="tab-decisions" class="tab-content hidden">
+      <div class="flex items-center justify-between mb-1">
+        <h2 class="serif text-3xl font-semibold">Decisions Log</h2>
+        <button onclick="openModal('decision')" class="bg-amber-700 text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-amber-800">+ Log Decision</button>
+      </div>
+      <p class="text-stone-400 text-sm mb-8">Every major decision logged. No more "I thought we agreed."</p>
+      <div id="decisions-list" class="space-y-3"></div>
+    </div>
+
+    <!-- SHOPPING -->
+    <div id="tab-shopping" class="tab-content hidden">
+      <div class="flex items-center justify-between mb-1">
+        <h2 class="serif text-3xl font-semibold">Shopping List</h2>
+        <button onclick="openModal('shopping')" class="bg-amber-700 text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-amber-800">+ Add Item</button>
+      </div>
+      <p class="text-stone-400 text-sm mb-8">Appliances, furniture, and essentials.</p>
+      <div class="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
+        <table class="w-full text-sm"><thead><tr class="bg-stone-50 text-xs text-stone-400 uppercase tracking-wider"><th class="px-5 py-3 text-left">Item</th><th class="px-3 py-3 text-left hidden md:table-cell">Category</th><th class="px-3 py-3 text-left">Priority</th><th class="px-3 py-3 text-left hidden md:table-cell">Cost</th><th class="px-3 py-3 text-left">Status</th><th class="px-3 py-3"></th></tr></thead>
+        <tbody id="shopping-tbody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- PROJECTS -->
+    <div id="tab-projects" class="tab-content hidden">
+      <div class="flex items-center justify-between mb-1">
+        <h2 class="serif text-3xl font-semibold">Projects & Tasks</h2>
+        <button onclick="openModal('project')" class="bg-amber-700 text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-amber-800">+ Add Task</button>
+      </div>
+      <p class="text-stone-400 text-sm mb-8">Every renovation task tracked.</p>
+      <div class="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
+        <table class="w-full text-sm"><thead><tr class="bg-stone-50 text-xs text-stone-400 uppercase tracking-wider"><th class="px-5 py-3 text-left">Task</th><th class="px-3 py-3 text-left hidden md:table-cell">Area</th><th class="px-3 py-3 text-left hidden md:table-cell">Cost</th><th class="px-3 py-3 text-left">Status</th><th class="px-3 py-3"></th></tr></thead>
+        <tbody id="projects-tbody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- BUDGET -->
+    <div id="tab-budget" class="tab-content hidden">
+      <div class="flex items-center justify-between mb-1">
+        <h2 class="serif text-3xl font-semibold">Budget Tracker</h2>
+        <button onclick="openModal('expense')" class="bg-amber-700 text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-amber-800">+ Add Expense</button>
+      </div>
+      <p class="text-stone-400 text-sm mb-6">Running total vs. $50,000 front house budget.</p>
+      <div class="grid grid-cols-3 gap-4 mb-6">
+        <div class="bg-white rounded-xl border-l-4 border-green-400 border border-stone-100 p-4 shadow-sm"><p class="text-xs font-semibold text-stone-400 uppercase tracking-wider mb-2">Budget</p><p class="serif text-xl font-semibold">$50,000</p></div>
+        <div class="bg-white rounded-xl border-l-4 border-amber-400 border border-stone-100 p-4 shadow-sm"><p class="text-xs font-semibold text-stone-400 uppercase tracking-wider mb-2">Spent</p><p class="serif text-xl font-semibold" id="total-spent">$0</p></div>
+        <div class="bg-white rounded-xl border-l-4 border-blue-400 border border-stone-100 p-4 shadow-sm"><p class="text-xs font-semibold text-stone-400 uppercase tracking-wider mb-2">Remaining</p><p class="serif text-xl font-semibold" id="total-remaining">$50,000</p></div>
+      </div>
+      <div class="mb-6"><div class="flex justify-between text-xs text-stone-400 mb-1"><span>Progress</span><span id="budget-pct">0% spent</span></div><div class="h-2 bg-stone-100 rounded-full overflow-hidden"><div id="budget-bar" class="h-full bg-amber-500 rounded-full transition-all" style="width:0%"></div></div></div>
+      <div class="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
+        <table class="w-full text-sm"><thead><tr class="bg-stone-50 text-xs text-stone-400 uppercase tracking-wider"><th class="px-5 py-3 text-left">Description</th><th class="px-3 py-3 text-left hidden md:table-cell">Category</th><th class="px-3 py-3 text-left hidden md:table-cell">Date</th><th class="px-3 py-3 text-left">Amount</th><th class="px-3 py-3"></th></tr></thead>
+        <tbody id="budget-tbody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- CONTACTS -->
+    <div id="tab-contacts" class="tab-content hidden">
+      <div class="flex items-center justify-between mb-1">
+        <h2 class="serif text-3xl font-semibold">Contacts</h2>
+        <button onclick="openModal('contact')" class="bg-amber-700 text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-amber-800">+ Add Contact</button>
+      </div>
+      <p class="text-stone-400 text-sm mb-8">Everyone involved in the project.</p>
+      <div class="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
+        <table class="w-full text-sm"><thead><tr class="bg-stone-50 text-xs text-stone-400 uppercase tracking-wider"><th class="px-5 py-3 text-left">Name</th><th class="px-3 py-3 text-left">Role</th><th class="px-3 py-3 text-left hidden md:table-cell">Company</th><th class="px-3 py-3 text-left hidden md:table-cell">Contact</th><th class="px-3 py-3"></th></tr></thead>
+        <tbody id="contacts-tbody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- DOCS -->
+    <div id="tab-docs" class="tab-content hidden">
+      <h2 class="serif text-3xl font-semibold mb-1">Documents</h2>
+      <p class="text-stone-400 text-sm mb-8">Checklist of key documents. Store actual files in Google Drive.</p>
+      <div class="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
+        <table class="w-full text-sm"><thead><tr class="bg-stone-50 text-xs text-stone-400 uppercase tracking-wider"><th class="px-5 py-3 text-left">Document</th><th class="px-3 py-3 text-left hidden md:table-cell">Category</th><th class="px-3 py-3 text-left">Status</th></tr></thead>
+        <tbody>
+          <tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3 font-medium">Closing Disclosure</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">Closing</td><td class="px-3 py-3"><span class="badge-green">Done</span></td></tr>
+          <tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3 font-medium">Termite Report (W9043)</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">Inspection</td><td class="px-3 py-3"><span class="badge-green">Done</span></td></tr>
+          <tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3 font-medium">Appraisal Report</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">Inspection</td><td class="px-3 py-3"><span class="badge-green">Done</span></td></tr>
+          <tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3 font-medium">City RPR Report</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">Permits</td><td class="px-3 py-3"><span class="badge-green">Done</span></td></tr>
+          <tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3 font-medium">Bamboo Insurance Policy</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">Insurance</td><td class="px-3 py-3"><span class="badge-amber">Verify</span></td></tr>
+          <tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3 font-medium">Full Roof Inspection Report</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">Inspection</td><td class="px-3 py-3"><span class="badge-red">Needed</span></td></tr>
+          <tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3 font-medium">Foundation Inspection Report</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">Inspection</td><td class="px-3 py-3"><span class="badge-red">Needed</span></td></tr>
+          <tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3 font-medium">Sewer Scope Report</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">Inspection</td><td class="px-3 py-3"><span class="badge-red">Needed</span></td></tr>
+          <tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3 font-medium">LADBS Full Permit History</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">Permits</td><td class="px-3 py-3"><span class="badge-red">Pull Now</span></td></tr>
+        </tbody></table>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- MODAL -->
+<div id="modal-overlay" class="hidden fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
+    <h3 id="modal-title" class="serif text-xl font-semibold mb-5"></h3>
+    <div id="modal-body" class="space-y-3"></div>
+    <div class="flex gap-3 justify-end mt-6">
+      <button onclick="closeModal()" class="px-4 py-2 text-sm text-stone-500 border border-stone-200 rounded-lg hover:bg-stone-50">Cancel</button>
+      <button onclick="saveModal()" id="save-btn" class="px-5 py-2 text-sm font-semibold bg-amber-700 text-white rounded-lg hover:bg-amber-800">Save</button>
+    </div>
+  </div>
+</div>
+
+<style>
+.badge-red { display:inline-block; padding:2px 8px; border-radius:20px; font-size:11px; font-weight:500; background:#fee2e2; color:#b91c1c; }
+.badge-amber { display:inline-block; padding:2px 8px; border-radius:20px; font-size:11px; font-weight:500; background:#fef3c7; color:#b45309; }
+.badge-green { display:inline-block; padding:2px 8px; border-radius:20px; font-size:11px; font-weight:500; background:#dcfce7; color:#15803d; }
+.badge-blue { display:inline-block; padding:2px 8px; border-radius:20px; font-size:11px; font-weight:500; background:#dbeafe; color:#1d4ed8; }
+.badge-purple { display:inline-block; padding:2px 8px; border-radius:20px; font-size:11px; font-weight:500; background:#ede9fe; color:#6d28d9; }
+.badge-gray { display:inline-block; padding:2px 8px; border-radius:20px; font-size:11px; font-weight:500; background:#f3f4f6; color:#6b7280; }
+.nav-active { background:#fffbeb; color:#92400e; font-weight:500; }
+.field-label { display:block; font-size:11px; font-weight:600; color:#9ca3af; text-transform:uppercase; letter-spacing:.05em; margin-bottom:4px; }
+.field-input { width:100%; border:1px solid #e5e7eb; border-radius:8px; padding:8px 12px; font-size:13.5px; color:#1c1917; outline:none; font-family:inherit; }
+.field-input:focus { border-color:#b45309; }
+</style>
+
+<script>
+const SUPABASE_URL = "https://kaalfyhgaeiwfjannmci.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImthYWxmeWhnYWVpd2ZqYW5ubWNpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxNjU4MDYsImV4cCI6MjA5Mjc0MTgwNn0.N2rJLZwEk5dXS1qW_pBdPEnY8ahtABysCOoCTdZ-QD0";
+
+const H = { "Content-Type":"application/json", "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}`, "Prefer":"return=representation" };
+
+async function dbGet(table) {
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}?order=created_at.asc`, { headers: H });
+    return r.ok ? await r.json() : [];
+  } catch { return []; }
+}
+
+async function dbInsert(table, data) {
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, { method:"POST", headers: H, body: JSON.stringify(data) });
+    if (!r.ok) return null;
+    const res = await r.json();
+    return Array.isArray(res) ? res[0] : res;
+  } catch { return null; }
+}
+
+async function dbUpdate(table, id, data) {
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${id}`, { method:"PATCH", headers: H, body: JSON.stringify(data) });
+  } catch {}
+}
+
+async function dbDelete(table, id) {
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${id}`, { method:"DELETE", headers: H });
+  } catch {}
+}
+
+const DEFAULT = {
+  shopping: [
+    {name:"Shower cabin replacement",category:"Bathroom",priority:"High",cost:"$800–1,200",status:"Research"},
+    {name:"Toilet replacement",category:"Bathroom",priority:"High",cost:"$300–500",status:"Research"},
+    {name:"Bathroom sink & faucet",category:"Bathroom",priority:"High",cost:"$250–500",status:"Research"},
+    {name:"Sliding bathroom door hardware",category:"Bathroom",priority:"Medium",cost:"$200–400",status:"Not Started"},
+    {name:"Refrigerator",category:"Kitchen",priority:"High",cost:"$1,000–2,000",status:"Not Started"},
+    {name:"Washer / Dryer",category:"Laundry",priority:"Medium",cost:"$1,200–2,000",status:"Not Started"},
+  ],
+  projects: [
+    {name:"Termite fumigation (full structure)",area:"Whole Property",contractor:"MC Exterminating",cost:"$5,375+",status:"Pending"},
+    {name:"Termite wood repairs (porch, fascia, deck)",area:"Exterior",contractor:"TBD",cost:"$2,000–4,000",status:"Not Started"},
+    {name:"Roof assessment & urgent repairs",area:"Front House",contractor:"TBD",cost:"$5,000–13,000",status:"Not Started"},
+    {name:"Foundation / floor support repairs",area:"Front House",contractor:"TBD",cost:"$4,000–7,000",status:"Not Started"},
+    {name:"Deep clean entire property",area:"Whole Property",contractor:"TBD",cost:"$800–1,500",status:"Not Started"},
+    {name:"Interior painting — front house",area:"Front House",contractor:"TBD",cost:"$3,000–5,000",status:"Not Started"},
+    {name:"Bathroom full upgrade",area:"Front House",contractor:"TBD",cost:"$8,000–15,000",status:"Not Started"},
+    {name:"Kitchen basic improvements",area:"Front House",contractor:"TBD",cost:"$4,000–8,000",status:"Not Started"},
+  ],
+  contacts: [
+    {name:"Paula Huling",role:"Escrow",company:"West Coast Escrow",contact:"—"},
+    {name:"MC Exterminating / Jose Ceja",role:"Termite",company:"MC Exterminating",contact:"—"},
+    {name:"New Wave Lending Group",role:"Lender",company:"New Wave Lending",contact:"—"},
+  ],
+  decisions: [
+    {date:"Apr 25, 2026",title:"Focus ADU investment on garage conversion + left-side expansion",notes:"Decided not to extend front house. Garage is the primary value-add opportunity.",status:"Agreed"},
+    {date:"Apr 25, 2026",title:"Bamboo selected as homeowner's insurance for Year 1",notes:"Will review after first year. Need to verify coverage for unpermitted bonus room.",status:"Review Later"},
+    {date:"Apr 25, 2026",title:"Accepted $10,000 seller credit (down from $30,000 ask)",notes:"Absorbed ~$20,000 in repair risk. Affects renovation budget.",status:"Noted"},
+  ],
+};
+
+function badge(text) {
+  const map = {High:"badge-red",Medium:"badge-blue",Low:"badge-gray","Not Started":"badge-gray",Pending:"badge-amber",Research:"badge-amber","In Progress":"badge-blue",Done:"badge-green",Agreed:"badge-green","Review Later":"badge-amber",Noted:"badge-blue",Ordered:"badge-purple",Delivered:"badge-green",Escrow:"badge-blue",Termite:"badge-amber",Lender:"badge-purple",Agent:"badge-green",Contractor:"badge-amber",Inspector:"badge-red",Architect:"badge-purple",Other:"badge-gray"};
+  return `<span class="${map[text]||'badge-gray'}">${text}</span>`;
+}
+
+function statusSelect(table, id, current, options) {
+  return `<select onchange="updateStatus('${table}',${id},this.value)" class="text-xs border border-stone-200 rounded-md px-2 py-1 bg-white text-stone-600 focus:outline-none">${options.map(o=>`<option${o===current?' selected':''}>${o}</option>`).join('')}</select>`;
+}
+
+let currentModal = '';
+
+function openModal(type) {
+  currentModal = type;
+  const titles = {shopping:'Add Shopping Item',project:'Add Renovation Task',expense:'Add Expense',contact:'Add Contact',decision:'Log a Decision'};
+  document.getElementById('modal-title').textContent = titles[type];
+  const forms = {
+    shopping:`<div><label class="field-label">Item Name</label><input class="field-input" id="f-name" placeholder="e.g. Refrigerator"></div><div><label class="field-label">Category</label><select class="field-input" id="f-cat"><option>Kitchen</option><option>Bathroom</option><option>Laundry</option><option>Bedroom</option><option>Living Room</option><option>Outdoor</option><option>Other</option></select></div><div><label class="field-label">Priority</label><select class="field-input" id="f-pri"><option>High</option><option>Medium</option><option>Low</option></select></div><div><label class="field-label">Estimated Cost</label><input class="field-input" id="f-cost" placeholder="e.g. $500–800"></div>`,
+    project:`<div><label class="field-label">Task Name</label><input class="field-input" id="f-name" placeholder="e.g. Paint living room"></div><div><label class="field-label">Area</label><select class="field-input" id="f-area"><option>Front House</option><option>Bathroom</option><option>Kitchen</option><option>Garage/ADU</option><option>Exterior</option><option>Whole Property</option></select></div><div><label class="field-label">Contractor</label><input class="field-input" id="f-contractor" placeholder="Name or TBD"></div><div><label class="field-label">Estimated Cost</label><input class="field-input" id="f-cost" placeholder="e.g. $2,000–4,000"></div>`,
+    expense:`<div><label class="field-label">Description</label><input class="field-input" id="f-name" placeholder="What was paid for"></div><div><label class="field-label">Category</label><select class="field-input" id="f-cat"><option>Renovation</option><option>Shopping</option><option>Inspection</option><option>Closing</option><option>Insurance</option><option>Other</option></select></div><div><label class="field-label">Date</label><input class="field-input" id="f-date" placeholder="e.g. Apr 28, 2026"></div><div><label class="field-label">Amount ($)</label><input class="field-input" type="number" id="f-amount" placeholder="0"></div>`,
+    contact:`<div><label class="field-label">Name</label><input class="field-input" id="f-name" placeholder="Full name"></div><div><label class="field-label">Role</label><select class="field-input" id="f-role"><option>Agent</option><option>Contractor</option><option>Escrow</option><option>Lender</option><option>Inspector</option><option>Architect</option><option>Other</option></select></div><div><label class="field-label">Company</label><input class="field-input" id="f-company" placeholder="Company name"></div><div><label class="field-label">Phone / Email</label><input class="field-input" id="f-contact" placeholder="Contact info"></div>`,
+    decision:`<div><label class="field-label">Decision</label><input class="field-input" id="f-name" placeholder="What was decided?"></div><div><label class="field-label">Notes</label><textarea class="field-input" id="f-notes" style="min-height:72px;resize:vertical" placeholder="Context or reasoning..."></textarea></div><div><label class="field-label">Status</label><select class="field-input" id="f-status"><option>Agreed</option><option>Review Later</option><option>Noted</option><option>Pending</option></select></div>`,
+  };
+  document.getElementById('modal-body').innerHTML = forms[type];
+  document.getElementById('modal-overlay').classList.remove('hidden');
+  document.getElementById('modal-overlay').classList.add('flex');
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.add('hidden');
+  document.getElementById('modal-overlay').classList.remove('flex');
+}
+
+async function saveModal() {
+  const name = document.getElementById('f-name')?.value?.trim();
+  if (!name) return;
+  document.getElementById('save-btn').textContent = 'Saving...';
+  const now = new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+
+  if (currentModal === 'shopping') {
+    const row = await dbInsert('shopping',{name,category:document.getElementById('f-cat').value,priority:document.getElementById('f-pri').value,cost:document.getElementById('f-cost').value||'—',status:'Not Started'});
+    if (row) appendShopping(row);
+  }
+  if (currentModal === 'project') {
+    const row = await dbInsert('projects',{name,area:document.getElementById('f-area').value,contractor:document.getElementById('f-contractor').value||'TBD',cost:document.getElementById('f-cost').value||'—',status:'Not Started'});
+    if (row) appendProject(row);
+  }
+  if (currentModal === 'expense') {
+    const amount = document.getElementById('f-amount').value||'0';
+    const row = await dbInsert('expenses',{name,category:document.getElementById('f-cat').value,date:document.getElementById('f-date').value||now,amount});
+    if (row) { appendExpense(row); updateBudget(); }
+  }
+  if (currentModal === 'contact') {
+    const row = await dbInsert('contacts',{name,role:document.getElementById('f-role').value,company:document.getElementById('f-company').value||'—',contact:document.getElementById('f-contact').value||'—'});
+    if (row) appendContact(row);
+  }
+  if (currentModal === 'decision') {
+    const row = await dbInsert('decisions',{date:now,title:name,notes:document.getElementById('f-notes').value||'',status:document.getElementById('f-status').value});
+    if (row) prependDecision(row);
+  }
+  document.getElementById('save-btn').textContent = 'Save';
+  closeModal();
+}
+
+async function updateStatus(table, id, status) {
+  await dbUpdate(table, id, {status});
+}
+
+async function deleteRow(table, id, el) {
+  await dbDelete(table, id);
+  el.closest('tr')?.remove() || el.closest('.decision-card')?.remove();
+  if (table === 'expenses') updateBudget();
+}
+
+function appendShopping(r) {
+  const tb = document.getElementById('shopping-tbody');
+  tb.insertAdjacentHTML('beforeend',`<tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3 font-medium">${r.name}</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">${r.category}</td><td class="px-3 py-3">${badge(r.priority)}</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">${r.cost}</td><td class="px-3 py-3">${statusSelect('shopping',r.id,r.status,['Not Started','Research','Approved','Ordered','Delivered'])}</td><td class="px-3 py-3"><button onclick="deleteRow('shopping',${r.id},this)" class="text-stone-300 hover:text-red-400 text-xs">✕</button></td></tr>`);
+}
+
+function appendProject(r) {
+  const tb = document.getElementById('projects-tbody');
+  tb.insertAdjacentHTML('beforeend',`<tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3 font-medium">${r.name}<div class="text-xs text-stone-400 font-normal">${r.contractor}</div></td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">${r.area}</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">${r.cost}</td><td class="px-3 py-3">${statusSelect('projects',r.id,r.status,['Not Started','Pending','In Progress','Done'])}</td><td class="px-3 py-3"><button onclick="deleteRow('projects',${r.id},this)" class="text-stone-300 hover:text-red-400 text-xs">✕</button></td></tr>`);
+}
+
+function appendExpense(r) {
+  const tb = document.getElementById('budget-tbody');
+  tb.insertAdjacentHTML('beforeend',`<tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3 font-medium">${r.name}</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">${r.category}</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">${r.date}</td><td class="px-3 py-3 font-semibold">$${parseFloat(r.amount).toLocaleString()}</td><td class="px-3 py-3"><button onclick="deleteRow('expenses',${r.id},this)" class="text-stone-300 hover:text-red-400 text-xs">✕</button></td></tr>`);
+}
+
+function appendContact(r) {
+  const tb = document.getElementById('contacts-tbody');
+  tb.insertAdjacentHTML('beforeend',`<tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3 font-medium">${r.name}</td><td class="px-3 py-3">${badge(r.role)}</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">${r.company}</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">${r.contact}</td><td class="px-3 py-3"><button onclick="deleteRow('contacts',${r.id},this)" class="text-stone-300 hover:text-red-400 text-xs">✕</button></td></tr>`);
+}
+
+function prependDecision(r) {
+  const list = document.getElementById('decisions-list');
+  const statusMap = {Agreed:'badge-green','Review Later':'badge-amber',Noted:'badge-blue',Pending:'badge-red'};
+  list.insertAdjacentHTML('afterbegin',`<div class="decision-card bg-white rounded-xl border border-stone-100 p-4 shadow-sm flex gap-4 items-start"><p class="text-xs font-mono text-stone-300 whitespace-nowrap pt-0.5 min-w-[90px]">${r.date}</p><div class="flex-1"><p class="text-sm font-medium text-stone-800 mb-1">${r.title}</p>${r.notes?`<p class="text-xs text-stone-400">${r.notes}</p>`:''}</div><div class="flex items-center gap-2 shrink-0"><span class="${statusMap[r.status]||'badge-gray'}">${r.status}</span><button onclick="deleteRow('decisions',${r.id},this)" class="text-stone-300 hover:text-red-400 text-xs">✕</button></div></div>`);
+}
+
+function updateBudget() {
+  const rows = document.querySelectorAll('#budget-tbody tr');
+  let total = 0;
+  rows.forEach(r => {
+    const amtCell = r.querySelector('td:nth-child(4)');
+    if (amtCell) total += parseFloat(amtCell.textContent.replace(/[$,]/g,''))||0;
+  });
+  document.getElementById('total-spent').textContent = '$'+total.toLocaleString();
+  document.getElementById('total-remaining').textContent = '$'+Math.max(0,50000-total).toLocaleString();
+  const pct = Math.min(100,Math.round((total/50000)*100));
+  document.getElementById('budget-pct').textContent = pct+'% spent';
+  document.getElementById('budget-bar').style.width = pct+'%';
+}
+
+function switchTab(name) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('nav-active'));
+  document.getElementById('tab-'+name).classList.remove('hidden');
+  document.querySelector(`[data-tab="${name}"]`)?.classList.add('nav-active');
+}
+
+async function init() {
+  switchTab('overview');
+  try {
+    const [s,p,e,c,d] = await Promise.all([dbGet('shopping'),dbGet('projects'),dbGet('expenses'),dbGet('contacts'),dbGet('decisions')]);
+    
+    // Seed if empty
+    if (s.length===0 && p.length===0) {
+      await Promise.all([
+        ...DEFAULT.shopping.map(i=>dbInsert('shopping',i)),
+        ...DEFAULT.projects.map(i=>dbInsert('projects',i)),
+        ...DEFAULT.contacts.map(i=>dbInsert('contacts',i)),
+        ...DEFAULT.decisions.map(i=>dbInsert('decisions',i)),
+      ]);
+      const [s2,p2,e2,c2,d2] = await Promise.all([dbGet('shopping'),dbGet('projects'),dbGet('expenses'),dbGet('contacts'),dbGet('decisions')]);
+      s2.forEach(appendShopping); p2.forEach(appendProject); e2.forEach(appendExpense); c2.forEach(appendContact); d2.forEach(prependDecision);
+    } else {
+      s.forEach(appendShopping); p.forEach(appendProject); e.forEach(appendExpense); c.forEach(appendContact); d.forEach(prependDecision);
+    }
+
+    document.getElementById('db-dot').className = 'w-1.5 h-1.5 rounded-full bg-green-400';
+    document.getElementById('db-status').textContent = 'Live — synced';
+    document.getElementById('db-status').className = 'text-xs text-green-600';
+    updateBudget();
+  } catch(err) {
+    document.getElementById('db-dot').className = 'w-1.5 h-1.5 rounded-full bg-red-400';
+    document.getElementById('db-status').textContent = 'Connection error';
+    document.getElementById('db-status').className = 'text-xs text-red-500';
+  }
+}
+
+init();
+</script>
+</body>
+</html>
