@@ -15,7 +15,13 @@
   body { font-family: 'Segoe UI', system-ui, sans-serif; }
   .serif { font-family: Georgia, 'Times New Roman', serif; }
   .sidebar { width: 220px; min-height: 100vh; }
-  @media (max-width: 768px) { .sidebar { display: none; } .sidebar.open { display: flex; position: fixed; z-index: 50; } }
+  @media (max-width: 768px) { 
+    .sidebar { display: none !important; } 
+    .main-content { margin-left: 0 !important; padding-bottom: 80px !important; }
+  }
+  @media (min-width: 769px) {
+    .bottom-nav { display: none !important; }
+  }
   .fade-in { animation: fadeIn 0.2s ease; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
   .badge-red { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:500;background:#fee2e2;color:#b91c1c; }
@@ -25,6 +31,7 @@
   .badge-purple { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:500;background:#ede9fe;color:#6d28d9; }
   .badge-gray { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:500;background:#f3f4f6;color:#6b7280; }
   .nav-active { background:#fffbeb;color:#92400e;font-weight:500; }
+  .bottom-nav-active { color:#b45309 !important; }
   .field-label { display:block;font-size:11px;font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px; }
   .field-input { width:100%;border:1px solid #e5e7eb;border-radius:8px;padding:8px 12px;font-size:13.5px;color:#1c1917;outline:none;font-family:inherit;background:white; }
   .field-input:focus { border-color:#b45309; }
@@ -60,8 +67,8 @@
 
 <div id="app" class="flex min-h-screen hidden">
 
-  <!-- Sidebar -->
-  <aside id="sidebar" class="sidebar bg-white border-r border-stone-100 flex flex-col py-6 shrink-0">
+  <!-- Sidebar — desktop only -->
+  <aside class="sidebar bg-white border-r border-stone-100 flex-col py-6 shrink-0 hidden md:flex">
     <div class="px-5 pb-5 border-b border-stone-100 mb-4">
       <p class="serif text-sm font-semibold text-stone-800 leading-snug">3967 Berryman Ave</p>
       <p class="text-xs text-stone-400 mt-0.5">Los Angeles, CA 90066</p>
@@ -88,11 +95,18 @@
   </aside>
 
   <!-- Main -->
-  <main class="flex-1 p-6 md:p-10 max-w-4xl fade-in">
+  <main class="main-content flex-1 md:ml-0 p-4 md:p-10 max-w-4xl w-full mx-auto fade-in">
 
-    <div class="flex items-center gap-3 mb-6 md:hidden">
-      <button onclick="document.getElementById('sidebar').classList.toggle('open')" class="text-stone-500 text-xl">☰</button>
-      <p class="serif font-semibold">3967 Berryman</p>
+    <!-- Mobile top bar -->
+    <div class="flex items-center justify-between mb-5 md:hidden">
+      <div>
+        <p class="serif text-base font-semibold text-stone-800">3967 Berryman</p>
+        <p class="text-xs text-stone-400">Amir & Rose · 2026</p>
+      </div>
+      <div class="flex items-center gap-2">
+        <div id="db-dot-mobile" class="w-1.5 h-1.5 rounded-full bg-amber-400"></div>
+        <button onclick="refreshAll()" class="text-stone-400 hover:text-amber-600 text-lg">↻</button>
+      </div>
     </div>
 
     <!-- OVERVIEW -->
@@ -393,6 +407,59 @@
 
 </div><!-- end #app -->
 
+<!-- BOTTOM NAV — mobile only -->
+<nav class="bottom-nav fixed bottom-0 left-0 right-0 bg-white border-t border-stone-100 z-40 md:hidden" style="padding-bottom:env(safe-area-inset-bottom)">
+  <div class="grid grid-cols-5 h-16">
+    <button onclick="switchTab('overview')" data-tab="overview" class="bottom-nav-btn flex flex-col items-center justify-center gap-0.5 text-stone-400 transition-colors">
+      <span class="text-xl">🏠</span>
+      <span class="text-[10px] font-medium">Home</span>
+    </button>
+    <button onclick="switchTab('projects')" data-tab="projects" class="bottom-nav-btn flex flex-col items-center justify-center gap-0.5 text-stone-400 transition-colors">
+      <span class="text-xl">🔨</span>
+      <span class="text-[10px] font-medium">Tasks</span>
+    </button>
+    <button onclick="switchTab('budget')" data-tab="budget" class="bottom-nav-btn flex flex-col items-center justify-center gap-0.5 text-stone-400 transition-colors">
+      <span class="text-xl">💰</span>
+      <span class="text-[10px] font-medium">Budget</span>
+    </button>
+    <button onclick="switchTab('shopping')" data-tab="shopping" class="bottom-nav-btn flex flex-col items-center justify-center gap-0.5 text-stone-400 transition-colors">
+      <span class="text-xl">🛒</span>
+      <span class="text-[10px] font-medium">Shopping</span>
+    </button>
+    <button onclick="switchTab('more')" data-tab="more" class="bottom-nav-btn flex flex-col items-center justify-center gap-0.5 text-stone-400 transition-colors">
+      <span class="text-xl">☰</span>
+      <span class="text-[10px] font-medium">More</span>
+    </button>
+  </div>
+</nav>
+
+<!-- MORE MENU — mobile slide up -->
+<div id="more-menu" class="hidden fixed inset-0 z-50 md:hidden" onclick="closeMoreMenu()">
+  <div class="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl p-6" onclick="event.stopPropagation()">
+    <div class="w-10 h-1 bg-stone-200 rounded-full mx-auto mb-6"></div>
+    <div class="grid grid-cols-3 gap-4">
+      <button onclick="switchTab('phases');closeMoreMenu()" class="flex flex-col items-center gap-2 p-3 rounded-2xl hover:bg-stone-50">
+        <span class="text-2xl">📋</span><span class="text-xs font-medium text-stone-600">Phases</span>
+      </button>
+      <button onclick="switchTab('decisions');closeMoreMenu()" class="flex flex-col items-center gap-2 p-3 rounded-2xl hover:bg-stone-50">
+        <span class="text-2xl">✅</span><span class="text-xs font-medium text-stone-600">Decisions</span>
+      </button>
+      <button onclick="switchTab('notes');closeMoreMenu()" class="flex flex-col items-center gap-2 p-3 rounded-2xl hover:bg-stone-50">
+        <span class="text-2xl">📝</span><span class="text-xs font-medium text-stone-600">Notes</span>
+      </button>
+      <button onclick="switchTab('contacts');closeMoreMenu()" class="flex flex-col items-center gap-2 p-3 rounded-2xl hover:bg-stone-50">
+        <span class="text-2xl">📞</span><span class="text-xs font-medium text-stone-600">Contacts</span>
+      </button>
+      <button onclick="switchTab('docs');closeMoreMenu()" class="flex flex-col items-center gap-2 p-3 rounded-2xl hover:bg-stone-50">
+        <span class="text-2xl">📁</span><span class="text-xs font-medium text-stone-600">Documents</span>
+      </button>
+      <button onclick="refreshAll();closeMoreMenu()" class="flex flex-col items-center gap-2 p-3 rounded-2xl hover:bg-stone-50">
+        <span class="text-2xl">↻</span><span class="text-xs font-medium text-stone-600">Refresh</span>
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL -->
 <div id="modal-overlay" class="hidden fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
   <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 max-h-screen overflow-y-auto">
@@ -692,11 +759,17 @@ function updateBudget(){
   if(ctx){if(budgetChart)budgetChart.destroy();const labels=Object.keys(cats),vals=Object.values(cats);if(labels.length>0){budgetChart=new Chart(ctx,{type:'doughnut',data:{labels,datasets:[{data:vals,backgroundColor:['#f59e0b','#3b82f6','#10b981','#f43f5e','#8b5cf6','#64748b'],borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{font:{size:11},padding:12}}}}});}}
 }
 
+function closeMoreMenu(){document.getElementById('more-menu').classList.add('hidden');}
+
 function switchTab(name){
+  if(name==='more'){document.getElementById('more-menu').classList.remove('hidden');return;}
   document.querySelectorAll('.tab-content').forEach(t=>t.classList.add('hidden'));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('nav-active'));
-  document.getElementById('tab-'+name).classList.remove('hidden');
-  document.querySelector(`[data-tab="${name}"]`)?.classList.add('nav-active');
+  document.querySelectorAll('.bottom-nav-btn').forEach(b=>{b.style.color='';});
+  document.getElementById('tab-'+name)?.classList.remove('hidden');
+  document.querySelector(`.nav-btn[data-tab="${name}"]`)?.classList.add('nav-active');
+  const activeBottom=document.querySelector(`.bottom-nav-btn[data-tab="${name}"]`);
+  if(activeBottom) activeBottom.style.color='#b45309';
 }
 
 async function init(){
