@@ -277,8 +277,15 @@
         <h2 class="serif text-3xl font-semibold">Shopping List</h2>
         <button onclick="openModal('shopping')" class="bg-amber-700 text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-amber-800">+ Add Item</button>
       </div>
-      <p class="text-stone-400 text-sm mb-8">Appliances, furniture, and essentials.</p>
-      <div class="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
+      <p class="text-stone-400 text-sm mb-6">Appliances, furniture, and essentials.</p>
+
+      <!-- Active items -->
+      <div class="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden mb-6">
+        <div class="px-5 py-3 border-b border-stone-100 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+          <p class="text-xs font-semibold text-stone-600 uppercase tracking-wider">Active</p>
+          <span id="active-count" class="text-xs text-stone-400 ml-1"></span>
+        </div>
         <table class="w-full text-sm"><thead><tr class="bg-stone-50 text-xs text-stone-400 uppercase tracking-wider">
           <th class="px-5 py-3 text-left">Item</th>
           <th class="px-3 py-3 text-left hidden md:table-cell">Category</th>
@@ -287,7 +294,31 @@
           <th class="px-3 py-3 text-left">Status</th>
           <th class="px-3 py-3"></th>
         </tr></thead>
-        <tbody id="shopping-tbody"></tbody></table>
+        <tbody id="shopping-tbody">
+          <tr id="shopping-empty"><td colspan="6" class="text-center py-8 text-stone-300 text-sm">No active items</td></tr>
+        </tbody></table>
+      </div>
+
+      <!-- Ordered / Delivered section -->
+      <div id="completed-shopping-section" class="hidden">
+        <button onclick="toggleCompletedShopping()" class="w-full flex items-center justify-between px-5 py-3 bg-white rounded-2xl border border-stone-100 shadow-sm mb-1">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-green-400"></span>
+            <p class="text-xs font-semibold text-stone-500 uppercase tracking-wider">Ordered & Delivered</p>
+            <span id="completed-count" class="text-xs text-stone-400 ml-1"></span>
+          </div>
+          <span id="completed-chevron" class="text-stone-400 text-xs">▼ Show</span>
+        </button>
+        <div id="completed-shopping-list" class="hidden bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
+          <table class="w-full text-sm"><thead><tr class="bg-stone-50 text-xs text-stone-400 uppercase tracking-wider">
+            <th class="px-5 py-3 text-left">Item</th>
+            <th class="px-3 py-3 text-left hidden md:table-cell">Category</th>
+            <th class="px-3 py-3 text-left hidden md:table-cell">Cost</th>
+            <th class="px-3 py-3 text-left">Status</th>
+            <th class="px-3 py-3"></th>
+          </tr></thead>
+          <tbody id="shopping-done-tbody"></tbody></table>
+        </div>
       </div>
     </div>
 
@@ -769,7 +800,13 @@ function editContact(id){const r=_cache.contacts.find(x=>x.id===id);if(r)openMod
 function editDecision(id){const r=_cache.decisions.find(x=>x.id===id);if(r)openModal('decision',r);}
 function editNote(id){const r=_cache.notes.find(x=>x.id===id);if(r)openModal('note',r);}
 
-async function updateStatus(table,id,status){await dbUpdate(table,id,{status});}
+async function updateStatus(table,id,status){
+  await dbUpdate(table,id,{status});
+  if(table==='shopping'){
+    const item = _cache.shopping.find(x=>x.id===id);
+    if(item){ item.status=status; appendShopping(item); }
+  }
+}
 
 async function deleteRow(table,id,el){
   if(!confirm('Delete this item?'))return;
@@ -779,11 +816,61 @@ async function deleteRow(table,id,el){
   if(table==='expenses')updateBudget();
 }
 
+function toggleCompletedShopping(){
+  const list = document.getElementById('completed-shopping-list');
+  const chevron = document.getElementById('completed-chevron');
+  const hidden = list.classList.contains('hidden');
+  list.classList.toggle('hidden');
+  chevron.textContent = hidden ? '▲ Hide' : '▼ Show';
+}
+
+function updateShoppingCounts(){
+  const active = document.getElementById('shopping-tbody').querySelectorAll('tr:not(#shopping-empty)').length;
+  const done = document.getElementById('shopping-done-tbody').querySelectorAll('tr').length;
+  document.getElementById('active-count').textContent = active ? `(${active})` : '';
+  document.getElementById('completed-count').textContent = done ? `(${done})` : '';
+  // Show/hide empty state
+  document.getElementById('shopping-empty').style.display = active ? 'none' : '';
+  // Show/hide completed section
+  if(done > 0) document.getElementById('completed-shopping-section').classList.remove('hidden');
+  else document.getElementById('completed-shopping-section').classList.add('hidden');
+}
+
 function appendShopping(r){
   _cache.shopping=_cache.shopping.filter(x=>x.id!==r.id).concat(r);
   const noteHtml=r.notes?`<div class="note-text">${r.notes}</div>`:'';
   const linkHtml=r.link?`<div class="link-text"><a href="${r.link}" target="_blank">🔗 View product</a></div>`:'';
-  document.getElementById('shopping-tbody').insertAdjacentHTML('beforeend',`<tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3 font-medium">${r.name}${noteHtml}${linkHtml}</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">${r.category}</td><td class="px-3 py-3">${badge(r.priority)}</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">${r.cost}</td><td class="px-3 py-3">${statusSelect('shopping',r.id,r.status,['Not Started','Research','Approved','Ordered','Delivered'])}</td><td class="px-3 py-3"><div class="flex gap-1"><button class="btn-edit" onclick="editShopping(${r.id})">✏️</button><button class="btn-del" onclick="deleteRow('shopping',${r.id},this)">✕</button></div></td></tr>`);
+  const isDone = ['Ordered','Delivered'].includes(r.status);
+
+  if(isDone){
+    // Remove from active if exists
+    document.getElementById('shopping-tbody').querySelector(`tr[data-id="${r.id}"]`)?.remove();
+    // Remove from done if exists (for updates)
+    document.getElementById('shopping-done-tbody').querySelector(`tr[data-id="${r.id}"]`)?.remove();
+    document.getElementById('shopping-done-tbody').insertAdjacentHTML('beforeend',
+      `<tr data-id="${r.id}" class="border-t border-stone-50 hover:bg-stone-50 opacity-70">
+        <td class="px-5 py-3 font-medium text-stone-500 line-through">${r.name}${noteHtml}${linkHtml}</td>
+        <td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">${r.category}</td>
+        <td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">${r.cost}</td>
+        <td class="px-3 py-3">${statusSelect('shopping',r.id,r.status,['Not Started','Research','Approved','Ordered','Delivered'])}</td>
+        <td class="px-3 py-3"><div class="flex gap-1"><button class="btn-edit" onclick="editShopping(${r.id})">✏️</button><button class="btn-del" onclick="deleteRow('shopping',${r.id},this)">✕</button></div></td>
+      </tr>`);
+  } else {
+    // Remove from done if exists (status changed back)
+    document.getElementById('shopping-done-tbody').querySelector(`tr[data-id="${r.id}"]`)?.remove();
+    // Remove from active if exists (for updates)
+    document.getElementById('shopping-tbody').querySelector(`tr[data-id="${r.id}"]`)?.remove();
+    document.getElementById('shopping-tbody').insertAdjacentHTML('beforeend',
+      `<tr data-id="${r.id}" class="border-t border-stone-50 hover:bg-stone-50">
+        <td class="px-5 py-3 font-medium">${r.name}${noteHtml}${linkHtml}</td>
+        <td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">${r.category}</td>
+        <td class="px-3 py-3">${badge(r.priority)}</td>
+        <td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">${r.cost}</td>
+        <td class="px-3 py-3">${statusSelect('shopping',r.id,r.status,['Not Started','Research','Approved','Ordered','Delivered'])}</td>
+        <td class="px-3 py-3"><div class="flex gap-1"><button class="btn-edit" onclick="editShopping(${r.id})">✏️</button><button class="btn-del" onclick="deleteRow('shopping',${r.id},this)">✕</button></div></td>
+      </tr>`);
+  }
+  updateShoppingCounts();
 }
 
 function appendProject(r){
