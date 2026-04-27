@@ -11,7 +11,6 @@
 <link rel="icon" type="image/png" href="https://img.icons8.com/fluency/48/home.png">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
   body { font-family: 'Segoe UI', system-ui, sans-serif; }
@@ -912,6 +911,50 @@ function connectGoogleDrive() {
   gAuthClient.requestAccessToken();
 }
 
+// ---- IMAGE COMPRESSION ----
+async function compressImage(file, maxWidth=1200, quality=0.75) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      let w = img.width, h = img.height;
+      if (w > maxWidth) { h = Math.round(h * maxWidth / w); w = maxWidth; }
+      canvas.width = w; canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, w, h);
+      canvas.toBlob((blob) => { URL.revokeObjectURL(url); resolve(blob); }, 'image/jpeg', quality);
+    };
+    img.src = url;
+  });
+}
+
+// ---- GOOGLE CLOUD VISION OCR ----
+async function readReceiptWithVision(imageBlob) {
+  const reader = new FileReader();
+  return new Promise((resolve, reject) => {
+    reader.onload = async () => {
+      const base64 = reader.result.split(',')[1];
+      try {
+        const res = await fetch(`https://vision.googleapis.com/v1/images:annotate?key=${GOOGLE_API_KEY}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            requests: [{
+              image: { content: base64 },
+              features: [{ type: 'TEXT_DETECTION', maxResults: 1 }]
+            }]
+          })
+        });
+        const data = await res.json();
+        const text = data.responses?.[0]?.fullTextAnnotation?.text || '';
+        resolve(text);
+      } catch(e) { reject(e); }
+    };
+    reader.readAsDataURL(imageBlob);
+  });
+}
+
 async function uploadToDrive(blob, filename) {
   if (!googleAccessToken) return null;
   const metadata = { name: filename, parents: [RECEIPTS_FOLDER_ID] };
@@ -948,25 +991,35 @@ function resetScanner() {
   document.getElementById('r-name').value = '';
   document.getElementById('r-amount').value = '';
   document.getElementById('r-date').value = '';
+  document.getElementById('save-receipt-btn').textContent = 'Save Receipt';
 }
 
-let receiptBlob = null;
+let compressedBlob = null;
 
 async function handleReceiptPhoto(input) {
   const file = input.files[0];
   if (!file) return;
-  receiptBlob = file;
-  const url = URL.createObjectURL(file);
+
+  document.getElementById('ocr-status').textContent = '🗜️ Compressing image...';
+  document.getElementById('ocr-status').className = 'text-xs text-amber-600 mt-2';
+
+  // Compress first
+  compressedBlob = await compressImage(file, 1200, 0.75);
+  const sizeMB = (compressedBlob.size / 1024 / 1024).toFixed(2);
+
+  // Show preview
+  const url = URL.createObjectURL(compressedBlob);
   const preview = document.getElementById('receipt-preview');
   preview.src = url;
   preview.classList.remove('hidden');
-  document.getElementById('ocr-status').textContent = '🔍 Reading receipt...';
-  document.getElementById('ocr-status').className = 'text-xs text-amber-600 mt-2';
+
+  document.getElementById('ocr-status').textContent = `🔍 Reading receipt (compressed to ${sizeMB}MB)...`;
+
   try {
-    const result = await Tesseract.recognize(file, 'eng', { logger: () => {} });
-    const text = result.data.text;
+    const text = await readReceiptWithVision(compressedBlob);
+    if (!text) throw new Error('No text found');
     parseReceipt(text);
-  } catch (e) {
+  } catch(e) {
     document.getElementById('ocr-status').textContent = '⚠️ Could not read receipt — please fill in manually.';
     document.getElementById('ocr-status').className = 'text-xs text-red-500 mt-2';
     document.getElementById('ocr-results').classList.remove('hidden');
@@ -975,15 +1028,19 @@ async function handleReceiptPhoto(input) {
 
 function parseReceipt(text) {
   const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
-  // Extract amount — look for largest dollar amount
+
+  // Extract largest dollar amount (likely the total)
   const amounts = [];
-  text.replace(/\$?\d+\.\d{2}/g, m => amounts.push(parseFloat(m.replace('$', ''))));
+  text.replace(/\$?\d+\.\d{2}/g, m => amounts.push(parseFloat(m.replace('$',''))));
   const amount = amounts.length ? Math.max(...amounts).toFixed(2) : '';
+
   // Extract date
   const dateMatch = text.match(/\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}/);
-  const date = dateMatch ? dateMatch[0] : new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-  // Extract merchant — usually first non-empty line
-  const merchant = lines[0] || '';
+  const date = dateMatch ? dateMatch[0] : new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+
+  // Merchant = first meaningful line (skip very short lines)
+  const merchant = lines.find(l => l.length > 3) || '';
+
   document.getElementById('r-name').value = merchant;
   document.getElementById('r-amount').value = amount;
   document.getElementById('r-date').value = date;
@@ -998,23 +1055,23 @@ async function saveReceipt() {
   const date = document.getElementById('r-date').value.trim();
   const category = document.getElementById('r-category').value;
   if (!amount) { alert('Please enter an amount.'); return; }
+
   document.getElementById('save-receipt-btn').textContent = 'Saving...';
-  // Save to Supabase budget
-  const now = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-  const row = await dbInsert('expenses', { name, category, date: date || now, amount });
+  const now = new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+
+  // Save to Supabase
+  const row = await dbInsert('expenses', { name, category, date: date||now, amount });
   if (row) { _cache.expenses.push(row); appendExpense(row); updateBudget(); }
-  // Upload to Google Drive if connected
-  if (googleAccessToken && receiptBlob) {
-    const filename = `Receipt_${name}_${Date.now()}.jpg`;
-    const uploaded = await uploadToDrive(receiptBlob, filename);
-    if (uploaded) {
-      document.getElementById('save-receipt-btn').textContent = '✅ Saved + Uploaded to Drive!';
-    } else {
-      document.getElementById('save-receipt-btn').textContent = '✅ Saved (Drive upload failed)';
-    }
+
+  // Upload compressed photo to Drive if connected
+  if (googleAccessToken && compressedBlob) {
+    const filename = `Receipt_${name.replace(/\s+/g,'_')}_${Date.now()}.jpg`;
+    const uploaded = await uploadToDrive(compressedBlob, filename);
+    document.getElementById('save-receipt-btn').textContent = uploaded ? '✅ Saved + Uploaded to Drive!' : '✅ Saved (Drive upload failed)';
   } else {
     document.getElementById('save-receipt-btn').textContent = '✅ Saved to Budget!';
   }
+
   setTimeout(() => { closeReceiptScanner(); switchTab('budget'); }, 1500);
 }
 const PASS = "2022";
