@@ -68,7 +68,7 @@
   </div>
 </div>
 
-<div id="app" class="flex min-h-screen hidden">
+<div id="app" style="display:none;min-height:100vh" class="flex">
 
   <!-- Sidebar — desktop only -->
 
@@ -1237,8 +1237,8 @@ function checkAuth(){
 const val = document.getElementById(‘auth-input’).value;
 if(val === PASS){
 sessionStorage.setItem(‘berryman_auth’,‘1’);
-document.getElementById(‘auth-screen’).classList.add(‘hidden’);
-document.getElementById(‘app’).classList.remove(‘hidden’);
+document.getElementById(‘auth-screen’).style.display=‘none’;
+document.getElementById(‘app’).style.display=‘flex’;
 init();
 } else {
 document.getElementById(‘auth-error’).classList.remove(‘hidden’);
@@ -1249,11 +1249,10 @@ document.getElementById(‘auth-input’).focus();
 
 // Check if already authenticated this session
 if(sessionStorage.getItem(‘berryman_auth’)===‘1’){
-document.getElementById(‘auth-screen’).classList.add(‘hidden’);
-document.getElementById(‘app’).classList.remove(‘hidden’);
+document.getElementById(‘auth-screen’).style.display=‘none’;
+document.getElementById(‘app’).style.display=‘flex’;
 init();
 } else {
-// Don’t auto-init — wait for password
 setTimeout(()=>document.getElementById(‘auth-input’)?.focus(), 100);
 }
 </script>
