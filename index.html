@@ -66,7 +66,7 @@
   </div>
 </div>
 
-<div id="app" class="flex min-h-screen hidden">
+<div id="app" style="display:none;min-height:100vh" class="flex">
 
   <!-- Sidebar — desktop only -->
   <aside class="sidebar bg-white border-r border-stone-100 flex-col py-6 shrink-0 hidden md:flex">
@@ -492,6 +492,9 @@
       </button>
       <button onclick="switchTab('notes');closeMoreMenu()" class="flex flex-col items-center gap-2 p-3 rounded-2xl hover:bg-stone-50">
         <span class="text-2xl">📝</span><span class="text-xs font-medium text-stone-600">Notes</span>
+      </button>
+      <button onclick="switchTab('quotes');closeMoreMenu()" class="flex flex-col items-center gap-2 p-3 rounded-2xl hover:bg-stone-50">
+        <span class="text-2xl">💬</span><span class="text-xs font-medium text-stone-600">Quotes</span>
       </button>
       <button onclick="switchTab('contacts');closeMoreMenu()" class="flex flex-col items-center gap-2 p-3 rounded-2xl hover:bg-stone-50">
         <span class="text-2xl">📞</span><span class="text-xs font-medium text-stone-600">Contacts</span>
@@ -1250,8 +1253,8 @@ function checkAuth(){
   const val = document.getElementById('auth-input').value;
   if(val === PASS){
     sessionStorage.setItem('berryman_auth','1');
-    document.getElementById('auth-screen').classList.add('hidden');
-    document.getElementById('app').classList.remove('hidden');
+    document.getElementById('auth-screen').style.display='none';
+    document.getElementById('app').style.display='flex';
     init();
   } else {
     document.getElementById('auth-error').classList.remove('hidden');
@@ -1262,10 +1265,10 @@ function checkAuth(){
 
 // Check if already authenticated this session
 if(sessionStorage.getItem('berryman_auth')==='1'){
-  document.getElementById('auth-screen').classList.add('hidden');
-  document.getElementById('app').classList.remove('hidden');
+  document.getElementById('auth-screen').style.display='none';
+  document.getElementById('app').style.display='flex';
+  init();
 } else {
-  // Don't auto-init — wait for password
   setTimeout(()=>document.getElementById('auth-input')?.focus(), 100);
 }
 </script>
