@@ -87,6 +87,7 @@
       <button onclick="switchTab('projects')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-stone-500 hover:bg-stone-50 hover:text-stone-800 transition-all" data-tab="projects">🔨 Projects & Tasks</button>
       <button onclick="switchTab('budget')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-stone-500 hover:bg-stone-50 hover:text-stone-800 transition-all" data-tab="budget">💰 Budget</button>
       <button onclick="switchTab('notes')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-stone-500 hover:bg-stone-50 hover:text-stone-800 transition-all" data-tab="notes">📝 Shared Notes</button>
+      <button onclick="switchTab('quotes')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-stone-500 hover:bg-stone-50 hover:text-stone-800 transition-all" data-tab="quotes">💬 Quotes</button>
       <button onclick="switchTab('contacts')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-stone-500 hover:bg-stone-50 hover:text-stone-800 transition-all" data-tab="contacts">📞 Contacts</button>
       <button onclick="switchTab('docs')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-stone-500 hover:bg-stone-50 hover:text-stone-800 transition-all" data-tab="docs">📁 Documents</button>
     </nav>
@@ -383,6 +384,16 @@
       <div id="notes-list" class="space-y-3"></div>
     </div>
 
+    <!-- QUOTES -->
+    <div id="tab-quotes" class="tab-content hidden">
+      <div class="flex items-center justify-between mb-1">
+        <h2 class="serif text-3xl font-semibold">Quotes</h2>
+        <button onclick="openModal('quote')" class="bg-amber-700 text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-amber-800">+ Add Quote</button>
+      </div>
+      <p class="text-stone-400 text-sm mb-8">Compare contractor quotes for each job. Mark the winner as Selected.</p>
+      <div id="quotes-list" class="space-y-4"></div>
+    </div>
+
     <!-- CONTACTS -->
     <div id="tab-contacts" class="tab-content hidden">
       <div class="flex items-center justify-between mb-1">
@@ -619,7 +630,7 @@ const DEFAULT={
   ],
 };
 
-let _cache={shopping:[],projects:[],expenses:[],contacts:[],decisions:[],notes:[],phases:[]};
+let _cache={shopping:[],projects:[],expenses:[],contacts:[],decisions:[],notes:[],phases:[],quotes:[]};
 let budgetChart=null;
 
 function badge(t){const m={High:"badge-red",Medium:"badge-blue",Low:"badge-gray","Not Started":"badge-gray",Pending:"badge-amber",Research:"badge-amber","In Progress":"badge-blue",Done:"badge-green",Completed:"badge-green",Agreed:"badge-green","Review Later":"badge-amber",Noted:"badge-blue",Ordered:"badge-purple",Delivered:"badge-green",Escrow:"badge-blue",Termite:"badge-amber",Lender:"badge-purple",Agent:"badge-green",Contractor:"badge-amber",Inspector:"badge-red",Architect:"badge-purple",Other:"badge-gray"};return`<span class="${m[t]||'badge-gray'}">${t}</span>`}
@@ -691,7 +702,7 @@ let currentModal='',editingId=null;
 
 function openModal(type,data=null){
   currentModal=type;editingId=data?data.id:null;
-  const titles={shopping:data?'Edit Item':'Add Shopping Item',project:data?'Edit Task':'Add Task',expense:data?'Edit Expense':'Add Expense',contact:data?'Edit Contact':'Add Contact',decision:data?'Edit Decision':'Log Decision',note:data?'Edit Note':'Add Note',phase:data?'Edit Phase':'Add Phase'};
+  const titles={shopping:data?'Edit Item':'Add Shopping Item',project:data?'Edit Task':'Add Task',expense:data?'Edit Expense':'Add Expense',contact:data?'Edit Contact':'Add Contact',decision:data?'Edit Decision':'Log Decision',note:data?'Edit Note':'Add Note',phase:data?'Edit Phase':'Add Phase',quote:data?'Edit Quote':'Add Quote'};
   document.getElementById('modal-title').textContent=titles[type];
   const v=(k,def='')=>data?(data[k]??def)??def:def;
   const sel=(id,opts,val)=>`<select class="field-input" id="${id}">${opts.map(o=>`<option${o===val?' selected':''}>${o}</option>`).join('')}</select>`;
@@ -707,6 +718,12 @@ function openModal(type,data=null){
     contact:`<div><label class="field-label">Name</label><input class="field-input" id="f-name" value="${v('name')}" placeholder="Full name"></div><div><label class="field-label">Role</label>${sel('f-role',['Agent','Contractor','Escrow','Lender','Inspector','Architect','Other'],v('role','Other'))}</div><div><label class="field-label">Company</label><input class="field-input" id="f-company" value="${v('company')}" placeholder="Company name"></div><div><label class="field-label">Phone / Email</label><input class="field-input" id="f-contact" value="${v('contact')}" placeholder="Contact info"></div>`,
     decision:`<div><label class="field-label">Decision</label><input class="field-input" id="f-name" value="${v('title')}" placeholder="What was decided?"></div><div><label class="field-label">Notes</label><textarea class="field-input" id="f-notes" style="min-height:72px;resize:vertical">${v('notes')}</textarea></div><div><label class="field-label">Status</label>${sel('f-status',['Agreed','Review Later','Noted','Pending'],v('status','Agreed'))}</div>`,
     note:`<div><label class="field-label">Title</label><input class="field-input" id="f-name" value="${v('title')}" placeholder="e.g. Contractor quote from John"></div><div><label class="field-label">Note</label><textarea class="field-input" id="f-notes" style="min-height:100px;resize:vertical">${v('content')}</textarea></div><div><label class="field-label">Tag</label>${sel('f-tag',['General','Contractor Quote','Idea','Reminder','ADU','Front House'],v('tag','General'))}</div>`,
+    quote:`<div><label class="field-label">Contractor Name</label><input class="field-input" id="f-name" value="${v('contractor')}" placeholder="e.g. ABC Roofing"></div>
+    <div><label class="field-label">Job / Task</label><select class="field-input" id="f-task-id"><option value="">— General / No specific task —</option>${_cache.projects.map(p=>`<option value="${p.id}"${v('task_id')==p.id?' selected':''}>${p.name}</option>`).join('')}</select></div>
+    <div><label class="field-label">Amount ($)</label><input class="field-input" type="number" id="f-amount" value="${v('amount')}" placeholder="0"></div>
+    <div><label class="field-label">Timeline</label><input class="field-input" id="f-timeline" value="${v('timeline')}" placeholder="e.g. 3 days, 2 weeks"></div>
+    <div><label class="field-label">Notes</label><textarea class="field-input" id="f-notes" style="min-height:72px;resize:vertical" placeholder="Details, inclusions, exclusions...">${v('notes')}</textarea></div>
+    <div><label class="field-label">Status</label>${sel('f-status',['Received','Selected','Rejected'],v('status','Received'))}</div>`,
   };
   document.getElementById('modal-body').innerHTML=forms[type];
   document.getElementById('modal-overlay').classList.remove('hidden');
@@ -766,24 +783,88 @@ async function saveModal(){
     if(editingId){await dbUpdate('notes',editingId,d);reloadTable('notes');}
     else{const row=await dbInsert('notes',d);if(row)appendNote(row);}
   }
+  if(currentModal==='quote'){
+    const taskId = document.getElementById('f-task-id').value;
+    const taskName = taskId ? _cache.projects.find(p=>p.id==taskId)?.name||'' : 'General';
+    const d={
+      contractor:name,
+      task_id: taskId||null,
+      task_name: taskName,
+      amount: parseFloat(document.getElementById('f-amount').value)||0,
+      timeline: document.getElementById('f-timeline').value||'',
+      notes: document.getElementById('f-notes').value||'',
+      status: document.getElementById('f-status').value,
+    };
+    if(editingId){await dbUpdate('quotes',editingId,d);reloadTable('quotes');}
+    else{const row=await dbInsert('quotes',d);if(row){_cache.quotes.push(row);renderQuotes();}}
+  }
   document.getElementById('save-btn').textContent='Save';
   closeModal();
 }
 
 async function reloadTable(table){
   const data=await dbGet(table);_cache[table]=data;
-  if(table==='shopping'){document.getElementById('shopping-tbody').innerHTML='';data.forEach(appendShopping);}
+  if(table==='shopping'){document.getElementById('shopping-tbody').innerHTML='';document.getElementById('shopping-done-tbody').innerHTML='';data.forEach(appendShopping);updateShoppingCounts();}
   if(table==='projects'){document.getElementById('projects-tbody').innerHTML='';data.forEach(appendProject);}
   if(table==='expenses'){document.getElementById('budget-tbody').innerHTML='';_cache.expenses=data;data.forEach(appendExpense);updateBudget();}
   if(table==='contacts'){document.getElementById('contacts-tbody').innerHTML='';data.forEach(appendContact);}
   if(table==='decisions'){document.getElementById('decisions-list').innerHTML='';[...data].reverse().forEach(prependDecision);}
   if(table==='notes'){document.getElementById('notes-list').innerHTML='';data.forEach(appendNote);}
+  if(table==='quotes'){_cache.quotes=data;renderQuotes();}
 }
 
+function renderQuotes(){
+  const container=document.getElementById('quotes-list');
+  if(!container)return;
+  container.innerHTML='';
+  if(!_cache.quotes||!_cache.quotes.length){container.innerHTML='<p class="text-center text-stone-300 text-sm py-10">No quotes yet — add your first one.</p>';return;}
+  const groups={};
+  _cache.quotes.forEach(q=>{const key=q.task_name||'General';if(!groups[key])groups[key]=[];groups[key].push(q);});
+  Object.entries(groups).forEach(([taskName,quotes])=>{
+    const selected=quotes.find(q=>q.status==='Selected');
+    const lowest=quotes.reduce((a,b)=>a.amount<b.amount?a:b,quotes[0]);
+    let html=`<div class="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
+      <div class="px-5 py-4 border-b border-stone-100 flex items-center justify-between">
+        <div><p class="font-semibold text-sm text-stone-800">${taskName}</p>
+        <p class="text-xs text-stone-400 mt-0.5">${quotes.length} quote${quotes.length>1?'s':''} · Lowest: $${parseFloat(lowest.amount).toLocaleString()}</p></div>
+        ${selected?`<span class="badge-green">✅ ${selected.contractor}</span>`:'<span class="badge-gray">No selection yet</span>'}
+      </div>
+      <table class="w-full text-sm">
+        <thead><tr class="bg-stone-50 text-xs text-stone-400 uppercase tracking-wider">
+          <th class="px-5 py-3 text-left">Contractor</th>
+          <th class="px-3 py-3 text-left">Amount</th>
+          <th class="px-3 py-3 text-left hidden md:table-cell">Timeline</th>
+          <th class="px-3 py-3 text-left hidden md:table-cell">Notes</th>
+          <th class="px-3 py-3 text-left">Status</th>
+          <th class="px-3 py-3"></th>
+        </tr></thead><tbody>`;
+    quotes.sort((a,b)=>a.amount-b.amount).forEach(q=>{
+      const isSelected=q.status==='Selected';
+      const isLowest=quotes.length>1&&q.id===lowest.id;
+      html+=`<tr class="border-t border-stone-50 hover:bg-stone-50${isSelected?' bg-green-50':''}">
+        <td class="px-5 py-3 font-medium${isSelected?' text-green-700':''}">${q.contractor}${isLowest?'<span class="ml-1 text-xs text-green-600 font-semibold">Lowest</span>':''}</td>
+        <td class="px-3 py-3 font-semibold${isSelected?' text-green-700':''} ">$${parseFloat(q.amount||0).toLocaleString()}</td>
+        <td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">${q.timeline||'—'}</td>
+        <td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">${q.notes||'—'}</td>
+        <td class="px-3 py-3"><select onchange="updateQuoteStatus(${q.id},this.value)" class="text-xs border border-stone-200 rounded-md px-2 py-1 bg-white text-stone-600 focus:outline-none">
+          ${['Received','Selected','Rejected'].map(s=>`<option${s===q.status?' selected':''}>${s}</option>`).join('')}
+        </select></td>
+        <td class="px-3 py-3"><div class="flex gap-1"><button class="btn-edit" onclick="editQuote(${q.id})">✏️</button><button class="btn-del" onclick="deleteQuote(${q.id})">✕</button></div></td>
+      </tr>`;
+    });
+    html+=`</tbody></table></div>`;
+    container.insertAdjacentHTML('beforeend',html);
+  });
+}
+
+function editQuote(id){const r=_cache.quotes.find(x=>x.id===id);if(r)openModal('quote',r);}
+async function deleteQuote(id){if(!confirm('Delete this quote?'))return;await dbDelete('quotes',id);_cache.quotes=_cache.quotes.filter(x=>x.id!==id);renderQuotes();}
+async function updateQuoteStatus(id,status){await dbUpdate('quotes',id,{status});_cache.quotes=_cache.quotes.map(x=>x.id===id?{...x,status}:x);renderQuotes();}
+
 async function refreshAll(){
-  const [s,p,e,c,d,n,ph]=await Promise.all([dbGet('shopping'),dbGet('projects'),dbGet('expenses'),dbGet('contacts'),dbGet('decisions'),dbGet('notes'),dbGet('phases','sort_order.asc')]);
-  _cache={shopping:s,projects:p,expenses:e,contacts:c,decisions:d,notes:n||[],phases:ph||[]};
-  document.getElementById('shopping-tbody').innerHTML='';s.forEach(appendShopping);
+  const [s,p,e,c,d,n,ph,q]=await Promise.all([dbGet('shopping'),dbGet('projects'),dbGet('expenses'),dbGet('contacts'),dbGet('decisions'),dbGet('notes'),dbGet('phases','sort_order.asc'),dbGet('quotes')]);
+  _cache={shopping:s,projects:p,expenses:e,contacts:c,decisions:d,notes:n||[],phases:ph||[],quotes:q||[]};
+  document.getElementById('shopping-tbody').innerHTML='';document.getElementById('shopping-done-tbody').innerHTML='';s.forEach(appendShopping);updateShoppingCounts();
   document.getElementById('projects-tbody').innerHTML='';p.forEach(appendProject);
   document.getElementById('budget-tbody').innerHTML='';e.forEach(appendExpense);updateBudget();
   document.getElementById('contacts-tbody').innerHTML='';c.forEach(appendContact);
@@ -791,6 +872,7 @@ async function refreshAll(){
   document.getElementById('notes-list').innerHTML='';(n||[]).forEach(appendNote);
   document.getElementById('phases-list').innerHTML='';(ph||[]).forEach(r=>renderPhase(r,document.getElementById('phases-list')));
   renderOverviewPhases(ph||[]);
+  renderQuotes();
 }
 
 function editShopping(id){const r=_cache.shopping.find(x=>x.id===id);if(r)openModal('shopping',r);}
@@ -929,11 +1011,11 @@ function switchTab(name){
 async function init(){
   switchTab('overview');
   try{
-    let [s,p,e,c,d,n,ph]=await Promise.all([dbGet('shopping'),dbGet('projects'),dbGet('expenses'),dbGet('contacts'),dbGet('decisions'),dbGet('notes'),dbGet('phases','sort_order.asc')]);
+    let [s,p,e,c,d,n,ph,q]=await Promise.all([dbGet('shopping'),dbGet('projects'),dbGet('expenses'),dbGet('contacts'),dbGet('decisions'),dbGet('notes'),dbGet('phases','sort_order.asc'),dbGet('quotes')]);
     if(!Array.isArray(n))n=[];
     if(!Array.isArray(ph))ph=[];
+    if(!Array.isArray(q))q=[];
 
-    // Seed default data if empty
     if(s.length===0&&p.length===0){
       await Promise.all([
         ...DEFAULT.shopping.map(i=>dbInsert('shopping',i)),
@@ -944,19 +1026,20 @@ async function init(){
       [s,p,e,c,d]=await Promise.all([dbGet('shopping'),dbGet('projects'),dbGet('expenses'),dbGet('contacts'),dbGet('decisions')]);
     }
 
-    // Seed phases if empty
     if(ph.length===0){
       await Promise.all(DEFAULT_PHASES.map(i=>dbInsert('phases',i)));
       ph=await dbGet('phases','sort_order.asc');
     }
 
-    _cache={shopping:s,projects:p,expenses:e,contacts:c,decisions:d,notes:n,phases:ph};
+    _cache={shopping:s,projects:p,expenses:e,contacts:c,decisions:d,notes:n,phases:ph,quotes:q};
     s.forEach(appendShopping);p.forEach(appendProject);e.forEach(appendExpense);c.forEach(appendContact);
     [...d].reverse().forEach(prependDecision);n.forEach(appendNote);
     const phList=document.getElementById('phases-list');
     ph.forEach(r=>renderPhase(r,phList));
     renderOverviewPhases(ph);
     updateBudget();
+    updateShoppingCounts();
+    renderQuotes();
 
     document.getElementById('db-dot').className='w-1.5 h-1.5 rounded-full bg-green-400';
     document.getElementById('db-status').textContent='Live — synced';
