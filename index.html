@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -52,7 +51,6 @@
 <body class="bg-stone-50 text-stone-800">
 
 <!-- PASSWORD SCREEN -->
-
 <div id="auth-screen" class="fixed inset-0 bg-stone-50 z-[999] flex items-center justify-center p-4">
   <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm p-8 text-center">
     <div class="text-4xl mb-4">🏠</div>
@@ -68,10 +66,9 @@
   </div>
 </div>
 
-<div id="app" style="display:none;min-height:100vh" class="flex">
+<div id="app" class="flex min-h-screen hidden">
 
   <!-- Sidebar — desktop only -->
-
   <aside class="sidebar bg-white border-r border-stone-100 flex-col py-6 shrink-0 hidden md:flex">
     <div class="px-5 pb-5 border-b border-stone-100 mb-4">
       <p class="serif text-sm font-semibold text-stone-800 leading-snug">3967 Berryman Ave</p>
@@ -100,359 +97,356 @@
   </aside>
 
   <!-- Main -->
-
   <main class="main-content flex-1 md:ml-0 p-4 md:p-10 max-w-4xl w-full mx-auto fade-in">
 
-```
-<!-- Mobile top bar -->
-<div class="flex items-center justify-between mb-5 md:hidden">
-  <div>
-    <p class="serif text-base font-semibold text-stone-800">3967 Berryman</p>
-    <p class="text-xs text-stone-400">Amir & Rose · 2026</p>
-  </div>
-  <div class="flex items-center gap-2">
-    <div id="db-dot-mobile" class="w-1.5 h-1.5 rounded-full bg-amber-400"></div>
-    <button onclick="refreshAll()" class="text-stone-400 hover:text-amber-600 text-lg">↻</button>
-  </div>
-</div>
-
-<!-- OVERVIEW -->
-<div id="tab-overview" class="tab-content">
-
-  <!-- Hero Banner -->
-  <div class="relative rounded-3xl overflow-hidden mb-8" style="background:linear-gradient(135deg,#1c1917 0%,#292524 50%,#1c1917 100%)">
-    <div class="absolute inset-0 opacity-10" style="background-image:radial-gradient(circle at 20% 50%,#f59e0b 0%,transparent 50%),radial-gradient(circle at 80% 20%,#d97706 0%,transparent 40%)"></div>
-    <div class="relative p-8 md:p-10">
-      <div class="flex items-start justify-between">
-        <div>
-          <p class="text-amber-400 text-xs font-semibold uppercase tracking-widest mb-2">Your Home · Mar Vista, Los Angeles</p>
-          <h1 class="serif text-3xl md:text-4xl font-semibold text-white mb-1">3967 Berryman Ave</h1>
-          <p class="text-stone-400 text-sm">Amir & Rose · Est. 2026</p>
-        </div>
-        <button onclick="refreshAll()" class="text-stone-500 hover:text-amber-400 transition-colors text-xl mt-1" title="Refresh">↻</button>
+    <!-- Mobile top bar -->
+    <div class="flex items-center justify-between mb-5 md:hidden">
+      <div>
+        <p class="serif text-base font-semibold text-stone-800">3967 Berryman</p>
+        <p class="text-xs text-stone-400">Amir & Rose · 2026</p>
       </div>
-      <!-- Key stats row -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
-        <div class="bg-white/5 backdrop-blur rounded-2xl p-4 border border-white/10">
-          <p class="text-stone-500 text-xs uppercase tracking-wider mb-1">Purchase Price</p>
-          <p class="serif text-2xl font-semibold text-white">$1.133M</p>
-          <p class="text-stone-500 text-xs mt-1">Closed Apr 28, 2026</p>
-        </div>
-        <div class="bg-white/5 backdrop-blur rounded-2xl p-4 border border-white/10">
-          <p class="text-stone-500 text-xs uppercase tracking-wider mb-1">Monthly Payment</p>
-          <p class="serif text-2xl font-semibold text-white">$7,387</p>
-          <p class="text-stone-500 text-xs mt-1">P&I + taxes/insurance</p>
-        </div>
-        <div class="bg-amber-500/20 backdrop-blur rounded-2xl p-4 border border-amber-500/30">
-          <p class="text-amber-300 text-xs uppercase tracking-wider mb-1">Reno Budget</p>
-          <p class="serif text-2xl font-semibold text-amber-300">$50,000</p>
-          <p class="text-amber-400/60 text-xs mt-1">Front house livability</p>
-        </div>
-        <div class="bg-white/5 backdrop-blur rounded-2xl p-4 border border-white/10">
-          <p class="text-stone-500 text-xs uppercase tracking-wider mb-1">ADU Potential</p>
-          <p class="serif text-2xl font-semibold text-white">$3,200+</p>
-          <p class="text-stone-500 text-xs mt-1">Est. monthly rental</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Quick nav cards -->
-  <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
-    <button onclick="switchTab('phases')" class="bg-white rounded-2xl p-4 shadow-sm border border-stone-100 hover:border-amber-300 hover:shadow-md transition-all text-left group">
-      <div class="text-2xl mb-2">📋</div>
-      <p class="text-sm font-semibold text-stone-700 group-hover:text-amber-700">Phases</p>
-      <p class="text-xs text-stone-400 mt-0.5">Track progress</p>
-    </button>
-    <button onclick="switchTab('projects')" class="bg-white rounded-2xl p-4 shadow-sm border border-stone-100 hover:border-amber-300 hover:shadow-md transition-all text-left group">
-      <div class="text-2xl mb-2">🔨</div>
-      <p class="text-sm font-semibold text-stone-700 group-hover:text-amber-700">Tasks</p>
-      <p class="text-xs text-stone-400 mt-0.5">Renovation work</p>
-    </button>
-    <button onclick="switchTab('budget')" class="bg-white rounded-2xl p-4 shadow-sm border border-stone-100 hover:border-amber-300 hover:shadow-md transition-all text-left group">
-      <div class="text-2xl mb-2">💰</div>
-      <p class="text-sm font-semibold text-stone-700 group-hover:text-amber-700">Budget</p>
-      <p class="text-xs text-stone-400 mt-0.5">Track spending</p>
-    </button>
-    <button onclick="switchTab('shopping')" class="bg-white rounded-2xl p-4 shadow-sm border border-stone-100 hover:border-amber-300 hover:shadow-md transition-all text-left group">
-      <div class="text-2xl mb-2">🛒</div>
-      <p class="text-sm font-semibold text-stone-700 group-hover:text-amber-700">Shopping</p>
-      <p class="text-xs text-stone-400 mt-0.5">Appliances & more</p>
-    </button>
-  </div>
-
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-    <!-- Urgent items -->
-    <div class="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
-      <div class="px-5 py-4 border-b border-stone-100 flex items-center gap-2">
-        <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
-        <p class="font-semibold text-sm text-stone-800">Urgent Action Items</p>
-      </div>
-      <div class="divide-y divide-stone-50">
-        <div class="px-5 py-3 flex items-start gap-3 hover:bg-stone-50 transition-colors">
-          <span class="badge-red mt-0.5">High</span>
-          <p class="text-xs text-stone-600 flex-1">Pull LADBS permit history for garage</p>
-          <p class="text-xs text-stone-300">Amir</p>
-        </div>
-        <div class="px-5 py-3 flex items-start gap-3 hover:bg-stone-50 transition-colors">
-          <span class="badge-red mt-0.5">High</span>
-          <p class="text-xs text-stone-600 flex-1">Schedule termite fumigation post-close</p>
-          <p class="text-xs text-stone-300">Amir</p>
-        </div>
-        <div class="px-5 py-3 flex items-start gap-3 hover:bg-stone-50 transition-colors">
-          <span class="badge-red mt-0.5">High</span>
-          <p class="text-xs text-stone-600 flex-1">Confirm Bamboo insurance covers all structures</p>
-          <p class="text-xs text-stone-300">Amir</p>
-        </div>
-        <div class="px-5 py-3 flex items-start gap-3 hover:bg-stone-50 transition-colors">
-          <span class="badge-amber mt-0.5">Med</span>
-          <p class="text-xs text-stone-600 flex-1">Review roof inspection report</p>
-          <p class="text-xs text-stone-300">Both</p>
-        </div>
-        <div class="px-5 py-3 flex items-start gap-3 hover:bg-stone-50 transition-colors">
-          <span class="badge-amber mt-0.5">Med</span>
-          <p class="text-xs text-stone-600 flex-1">Measure garage left-side clearance</p>
-          <p class="text-xs text-stone-300">Amir</p>
-        </div>
-        <div class="px-5 py-3 flex items-start gap-3 hover:bg-stone-50 transition-colors">
-          <span class="badge-gray mt-0.5">Low</span>
-          <p class="text-xs text-stone-600 flex-1">ADU architect feasibility consultation</p>
-          <p class="text-xs text-stone-300">Both</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Phase overview -->
-    <div class="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
-      <div class="px-5 py-4 border-b border-stone-100 flex items-center justify-between">
-        <p class="font-semibold text-sm text-stone-800">Project Phases</p>
-        <button onclick="switchTab('phases')" class="text-xs text-amber-600 hover:text-amber-800">View all →</button>
-      </div>
-      <div class="p-5 space-y-4" id="overview-phases"></div>
-    </div>
-  </div>
-
-  <!-- Property details strip -->
-  <div class="bg-white rounded-2xl border border-stone-100 shadow-sm p-5">
-    <p class="text-xs font-semibold text-stone-400 uppercase tracking-wider mb-4">Property Details</p>
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-      <div class="text-center p-3 bg-stone-50 rounded-xl">
-        <p class="text-2xl font-bold text-stone-800 serif">779</p>
-        <p class="text-xs text-stone-400 mt-1">Sq Ft · Front House</p>
-      </div>
-      <div class="text-center p-3 bg-stone-50 rounded-xl">
-        <p class="text-2xl font-bold text-stone-800 serif">5,016</p>
-        <p class="text-xs text-stone-400 mt-1">Sq Ft · Lot Size</p>
-      </div>
-      <div class="text-center p-3 bg-stone-50 rounded-xl">
-        <p class="text-2xl font-bold text-stone-800 serif">1941</p>
-        <p class="text-xs text-stone-400 mt-1">Year Built</p>
-      </div>
-      <div class="text-center p-3 bg-stone-50 rounded-xl">
-        <p class="text-2xl font-bold text-stone-800 serif">R1</p>
-        <p class="text-xs text-stone-400 mt-1">Zoning · ADU Eligible</p>
-      </div>
-    </div>
-  </div>
-
-</div>
-
-<!-- PHASES -->
-<div id="tab-phases" class="tab-content hidden">
-  <div class="flex items-center justify-between mb-1">
-    <h2 class="serif text-3xl font-semibold">Project Phases</h2>
-    <button onclick="openModal('phase')" class="bg-amber-700 text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-amber-800">+ Add Phase</button>
-  </div>
-  <p class="text-stone-400 text-sm mb-8">Update progress and status as you move through the project.</p>
-  <div id="phases-list" class="space-y-4"></div>
-</div>
-
-<!-- DECISIONS -->
-<div id="tab-decisions" class="tab-content hidden">
-  <div class="flex items-center justify-between mb-1">
-    <h2 class="serif text-3xl font-semibold">Decisions Log</h2>
-    <button onclick="openModal('decision')" class="bg-amber-700 text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-amber-800">+ Log Decision</button>
-  </div>
-  <p class="text-stone-400 text-sm mb-8">Every major decision logged. No more "I thought we agreed."</p>
-  <div id="decisions-list" class="space-y-3"></div>
-</div>
-
-<!-- SHOPPING -->
-<div id="tab-shopping" class="tab-content hidden">
-  <div class="flex items-center justify-between mb-1">
-    <h2 class="serif text-3xl font-semibold">Shopping List</h2>
-    <button onclick="openModal('shopping')" class="bg-amber-700 text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-amber-800">+ Add Item</button>
-  </div>
-  <p class="text-stone-400 text-sm mb-6">Appliances, furniture, and essentials.</p>
-
-  <!-- Active items -->
-  <div class="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden mb-6">
-    <div class="px-5 py-3 border-b border-stone-100 flex items-center gap-2">
-      <span class="w-2 h-2 rounded-full bg-amber-400"></span>
-      <p class="text-xs font-semibold text-stone-600 uppercase tracking-wider">Active</p>
-      <span id="active-count" class="text-xs text-stone-400 ml-1"></span>
-    </div>
-    <table class="w-full text-sm"><thead><tr class="bg-stone-50 text-xs text-stone-400 uppercase tracking-wider">
-      <th class="px-5 py-3 text-left">Item</th>
-      <th class="px-3 py-3 text-left hidden md:table-cell">Category</th>
-      <th class="px-3 py-3 text-left">Priority</th>
-      <th class="px-3 py-3 text-left hidden md:table-cell">Cost</th>
-      <th class="px-3 py-3 text-left">Status</th>
-      <th class="px-3 py-3"></th>
-    </tr></thead>
-    <tbody id="shopping-tbody">
-      <tr id="shopping-empty"><td colspan="6" class="text-center py-8 text-stone-300 text-sm">No active items</td></tr>
-    </tbody></table>
-  </div>
-
-  <!-- Ordered / Delivered section -->
-  <div id="completed-shopping-section" class="hidden">
-    <button onclick="toggleCompletedShopping()" class="w-full flex items-center justify-between px-5 py-3 bg-white rounded-2xl border border-stone-100 shadow-sm mb-1">
       <div class="flex items-center gap-2">
-        <span class="w-2 h-2 rounded-full bg-green-400"></span>
-        <p class="text-xs font-semibold text-stone-500 uppercase tracking-wider">Ordered & Delivered</p>
-        <span id="completed-count" class="text-xs text-stone-400 ml-1"></span>
+        <div id="db-dot-mobile" class="w-1.5 h-1.5 rounded-full bg-amber-400"></div>
+        <button onclick="refreshAll()" class="text-stone-400 hover:text-amber-600 text-lg">↻</button>
       </div>
-      <span id="completed-chevron" class="text-stone-400 text-xs">▼ Show</span>
-    </button>
-    <div id="completed-shopping-list" class="hidden bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
-      <table class="w-full text-sm"><thead><tr class="bg-stone-50 text-xs text-stone-400 uppercase tracking-wider">
-        <th class="px-5 py-3 text-left">Item</th>
-        <th class="px-3 py-3 text-left hidden md:table-cell">Category</th>
-        <th class="px-3 py-3 text-left hidden md:table-cell">Cost</th>
-        <th class="px-3 py-3 text-left">Status</th>
-        <th class="px-3 py-3"></th>
-      </tr></thead>
-      <tbody id="shopping-done-tbody"></tbody></table>
     </div>
-  </div>
-</div>
 
-<!-- PROJECTS -->
-<div id="tab-projects" class="tab-content hidden">
-  <div class="flex items-center justify-between mb-1">
-    <h2 class="serif text-3xl font-semibold">Projects & Tasks</h2>
-    <button onclick="openModal('project')" class="bg-amber-700 text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-amber-800">+ Add Task</button>
-  </div>
-  <p class="text-stone-400 text-sm mb-8">Every renovation task with due date, owner, and notes.</p>
-  <div class="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
-    <table class="w-full text-sm"><thead><tr class="bg-stone-50 text-xs text-stone-400 uppercase tracking-wider">
-      <th class="px-5 py-3 text-left">Task</th>
-      <th class="px-3 py-3 text-left hidden md:table-cell">Due</th>
-      <th class="px-3 py-3 text-left hidden md:table-cell">Owner</th>
-      <th class="px-3 py-3 text-left">Status</th>
-      <th class="px-3 py-3"></th>
-    </tr></thead>
-    <tbody id="projects-tbody"></tbody></table>
-  </div>
-</div>
+    <!-- OVERVIEW -->
+    <div id="tab-overview" class="tab-content">
 
-<!-- BUDGET -->
-<div id="tab-budget" class="tab-content hidden">
-  <div class="flex items-center justify-between mb-1">
-    <h2 class="serif text-3xl font-semibold">Budget Tracker</h2>
-    <div class="flex gap-2">
-      <button onclick="openReceiptScanner()" class="bg-stone-800 text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-stone-900 flex items-center gap-1.5">📷 Scan Receipt</button>
-      <button onclick="openModal('expense')" class="bg-amber-700 text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-amber-800">+ Add Expense</button>
+      <!-- Hero Banner -->
+      <div class="relative rounded-3xl overflow-hidden mb-8" style="background:linear-gradient(135deg,#1c1917 0%,#292524 50%,#1c1917 100%)">
+        <div class="absolute inset-0 opacity-10" style="background-image:radial-gradient(circle at 20% 50%,#f59e0b 0%,transparent 50%),radial-gradient(circle at 80% 20%,#d97706 0%,transparent 40%)"></div>
+        <div class="relative p-8 md:p-10">
+          <div class="flex items-start justify-between">
+            <div>
+              <p class="text-amber-400 text-xs font-semibold uppercase tracking-widest mb-2">Your Home · Mar Vista, Los Angeles</p>
+              <h1 class="serif text-3xl md:text-4xl font-semibold text-white mb-1">3967 Berryman Ave</h1>
+              <p class="text-stone-400 text-sm">Amir & Rose · Est. 2026</p>
+            </div>
+            <button onclick="refreshAll()" class="text-stone-500 hover:text-amber-400 transition-colors text-xl mt-1" title="Refresh">↻</button>
+          </div>
+          <!-- Key stats row -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+            <div class="bg-white/5 backdrop-blur rounded-2xl p-4 border border-white/10">
+              <p class="text-stone-500 text-xs uppercase tracking-wider mb-1">Purchase Price</p>
+              <p class="serif text-2xl font-semibold text-white">$1.133M</p>
+              <p class="text-stone-500 text-xs mt-1">Closed Apr 28, 2026</p>
+            </div>
+            <div class="bg-white/5 backdrop-blur rounded-2xl p-4 border border-white/10">
+              <p class="text-stone-500 text-xs uppercase tracking-wider mb-1">Monthly Payment</p>
+              <p class="serif text-2xl font-semibold text-white">$7,387</p>
+              <p class="text-stone-500 text-xs mt-1">P&I + taxes/insurance</p>
+            </div>
+            <div class="bg-amber-500/20 backdrop-blur rounded-2xl p-4 border border-amber-500/30">
+              <p class="text-amber-300 text-xs uppercase tracking-wider mb-1">Reno Budget</p>
+              <p class="serif text-2xl font-semibold text-amber-300">$50,000</p>
+              <p class="text-amber-400/60 text-xs mt-1">Front house livability</p>
+            </div>
+            <div class="bg-white/5 backdrop-blur rounded-2xl p-4 border border-white/10">
+              <p class="text-stone-500 text-xs uppercase tracking-wider mb-1">ADU Potential</p>
+              <p class="serif text-2xl font-semibold text-white">$3,200+</p>
+              <p class="text-stone-500 text-xs mt-1">Est. monthly rental</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick nav cards -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
+        <button onclick="switchTab('phases')" class="bg-white rounded-2xl p-4 shadow-sm border border-stone-100 hover:border-amber-300 hover:shadow-md transition-all text-left group">
+          <div class="text-2xl mb-2">📋</div>
+          <p class="text-sm font-semibold text-stone-700 group-hover:text-amber-700">Phases</p>
+          <p class="text-xs text-stone-400 mt-0.5">Track progress</p>
+        </button>
+        <button onclick="switchTab('projects')" class="bg-white rounded-2xl p-4 shadow-sm border border-stone-100 hover:border-amber-300 hover:shadow-md transition-all text-left group">
+          <div class="text-2xl mb-2">🔨</div>
+          <p class="text-sm font-semibold text-stone-700 group-hover:text-amber-700">Tasks</p>
+          <p class="text-xs text-stone-400 mt-0.5">Renovation work</p>
+        </button>
+        <button onclick="switchTab('budget')" class="bg-white rounded-2xl p-4 shadow-sm border border-stone-100 hover:border-amber-300 hover:shadow-md transition-all text-left group">
+          <div class="text-2xl mb-2">💰</div>
+          <p class="text-sm font-semibold text-stone-700 group-hover:text-amber-700">Budget</p>
+          <p class="text-xs text-stone-400 mt-0.5">Track spending</p>
+        </button>
+        <button onclick="switchTab('shopping')" class="bg-white rounded-2xl p-4 shadow-sm border border-stone-100 hover:border-amber-300 hover:shadow-md transition-all text-left group">
+          <div class="text-2xl mb-2">🛒</div>
+          <p class="text-sm font-semibold text-stone-700 group-hover:text-amber-700">Shopping</p>
+          <p class="text-xs text-stone-400 mt-0.5">Appliances & more</p>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <!-- Urgent items -->
+        <div class="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
+          <div class="px-5 py-4 border-b border-stone-100 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+            <p class="font-semibold text-sm text-stone-800">Urgent Action Items</p>
+          </div>
+          <div class="divide-y divide-stone-50">
+            <div class="px-5 py-3 flex items-start gap-3 hover:bg-stone-50 transition-colors">
+              <span class="badge-red mt-0.5">High</span>
+              <p class="text-xs text-stone-600 flex-1">Pull LADBS permit history for garage</p>
+              <p class="text-xs text-stone-300">Amir</p>
+            </div>
+            <div class="px-5 py-3 flex items-start gap-3 hover:bg-stone-50 transition-colors">
+              <span class="badge-red mt-0.5">High</span>
+              <p class="text-xs text-stone-600 flex-1">Schedule termite fumigation post-close</p>
+              <p class="text-xs text-stone-300">Amir</p>
+            </div>
+            <div class="px-5 py-3 flex items-start gap-3 hover:bg-stone-50 transition-colors">
+              <span class="badge-red mt-0.5">High</span>
+              <p class="text-xs text-stone-600 flex-1">Confirm Bamboo insurance covers all structures</p>
+              <p class="text-xs text-stone-300">Amir</p>
+            </div>
+            <div class="px-5 py-3 flex items-start gap-3 hover:bg-stone-50 transition-colors">
+              <span class="badge-amber mt-0.5">Med</span>
+              <p class="text-xs text-stone-600 flex-1">Review roof inspection report</p>
+              <p class="text-xs text-stone-300">Both</p>
+            </div>
+            <div class="px-5 py-3 flex items-start gap-3 hover:bg-stone-50 transition-colors">
+              <span class="badge-amber mt-0.5">Med</span>
+              <p class="text-xs text-stone-600 flex-1">Measure garage left-side clearance</p>
+              <p class="text-xs text-stone-300">Amir</p>
+            </div>
+            <div class="px-5 py-3 flex items-start gap-3 hover:bg-stone-50 transition-colors">
+              <span class="badge-gray mt-0.5">Low</span>
+              <p class="text-xs text-stone-600 flex-1">ADU architect feasibility consultation</p>
+              <p class="text-xs text-stone-300">Both</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase overview -->
+        <div class="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
+          <div class="px-5 py-4 border-b border-stone-100 flex items-center justify-between">
+            <p class="font-semibold text-sm text-stone-800">Project Phases</p>
+            <button onclick="switchTab('phases')" class="text-xs text-amber-600 hover:text-amber-800">View all →</button>
+          </div>
+          <div class="p-5 space-y-4" id="overview-phases"></div>
+        </div>
+      </div>
+
+      <!-- Property details strip -->
+      <div class="bg-white rounded-2xl border border-stone-100 shadow-sm p-5">
+        <p class="text-xs font-semibold text-stone-400 uppercase tracking-wider mb-4">Property Details</p>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div class="text-center p-3 bg-stone-50 rounded-xl">
+            <p class="text-2xl font-bold text-stone-800 serif">779</p>
+            <p class="text-xs text-stone-400 mt-1">Sq Ft · Front House</p>
+          </div>
+          <div class="text-center p-3 bg-stone-50 rounded-xl">
+            <p class="text-2xl font-bold text-stone-800 serif">5,016</p>
+            <p class="text-xs text-stone-400 mt-1">Sq Ft · Lot Size</p>
+          </div>
+          <div class="text-center p-3 bg-stone-50 rounded-xl">
+            <p class="text-2xl font-bold text-stone-800 serif">1941</p>
+            <p class="text-xs text-stone-400 mt-1">Year Built</p>
+          </div>
+          <div class="text-center p-3 bg-stone-50 rounded-xl">
+            <p class="text-2xl font-bold text-stone-800 serif">R1</p>
+            <p class="text-xs text-stone-400 mt-1">Zoning · ADU Eligible</p>
+          </div>
+        </div>
+      </div>
+
     </div>
-  </div>
-  <p class="text-stone-400 text-sm mb-6">Running total vs. $50,000 front house budget.</p>
-  <div class="grid grid-cols-3 gap-4 mb-6">
-    <div class="bg-white rounded-xl border-l-4 border-green-400 border border-stone-100 p-4 shadow-sm"><p class="text-xs font-semibold text-stone-400 uppercase tracking-wider mb-2">Budget</p><p class="serif text-xl font-semibold">$50,000</p></div>
-    <div class="bg-white rounded-xl border-l-4 border-amber-400 border border-stone-100 p-4 shadow-sm"><p class="text-xs font-semibold text-stone-400 uppercase tracking-wider mb-2">Spent</p><p class="serif text-xl font-semibold" id="total-spent">$0</p></div>
-    <div class="bg-white rounded-xl border-l-4 border-blue-400 border border-stone-100 p-4 shadow-sm"><p class="text-xs font-semibold text-stone-400 uppercase tracking-wider mb-2">Remaining</p><p class="serif text-xl font-semibold" id="total-remaining">$50,000</p></div>
-  </div>
-  <div class="mb-6"><div class="flex justify-between text-xs text-stone-400 mb-1"><span>Progress</span><span id="budget-pct">0% spent</span></div><div class="h-2 bg-stone-100 rounded-full overflow-hidden"><div id="budget-bar" class="h-full bg-amber-500 rounded-full transition-all" style="width:0%"></div></div></div>
-  <div class="bg-white rounded-2xl border border-stone-100 shadow-sm p-5 mb-6">
-    <p class="text-sm font-semibold text-stone-700 mb-4">Spending by Category</p>
-    <div style="max-height:220px"><canvas id="budget-chart"></canvas></div>
-  </div>
-  <div class="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
-    <table class="w-full text-sm"><thead><tr class="bg-stone-50 text-xs text-stone-400 uppercase tracking-wider">
-      <th class="px-5 py-3 text-left">Description</th>
-      <th class="px-3 py-3 text-left hidden md:table-cell">Category</th>
-      <th class="px-3 py-3 text-left hidden md:table-cell">Date</th>
-      <th class="px-3 py-3 text-left">Amount</th>
-      <th class="px-3 py-3"></th>
-    </tr></thead>
-    <tbody id="budget-tbody"></tbody></table>
-  </div>
-</div>
 
-<!-- SHARED NOTES -->
-<div id="tab-notes" class="tab-content hidden">
-  <div class="flex items-center justify-between mb-1">
-    <h2 class="serif text-3xl font-semibold">Shared Notes</h2>
-    <button onclick="openModal('note')" class="bg-amber-700 text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-amber-800">+ Add Note</button>
-  </div>
-  <p class="text-stone-400 text-sm mb-8">Contractor quotes, ideas, reminders — anything that doesn't fit elsewhere.</p>
-  <div id="notes-list" class="space-y-3"></div>
-</div>
-
-<!-- QUOTES -->
-<div id="tab-quotes" class="tab-content hidden">
-  <div class="flex items-center justify-between mb-1">
-    <h2 class="serif text-3xl font-semibold">Quotes</h2>
-    <button onclick="openModal('quote')" class="bg-amber-700 text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-amber-800">+ Add Quote</button>
-  </div>
-  <p class="text-stone-400 text-sm mb-8">Compare contractor quotes for each job. Mark the winner as Selected.</p>
-  <div id="quotes-list" class="space-y-4"></div>
-</div>
-
-<!-- CONTACTS -->
-<div id="tab-contacts" class="tab-content hidden">
-  <div class="flex items-center justify-between mb-1">
-    <h2 class="serif text-3xl font-semibold">Contacts</h2>
-    <button onclick="openModal('contact')" class="bg-amber-700 text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-amber-800">+ Add Contact</button>
-  </div>
-  <p class="text-stone-400 text-sm mb-8">Everyone involved in the project.</p>
-  <div class="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
-    <table class="w-full text-sm"><thead><tr class="bg-stone-50 text-xs text-stone-400 uppercase tracking-wider">
-      <th class="px-5 py-3 text-left">Name</th><th class="px-3 py-3 text-left">Role</th>
-      <th class="px-3 py-3 text-left hidden md:table-cell">Company</th>
-      <th class="px-3 py-3 text-left hidden md:table-cell">Contact</th>
-      <th class="px-3 py-3"></th>
-    </tr></thead>
-    <tbody id="contacts-tbody"></tbody></table>
-  </div>
-</div>
-
-<!-- DOCS -->
-<div id="tab-docs" class="tab-content hidden">
-  <div class="flex items-center justify-between mb-1">
-    <h2 class="serif text-3xl font-semibold">Documents</h2>
-    <a href="https://drive.google.com/drive/folders/1qGjFCAcxaERWwnapcImLi5hTOJ_oK8n_?usp=drive_link" target="_blank"
-      class="flex items-center gap-2 bg-white border border-stone-200 text-stone-600 text-xs font-semibold px-4 py-2 rounded-lg hover:bg-stone-50 hover:border-stone-300 transition-all shadow-sm">
-      <svg width="14" height="14" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg"><path d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 0 0 -1.2 4.5h27.5z" fill="#00ac47"/><path d="m73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.502l5.852 11.5z" fill="#ea4335"/><path d="m43.65 25 13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="m59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="m73.4 26.5-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg>
-      Open Google Drive
-    </a>
-  </div>
-  <p class="text-stone-400 text-sm mb-4">Checklist of key documents — click the button to open the actual files in Google Drive.</p>
-  <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 flex items-center gap-3">
-    <span class="text-amber-600 text-lg">📁</span>
-    <div class="flex-1">
-      <p class="text-sm font-semibold text-amber-800">Berryman Project — Google Drive</p>
-      <p class="text-xs text-amber-600 mt-0.5">All project documents, reports, and files are stored here</p>
+    <!-- PHASES -->
+    <div id="tab-phases" class="tab-content hidden">
+      <div class="flex items-center justify-between mb-1">
+        <h2 class="serif text-3xl font-semibold">Project Phases</h2>
+        <button onclick="openModal('phase')" class="bg-amber-700 text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-amber-800">+ Add Phase</button>
+      </div>
+      <p class="text-stone-400 text-sm mb-8">Update progress and status as you move through the project.</p>
+      <div id="phases-list" class="space-y-4"></div>
     </div>
-    <a href="https://drive.google.com/drive/folders/1qGjFCAcxaERWwnapcImLi5hTOJ_oK8n_?usp=drive_link" target="_blank"
-      class="text-xs font-semibold text-amber-700 underline hover:text-amber-900">Open →</a>
-  </div>
-  <div class="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
-    <table class="w-full text-sm"><thead><tr class="bg-stone-50 text-xs text-stone-400 uppercase tracking-wider"><th class="px-5 py-3 text-left">Document</th><th class="px-3 py-3 text-left hidden md:table-cell">Category</th><th class="px-3 py-3 text-left">Status</th></tr></thead>
-    <tbody>
-      <tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3 font-medium">Closing Disclosure</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">Closing</td><td class="px-3 py-3"><span class="badge-green">Done</span></td></tr>
-      <tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3 font-medium">Termite Report (W9043)</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">Inspection</td><td class="px-3 py-3"><span class="badge-green">Done</span></td></tr>
-      <tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3 font-medium">Appraisal Report</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">Inspection</td><td class="px-3 py-3"><span class="badge-green">Done</span></td></tr>
-      <tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3 font-medium">City RPR Report</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">Permits</td><td class="px-3 py-3"><span class="badge-green">Done</span></td></tr>
-      <tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3 font-medium">Bamboo Insurance Policy</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">Insurance</td><td class="px-3 py-3"><span class="badge-amber">Verify</span></td></tr>
-      <tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3 font-medium">Full Roof Inspection Report</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">Inspection</td><td class="px-3 py-3"><span class="badge-red">Needed</span></td></tr>
-      <tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3 font-medium">Foundation Inspection Report</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">Inspection</td><td class="px-3 py-3"><span class="badge-red">Needed</span></td></tr>
-      <tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3 font-medium">Sewer Scope Report</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">Inspection</td><td class="px-3 py-3"><span class="badge-red">Needed</span></td></tr>
-      <tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3 font-medium">LADBS Full Permit History</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">Permits</td><td class="px-3 py-3"><span class="badge-red">Pull Now</span></td></tr>
-    </tbody></table>
-  </div>
-</div>
-```
+
+    <!-- DECISIONS -->
+    <div id="tab-decisions" class="tab-content hidden">
+      <div class="flex items-center justify-between mb-1">
+        <h2 class="serif text-3xl font-semibold">Decisions Log</h2>
+        <button onclick="openModal('decision')" class="bg-amber-700 text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-amber-800">+ Log Decision</button>
+      </div>
+      <p class="text-stone-400 text-sm mb-8">Every major decision logged. No more "I thought we agreed."</p>
+      <div id="decisions-list" class="space-y-3"></div>
+    </div>
+
+    <!-- SHOPPING -->
+    <div id="tab-shopping" class="tab-content hidden">
+      <div class="flex items-center justify-between mb-1">
+        <h2 class="serif text-3xl font-semibold">Shopping List</h2>
+        <button onclick="openModal('shopping')" class="bg-amber-700 text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-amber-800">+ Add Item</button>
+      </div>
+      <p class="text-stone-400 text-sm mb-6">Appliances, furniture, and essentials.</p>
+
+      <!-- Active items -->
+      <div class="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden mb-6">
+        <div class="px-5 py-3 border-b border-stone-100 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+          <p class="text-xs font-semibold text-stone-600 uppercase tracking-wider">Active</p>
+          <span id="active-count" class="text-xs text-stone-400 ml-1"></span>
+        </div>
+        <table class="w-full text-sm"><thead><tr class="bg-stone-50 text-xs text-stone-400 uppercase tracking-wider">
+          <th class="px-5 py-3 text-left">Item</th>
+          <th class="px-3 py-3 text-left hidden md:table-cell">Category</th>
+          <th class="px-3 py-3 text-left">Priority</th>
+          <th class="px-3 py-3 text-left hidden md:table-cell">Cost</th>
+          <th class="px-3 py-3 text-left">Status</th>
+          <th class="px-3 py-3"></th>
+        </tr></thead>
+        <tbody id="shopping-tbody">
+          <tr id="shopping-empty"><td colspan="6" class="text-center py-8 text-stone-300 text-sm">No active items</td></tr>
+        </tbody></table>
+      </div>
+
+      <!-- Ordered / Delivered section -->
+      <div id="completed-shopping-section" class="hidden">
+        <button onclick="toggleCompletedShopping()" class="w-full flex items-center justify-between px-5 py-3 bg-white rounded-2xl border border-stone-100 shadow-sm mb-1">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-green-400"></span>
+            <p class="text-xs font-semibold text-stone-500 uppercase tracking-wider">Ordered & Delivered</p>
+            <span id="completed-count" class="text-xs text-stone-400 ml-1"></span>
+          </div>
+          <span id="completed-chevron" class="text-stone-400 text-xs">▼ Show</span>
+        </button>
+        <div id="completed-shopping-list" class="hidden bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
+          <table class="w-full text-sm"><thead><tr class="bg-stone-50 text-xs text-stone-400 uppercase tracking-wider">
+            <th class="px-5 py-3 text-left">Item</th>
+            <th class="px-3 py-3 text-left hidden md:table-cell">Category</th>
+            <th class="px-3 py-3 text-left hidden md:table-cell">Cost</th>
+            <th class="px-3 py-3 text-left">Status</th>
+            <th class="px-3 py-3"></th>
+          </tr></thead>
+          <tbody id="shopping-done-tbody"></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROJECTS -->
+    <div id="tab-projects" class="tab-content hidden">
+      <div class="flex items-center justify-between mb-1">
+        <h2 class="serif text-3xl font-semibold">Projects & Tasks</h2>
+        <button onclick="openModal('project')" class="bg-amber-700 text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-amber-800">+ Add Task</button>
+      </div>
+      <p class="text-stone-400 text-sm mb-8">Every renovation task with due date, owner, and notes.</p>
+      <div class="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
+        <table class="w-full text-sm"><thead><tr class="bg-stone-50 text-xs text-stone-400 uppercase tracking-wider">
+          <th class="px-5 py-3 text-left">Task</th>
+          <th class="px-3 py-3 text-left hidden md:table-cell">Due</th>
+          <th class="px-3 py-3 text-left hidden md:table-cell">Owner</th>
+          <th class="px-3 py-3 text-left">Status</th>
+          <th class="px-3 py-3"></th>
+        </tr></thead>
+        <tbody id="projects-tbody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- BUDGET -->
+    <div id="tab-budget" class="tab-content hidden">
+      <div class="flex items-center justify-between mb-1">
+        <h2 class="serif text-3xl font-semibold">Budget Tracker</h2>
+        <div class="flex gap-2">
+          <button onclick="openReceiptScanner()" class="bg-stone-800 text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-stone-900 flex items-center gap-1.5">📷 Scan Receipt</button>
+          <button onclick="openModal('expense')" class="bg-amber-700 text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-amber-800">+ Add Expense</button>
+        </div>
+      </div>
+      <p class="text-stone-400 text-sm mb-6">Running total vs. $50,000 front house budget.</p>
+      <div class="grid grid-cols-3 gap-4 mb-6">
+        <div class="bg-white rounded-xl border-l-4 border-green-400 border border-stone-100 p-4 shadow-sm"><p class="text-xs font-semibold text-stone-400 uppercase tracking-wider mb-2">Budget</p><p class="serif text-xl font-semibold">$50,000</p></div>
+        <div class="bg-white rounded-xl border-l-4 border-amber-400 border border-stone-100 p-4 shadow-sm"><p class="text-xs font-semibold text-stone-400 uppercase tracking-wider mb-2">Spent</p><p class="serif text-xl font-semibold" id="total-spent">$0</p></div>
+        <div class="bg-white rounded-xl border-l-4 border-blue-400 border border-stone-100 p-4 shadow-sm"><p class="text-xs font-semibold text-stone-400 uppercase tracking-wider mb-2">Remaining</p><p class="serif text-xl font-semibold" id="total-remaining">$50,000</p></div>
+      </div>
+      <div class="mb-6"><div class="flex justify-between text-xs text-stone-400 mb-1"><span>Progress</span><span id="budget-pct">0% spent</span></div><div class="h-2 bg-stone-100 rounded-full overflow-hidden"><div id="budget-bar" class="h-full bg-amber-500 rounded-full transition-all" style="width:0%"></div></div></div>
+      <div class="bg-white rounded-2xl border border-stone-100 shadow-sm p-5 mb-6">
+        <p class="text-sm font-semibold text-stone-700 mb-4">Spending by Category</p>
+        <div style="max-height:220px"><canvas id="budget-chart"></canvas></div>
+      </div>
+      <div class="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
+        <table class="w-full text-sm"><thead><tr class="bg-stone-50 text-xs text-stone-400 uppercase tracking-wider">
+          <th class="px-5 py-3 text-left">Description</th>
+          <th class="px-3 py-3 text-left hidden md:table-cell">Category</th>
+          <th class="px-3 py-3 text-left hidden md:table-cell">Date</th>
+          <th class="px-3 py-3 text-left">Amount</th>
+          <th class="px-3 py-3"></th>
+        </tr></thead>
+        <tbody id="budget-tbody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- SHARED NOTES -->
+    <div id="tab-notes" class="tab-content hidden">
+      <div class="flex items-center justify-between mb-1">
+        <h2 class="serif text-3xl font-semibold">Shared Notes</h2>
+        <button onclick="openModal('note')" class="bg-amber-700 text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-amber-800">+ Add Note</button>
+      </div>
+      <p class="text-stone-400 text-sm mb-8">Contractor quotes, ideas, reminders — anything that doesn't fit elsewhere.</p>
+      <div id="notes-list" class="space-y-3"></div>
+    </div>
+
+    <!-- QUOTES -->
+    <div id="tab-quotes" class="tab-content hidden">
+      <div class="flex items-center justify-between mb-1">
+        <h2 class="serif text-3xl font-semibold">Quotes</h2>
+        <button onclick="openModal('quote')" class="bg-amber-700 text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-amber-800">+ Add Quote</button>
+      </div>
+      <p class="text-stone-400 text-sm mb-8">Compare contractor quotes for each job. Mark the winner as Selected.</p>
+      <div id="quotes-list" class="space-y-4"></div>
+    </div>
+
+    <!-- CONTACTS -->
+    <div id="tab-contacts" class="tab-content hidden">
+      <div class="flex items-center justify-between mb-1">
+        <h2 class="serif text-3xl font-semibold">Contacts</h2>
+        <button onclick="openModal('contact')" class="bg-amber-700 text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-amber-800">+ Add Contact</button>
+      </div>
+      <p class="text-stone-400 text-sm mb-8">Everyone involved in the project.</p>
+      <div class="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
+        <table class="w-full text-sm"><thead><tr class="bg-stone-50 text-xs text-stone-400 uppercase tracking-wider">
+          <th class="px-5 py-3 text-left">Name</th><th class="px-3 py-3 text-left">Role</th>
+          <th class="px-3 py-3 text-left hidden md:table-cell">Company</th>
+          <th class="px-3 py-3 text-left hidden md:table-cell">Contact</th>
+          <th class="px-3 py-3"></th>
+        </tr></thead>
+        <tbody id="contacts-tbody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- DOCS -->
+    <div id="tab-docs" class="tab-content hidden">
+      <div class="flex items-center justify-between mb-1">
+        <h2 class="serif text-3xl font-semibold">Documents</h2>
+        <a href="https://drive.google.com/drive/folders/1qGjFCAcxaERWwnapcImLi5hTOJ_oK8n_?usp=drive_link" target="_blank"
+          class="flex items-center gap-2 bg-white border border-stone-200 text-stone-600 text-xs font-semibold px-4 py-2 rounded-lg hover:bg-stone-50 hover:border-stone-300 transition-all shadow-sm">
+          <svg width="14" height="14" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg"><path d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 0 0 -1.2 4.5h27.5z" fill="#00ac47"/><path d="m73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.502l5.852 11.5z" fill="#ea4335"/><path d="m43.65 25 13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="m59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="m73.4 26.5-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg>
+          Open Google Drive
+        </a>
+      </div>
+      <p class="text-stone-400 text-sm mb-4">Checklist of key documents — click the button to open the actual files in Google Drive.</p>
+      <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 flex items-center gap-3">
+        <span class="text-amber-600 text-lg">📁</span>
+        <div class="flex-1">
+          <p class="text-sm font-semibold text-amber-800">Berryman Project — Google Drive</p>
+          <p class="text-xs text-amber-600 mt-0.5">All project documents, reports, and files are stored here</p>
+        </div>
+        <a href="https://drive.google.com/drive/folders/1qGjFCAcxaERWwnapcImLi5hTOJ_oK8n_?usp=drive_link" target="_blank"
+          class="text-xs font-semibold text-amber-700 underline hover:text-amber-900">Open →</a>
+      </div>
+      <div class="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
+        <table class="w-full text-sm"><thead><tr class="bg-stone-50 text-xs text-stone-400 uppercase tracking-wider"><th class="px-5 py-3 text-left">Document</th><th class="px-3 py-3 text-left hidden md:table-cell">Category</th><th class="px-3 py-3 text-left">Status</th></tr></thead>
+        <tbody>
+          <tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3 font-medium">Closing Disclosure</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">Closing</td><td class="px-3 py-3"><span class="badge-green">Done</span></td></tr>
+          <tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3 font-medium">Termite Report (W9043)</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">Inspection</td><td class="px-3 py-3"><span class="badge-green">Done</span></td></tr>
+          <tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3 font-medium">Appraisal Report</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">Inspection</td><td class="px-3 py-3"><span class="badge-green">Done</span></td></tr>
+          <tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3 font-medium">City RPR Report</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">Permits</td><td class="px-3 py-3"><span class="badge-green">Done</span></td></tr>
+          <tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3 font-medium">Bamboo Insurance Policy</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">Insurance</td><td class="px-3 py-3"><span class="badge-amber">Verify</span></td></tr>
+          <tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3 font-medium">Full Roof Inspection Report</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">Inspection</td><td class="px-3 py-3"><span class="badge-red">Needed</span></td></tr>
+          <tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3 font-medium">Foundation Inspection Report</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">Inspection</td><td class="px-3 py-3"><span class="badge-red">Needed</span></td></tr>
+          <tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3 font-medium">Sewer Scope Report</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">Inspection</td><td class="px-3 py-3"><span class="badge-red">Needed</span></td></tr>
+          <tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3 font-medium">LADBS Full Permit History</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">Permits</td><td class="px-3 py-3"><span class="badge-red">Pull Now</span></td></tr>
+        </tbody></table>
+      </div>
+    </div>
 
   </main>
 </div>
@@ -460,7 +454,6 @@
 </div><!-- end #app -->
 
 <!-- BOTTOM NAV — mobile only -->
-
 <nav class="bottom-nav fixed bottom-0 left-0 right-0 bg-white border-t border-stone-100 z-40 md:hidden" style="padding-bottom:env(safe-area-inset-bottom)">
   <div class="grid grid-cols-5 h-16">
     <button onclick="switchTab('overview')" data-tab="overview" class="bottom-nav-btn flex flex-col items-center justify-center gap-0.5 text-stone-400 transition-colors">
@@ -487,7 +480,6 @@
 </nav>
 
 <!-- MORE MENU — mobile slide up -->
-
 <div id="more-menu" class="hidden fixed inset-0 z-50 md:hidden" onclick="closeMoreMenu()">
   <div class="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl p-6" onclick="event.stopPropagation()">
     <div class="w-10 h-1 bg-stone-200 rounded-full mx-auto mb-6"></div>
@@ -500,9 +492,6 @@
       </button>
       <button onclick="switchTab('notes');closeMoreMenu()" class="flex flex-col items-center gap-2 p-3 rounded-2xl hover:bg-stone-50">
         <span class="text-2xl">📝</span><span class="text-xs font-medium text-stone-600">Notes</span>
-      </button>
-      <button onclick="switchTab('quotes');closeMoreMenu()" class="flex flex-col items-center gap-2 p-3 rounded-2xl hover:bg-stone-50">
-        <span class="text-2xl">💬</span><span class="text-xs font-medium text-stone-600">Quotes</span>
       </button>
       <button onclick="switchTab('contacts');closeMoreMenu()" class="flex flex-col items-center gap-2 p-3 rounded-2xl hover:bg-stone-50">
         <span class="text-2xl">📞</span><span class="text-xs font-medium text-stone-600">Contacts</span>
@@ -518,7 +507,6 @@
 </div>
 
 <!-- RECEIPT SCANNER MODAL -->
-
 <div id="receipt-scanner" class="hidden fixed inset-0 bg-black/50 z-50 items-center justify-center p-4">
   <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 max-h-[90vh] overflow-y-auto">
     <div class="flex items-center justify-between mb-5">
@@ -526,66 +514,62 @@
       <button onclick="closeReceiptScanner()" class="text-stone-400 hover:text-stone-600 text-xl">✕</button>
     </div>
 
-```
-<!-- Google Drive connection -->
-<div class="bg-stone-50 rounded-xl p-3 mb-4 flex items-center justify-between">
-  <div>
-    <p class="text-xs font-semibold text-stone-600">Google Drive</p>
-    <p id="gdrive-status" class="text-xs text-stone-400 mt-0.5">Not connected — photo won't be saved to Drive</p>
-  </div>
-  <button onclick="connectGoogleDrive()" class="text-xs font-semibold text-blue-600 hover:text-blue-800 border border-blue-200 px-3 py-1.5 rounded-lg">Connect</button>
-</div>
+    <!-- Google Drive connection -->
+    <div class="bg-stone-50 rounded-xl p-3 mb-4 flex items-center justify-between">
+      <div>
+        <p class="text-xs font-semibold text-stone-600">Google Drive</p>
+        <p id="gdrive-status" class="text-xs text-stone-400 mt-0.5">Not connected — photo won't be saved to Drive</p>
+      </div>
+      <button onclick="connectGoogleDrive()" class="text-xs font-semibold text-blue-600 hover:text-blue-800 border border-blue-200 px-3 py-1.5 rounded-lg">Connect</button>
+    </div>
 
-<!-- Camera input -->
-<div class="mb-4">
-  <label class="field-label">Take Photo or Upload</label>
-  <input type="file" id="receipt-file" accept="image/*" capture="environment"
-    onchange="handleReceiptPhoto(this)"
-    class="w-full border border-stone-200 rounded-xl p-3 text-sm text-stone-600 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:bg-amber-50 file:text-amber-700 file:font-semibold cursor-pointer">
-</div>
+    <!-- Camera input -->
+    <div class="mb-4">
+      <label class="field-label">Take Photo or Upload</label>
+      <input type="file" id="receipt-file" accept="image/*" capture="environment"
+        onchange="handleReceiptPhoto(this)"
+        class="w-full border border-stone-200 rounded-xl p-3 text-sm text-stone-600 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:bg-amber-50 file:text-amber-700 file:font-semibold cursor-pointer">
+    </div>
 
-<!-- Preview -->
-<img id="receipt-preview" class="hidden w-full rounded-xl mb-3 max-h-48 object-contain bg-stone-50" alt="Receipt preview">
+    <!-- Preview -->
+    <img id="receipt-preview" class="hidden w-full rounded-xl mb-3 max-h-48 object-contain bg-stone-50" alt="Receipt preview">
 
-<!-- OCR Status -->
-<p id="ocr-status" class="text-xs text-stone-400"></p>
+    <!-- OCR Status -->
+    <p id="ocr-status" class="text-xs text-stone-400"></p>
 
-<!-- OCR Results / Manual Entry -->
-<div id="ocr-results" class="hidden mt-4 space-y-3">
-  <div><label class="field-label">Merchant / Description</label>
-    <input class="field-input" id="r-name" placeholder="e.g. Home Depot"></div>
-  <div><label class="field-label">Amount ($)</label>
-    <input class="field-input" type="number" id="r-amount" placeholder="0.00"></div>
-  <div><label class="field-label">Date</label>
-    <input class="field-input" id="r-date" placeholder="e.g. Apr 28, 2026"></div>
-  <div><label class="field-label">Category</label>
-    <select class="field-input" id="r-category">
-      <option>Renovation</option>
-      <option>Shopping</option>
-      <option>Inspection</option>
-      <option>Closing</option>
-      <option>Insurance</option>
-      <option>Other</option>
-    </select>
-  </div>
-  <button id="save-receipt-btn" onclick="saveReceipt()"
-    class="w-full bg-amber-700 text-white font-semibold py-3 rounded-xl hover:bg-amber-800 transition-colors mt-2">
-    Save Receipt
-  </button>
-</div>
+    <!-- OCR Results / Manual Entry -->
+    <div id="ocr-results" class="hidden mt-4 space-y-3">
+      <div><label class="field-label">Merchant / Description</label>
+        <input class="field-input" id="r-name" placeholder="e.g. Home Depot"></div>
+      <div><label class="field-label">Amount ($)</label>
+        <input class="field-input" type="number" id="r-amount" placeholder="0.00"></div>
+      <div><label class="field-label">Date</label>
+        <input class="field-input" id="r-date" placeholder="e.g. Apr 28, 2026"></div>
+      <div><label class="field-label">Category</label>
+        <select class="field-input" id="r-category">
+          <option>Renovation</option>
+          <option>Shopping</option>
+          <option>Inspection</option>
+          <option>Closing</option>
+          <option>Insurance</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <button id="save-receipt-btn" onclick="saveReceipt()"
+        class="w-full bg-amber-700 text-white font-semibold py-3 rounded-xl hover:bg-amber-800 transition-colors mt-2">
+        Save Receipt
+      </button>
+    </div>
 
-<!-- Manual entry fallback -->
-<button onclick="document.getElementById('ocr-results').classList.remove('hidden')"
-  class="w-full text-xs text-stone-400 hover:text-stone-600 mt-3 underline">
-  Enter manually without photo
-</button>
-```
-
+    <!-- Manual entry fallback -->
+    <button onclick="document.getElementById('ocr-results').classList.remove('hidden')"
+      class="w-full text-xs text-stone-400 hover:text-stone-600 mt-3 underline">
+      Enter manually without photo
+    </button>
   </div>
 </div>
 
 <!-- MODAL -->
-
 <div id="modal-overlay" class="hidden fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
   <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 max-h-screen overflow-y-auto">
     <h3 id="modal-title" class="serif text-xl font-semibold mb-5"></h3>
@@ -726,536 +710,564 @@ function openModal(type,data=null){
     phase:`<div><label class="field-label">Phase Name</label><input class="field-input" id="f-name" value="${v('name')}" placeholder="e.g. Phase 1 — Closing"></div>
     <div><label class="field-label">Status</label>${sel('f-status',['Not Started','In Progress','Completed'],v('status','Not Started'))}</div>
     <div><label class="field-label">Description</label><textarea class="field-input" id="f-desc" style="min-height:72px;resize:vertical" placeholder="What does this phase involve?">${v('description')}</textarea></div>
-
-```
-<div><label class="field-label">Progress: <span id="prog-label">${v('progress',0)}%</span></label>
-<input type="range" min="0" max="100" value="${v('progress',0)}" id="f-progress" oninput="document.getElementById('prog-label').textContent=this.value+'%'" class="mt-2"></div>`,
-shopping:`<div><label class="field-label">Item Name</label><input class="field-input" id="f-name" value="${v('name')}" placeholder="e.g. Refrigerator"></div><div><label class="field-label">Category</label>${sel('f-cat',['Kitchen','Bathroom','Laundry','Bedroom','Living Room','Outdoor','Other'],v('category','Kitchen'))}</div><div><label class="field-label">Priority</label>${sel('f-pri',['High','Medium','Low'],v('priority','Medium'))}</div><div><label class="field-label">Estimated Cost</label><input class="field-input" id="f-cost" value="${v('cost')}" placeholder="e.g. $500–800"></div><div><label class="field-label">Product Link</label><input class="field-input" id="f-link" value="${v('link')}" placeholder="https://..."></div><div><label class="field-label">Notes</label><textarea class="field-input" id="f-notes" style="min-height:60px;resize:vertical">${v('notes')}</textarea></div>`,
-project:`<div><label class="field-label">Task Name</label><input class="field-input" id="f-name" value="${v('name')}" placeholder="e.g. Paint living room"></div><div><label class="field-label">Area</label>${sel('f-area',['Front House','Bathroom','Kitchen','Garage/ADU','Exterior','Whole Property'],v('area','Front House'))}</div><div><label class="field-label">Contractor</label><input class="field-input" id="f-contractor" value="${v('contractor')}" placeholder="Name or TBD"></div><div><label class="field-label">Estimated Cost</label><input class="field-input" id="f-cost" value="${v('cost')}" placeholder="e.g. $2,000–4,000"></div><div><label class="field-label">Due Date</label><input class="field-input" type="date" id="f-due" value="${v('due_date')}"></div><div><label class="field-label">Assigned To</label>${sel('f-assigned',['Amir','Rose','Both'],v('assigned_to','Both'))}</div><div><label class="field-label">Notes</label><textarea class="field-input" id="f-notes" style="min-height:60px;resize:vertical">${v('notes')}</textarea></div>`,
-expense:`<div><label class="field-label">Description</label><input class="field-input" id="f-name" value="${v('name')}" placeholder="What was paid for"></div><div><label class="field-label">Category</label>${sel('f-cat',['Renovation','Shopping','Inspection','Closing','Insurance','Other'],v('category','Renovation'))}</div><div><label class="field-label">Date</label><input class="field-input" id="f-date" value="${v('date')}" placeholder="e.g. Apr 28, 2026"></div><div><label class="field-label">Amount ($)</label><input class="field-input" type="number" id="f-amount" value="${v('amount','0')}"></div>`,
-contact:`<div><label class="field-label">Name</label><input class="field-input" id="f-name" value="${v('name')}" placeholder="Full name"></div><div><label class="field-label">Role</label>${sel('f-role',['Agent','Contractor','Escrow','Lender','Inspector','Architect','Other'],v('role','Other'))}</div><div><label class="field-label">Company</label><input class="field-input" id="f-company" value="${v('company')}" placeholder="Company name"></div><div><label class="field-label">Phone / Email</label><input class="field-input" id="f-contact" value="${v('contact')}" placeholder="Contact info"></div>`,
-decision:`<div><label class="field-label">Decision</label><input class="field-input" id="f-name" value="${v('title')}" placeholder="What was decided?"></div><div><label class="field-label">Notes</label><textarea class="field-input" id="f-notes" style="min-height:72px;resize:vertical">${v('notes')}</textarea></div><div><label class="field-label">Status</label>${sel('f-status',['Agreed','Review Later','Noted','Pending'],v('status','Agreed'))}</div>`,
-note:`<div><label class="field-label">Title</label><input class="field-input" id="f-name" value="${v('title')}" placeholder="e.g. Contractor quote from John"></div><div><label class="field-label">Note</label><textarea class="field-input" id="f-notes" style="min-height:100px;resize:vertical">${v('content')}</textarea></div><div><label class="field-label">Tag</label>${sel('f-tag',['General','Contractor Quote','Idea','Reminder','ADU','Front House'],v('tag','General'))}</div>`,
-quote:`<div><label class="field-label">Contractor Name</label><input class="field-input" id="f-name" value="${v('contractor')}" placeholder="e.g. ABC Roofing"></div>
-<div><label class="field-label">Job / Task</label><select class="field-input" id="f-task-id"><option value="">— General / No specific task —</option>${_cache.projects.map(p=>`<option value="${p.id}"${v('task_id')==p.id?' selected':''}>${p.name}</option>`).join('')}</select></div>
-<div><label class="field-label">Amount ($)</label><input class="field-input" type="number" id="f-amount" value="${v('amount')}" placeholder="0"></div>
-<div><label class="field-label">Timeline</label><input class="field-input" id="f-timeline" value="${v('timeline')}" placeholder="e.g. 3 days, 2 weeks"></div>
-<div><label class="field-label">Notes</label><textarea class="field-input" id="f-notes" style="min-height:72px;resize:vertical" placeholder="Details, inclusions, exclusions...">${v('notes')}</textarea></div>
-<div><label class="field-label">Status</label>${sel('f-status',['Received','Selected','Rejected'],v('status','Received'))}</div>`,
-```
-
-};
-document.getElementById(‘modal-body’).innerHTML=forms[type];
-document.getElementById(‘modal-overlay’).classList.remove(‘hidden’);
-document.getElementById(‘modal-overlay’).classList.add(‘flex’);
-setTimeout(()=>document.getElementById(‘f-name’)?.focus(),50);
+    <div><label class="field-label">Progress: <span id="prog-label">${v('progress',0)}%</span></label>
+    <input type="range" min="0" max="100" value="${v('progress',0)}" id="f-progress" oninput="document.getElementById('prog-label').textContent=this.value+'%'" class="mt-2"></div>`,
+    shopping:`<div><label class="field-label">Item Name</label><input class="field-input" id="f-name" value="${v('name')}" placeholder="e.g. Refrigerator"></div><div><label class="field-label">Category</label>${sel('f-cat',['Kitchen','Bathroom','Laundry','Bedroom','Living Room','Outdoor','Other'],v('category','Kitchen'))}</div><div><label class="field-label">Priority</label>${sel('f-pri',['High','Medium','Low'],v('priority','Medium'))}</div><div><label class="field-label">Estimated Cost</label><input class="field-input" id="f-cost" value="${v('cost')}" placeholder="e.g. $500–800"></div><div><label class="field-label">Product Link</label><input class="field-input" id="f-link" value="${v('link')}" placeholder="https://..."></div><div><label class="field-label">Notes</label><textarea class="field-input" id="f-notes" style="min-height:60px;resize:vertical">${v('notes')}</textarea></div>`,
+    project:`<div><label class="field-label">Task Name</label><input class="field-input" id="f-name" value="${v('name')}" placeholder="e.g. Paint living room"></div><div><label class="field-label">Area</label>${sel('f-area',['Front House','Bathroom','Kitchen','Garage/ADU','Exterior','Whole Property'],v('area','Front House'))}</div><div><label class="field-label">Contractor</label><input class="field-input" id="f-contractor" value="${v('contractor')}" placeholder="Name or TBD"></div><div><label class="field-label">Estimated Cost</label><input class="field-input" id="f-cost" value="${v('cost')}" placeholder="e.g. $2,000–4,000"></div><div><label class="field-label">Due Date</label><input class="field-input" type="date" id="f-due" value="${v('due_date')}"></div><div><label class="field-label">Assigned To</label>${sel('f-assigned',['Amir','Rose','Both'],v('assigned_to','Both'))}</div><div><label class="field-label">Notes</label><textarea class="field-input" id="f-notes" style="min-height:60px;resize:vertical">${v('notes')}</textarea></div>`,
+    expense:`<div><label class="field-label">Description</label><input class="field-input" id="f-name" value="${v('name')}" placeholder="What was paid for"></div><div><label class="field-label">Category</label>${sel('f-cat',['Renovation','Shopping','Inspection','Closing','Insurance','Other'],v('category','Renovation'))}</div><div><label class="field-label">Date</label><input class="field-input" id="f-date" value="${v('date')}" placeholder="e.g. Apr 28, 2026"></div><div><label class="field-label">Amount ($)</label><input class="field-input" type="number" id="f-amount" value="${v('amount','0')}"></div>`,
+    contact:`<div><label class="field-label">Name</label><input class="field-input" id="f-name" value="${v('name')}" placeholder="Full name"></div><div><label class="field-label">Role</label>${sel('f-role',['Agent','Contractor','Escrow','Lender','Inspector','Architect','Other'],v('role','Other'))}</div><div><label class="field-label">Company</label><input class="field-input" id="f-company" value="${v('company')}" placeholder="Company name"></div><div><label class="field-label">Phone / Email</label><input class="field-input" id="f-contact" value="${v('contact')}" placeholder="Contact info"></div>`,
+    decision:`<div><label class="field-label">Decision</label><input class="field-input" id="f-name" value="${v('title')}" placeholder="What was decided?"></div><div><label class="field-label">Notes</label><textarea class="field-input" id="f-notes" style="min-height:72px;resize:vertical">${v('notes')}</textarea></div><div><label class="field-label">Status</label>${sel('f-status',['Agreed','Review Later','Noted','Pending'],v('status','Agreed'))}</div>`,
+    note:`<div><label class="field-label">Title</label><input class="field-input" id="f-name" value="${v('title')}" placeholder="e.g. Contractor quote from John"></div><div><label class="field-label">Note</label><textarea class="field-input" id="f-notes" style="min-height:100px;resize:vertical">${v('content')}</textarea></div><div><label class="field-label">Tag</label>${sel('f-tag',['General','Contractor Quote','Idea','Reminder','ADU','Front House'],v('tag','General'))}</div>`,
+    quote:`<div><label class="field-label">Contractor Name</label><input class="field-input" id="f-name" value="${v('contractor')}" placeholder="e.g. ABC Roofing"></div>
+    <div><label class="field-label">Job / Task</label><select class="field-input" id="f-task-id"><option value="">— General / No specific task —</option>${_cache.projects.map(p=>`<option value="${p.id}"${v('task_id')==p.id?' selected':''}>${p.name}</option>`).join('')}</select></div>
+    <div><label class="field-label">Amount ($)</label><input class="field-input" type="number" id="f-amount" value="${v('amount')}" placeholder="0"></div>
+    <div><label class="field-label">Timeline</label><input class="field-input" id="f-timeline" value="${v('timeline')}" placeholder="e.g. 3 days, 2 weeks"></div>
+    <div><label class="field-label">Notes</label><textarea class="field-input" id="f-notes" style="min-height:72px;resize:vertical" placeholder="Details, inclusions, exclusions...">${v('notes')}</textarea></div>
+    <div><label class="field-label">Status</label>${sel('f-status',['Received','Selected','Rejected'],v('status','Received'))}</div>`,
+  };
+  document.getElementById('modal-body').innerHTML=forms[type];
+  document.getElementById('modal-overlay').classList.remove('hidden');
+  document.getElementById('modal-overlay').classList.add('flex');
+  setTimeout(()=>document.getElementById('f-name')?.focus(),50);
 }
 
-function closeModal(){document.getElementById(‘modal-overlay’).classList.add(‘hidden’);document.getElementById(‘modal-overlay’).classList.remove(‘flex’);editingId=null;}
+function closeModal(){document.getElementById('modal-overlay').classList.add('hidden');document.getElementById('modal-overlay').classList.remove('flex');editingId=null;}
 
 async function saveModal(){
-const name=document.getElementById(‘f-name’)?.value?.trim();
-if(!name)return;
-document.getElementById(‘save-btn’).textContent=‘Saving…’;
-const now=new Date().toLocaleDateString(‘en-US’,{month:‘short’,day:‘numeric’,year:‘numeric’});
+  const name=document.getElementById('f-name')?.value?.trim();
+  if(!name)return;
+  document.getElementById('save-btn').textContent='Saving...';
+  const now=new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
 
-if(currentModal===‘phase’){
-const d={name,status:document.getElementById(‘f-status’).value,description:document.getElementById(‘f-desc’).value||’’,progress:parseInt(document.getElementById(‘f-progress’).value)||0};
-if(editingId){
-await dbUpdate(‘phases’,editingId,d);
-const updated={…_cache.phases.find(x=>x.id===editingId),…d};
-_cache.phases=_cache.phases.map(x=>x.id===editingId?updated:x);
-document.getElementById(‘phase-’+editingId)?.remove();
-renderPhase(updated,null);
-renderOverviewPhases(_cache.phases);
-} else {
-const row=await dbInsert(‘phases’,{…d,sort_order:_cache.phases.length+1});
-if(row){renderPhase(row,document.getElementById(‘phases-list’));_cache.phases.push(row);renderOverviewPhases(_cache.phases);}
-}
-}
-if(currentModal===‘shopping’){
-const d={name,category:document.getElementById(‘f-cat’).value,priority:document.getElementById(‘f-pri’).value,cost:document.getElementById(‘f-cost’).value||’—’,link:document.getElementById(‘f-link’).value||’’,notes:document.getElementById(‘f-notes’).value||’’};
-if(editingId){await dbUpdate(‘shopping’,editingId,d);reloadTable(‘shopping’);}
-else{const row=await dbInsert(‘shopping’,{…d,status:‘Not Started’});if(row)appendShopping(row);}
-}
-if(currentModal===‘project’){
-const d={name,area:document.getElementById(‘f-area’).value,contractor:document.getElementById(‘f-contractor’).value||‘TBD’,cost:document.getElementById(‘f-cost’).value||’—’,due_date:document.getElementById(‘f-due’).value||’’,assigned_to:document.getElementById(‘f-assigned’).value,notes:document.getElementById(‘f-notes’).value||’’};
-if(editingId){await dbUpdate(‘projects’,editingId,d);reloadTable(‘projects’);}
-else{const row=await dbInsert(‘projects’,{…d,status:‘Not Started’});if(row)appendProject(row);}
-}
-if(currentModal===‘expense’){
-const d={name,category:document.getElementById(‘f-cat’).value,date:document.getElementById(‘f-date’).value||now,amount:document.getElementById(‘f-amount’).value||‘0’};
-if(editingId){await dbUpdate(‘expenses’,editingId,d);reloadTable(‘expenses’);}
-else{const row=await dbInsert(‘expenses’,d);if(row){_cache.expenses.push(row);appendExpense(row);updateBudget();}}
-}
-if(currentModal===‘contact’){
-const d={name,role:document.getElementById(‘f-role’).value,company:document.getElementById(‘f-company’).value||’—’,contact:document.getElementById(‘f-contact’).value||’—’};
-if(editingId){await dbUpdate(‘contacts’,editingId,d);reloadTable(‘contacts’);}
-else{const row=await dbInsert(‘contacts’,d);if(row)appendContact(row);}
-}
-if(currentModal===‘decision’){
-const d={title:name,notes:document.getElementById(‘f-notes’).value||’’,status:document.getElementById(‘f-status’).value};
-if(editingId){await dbUpdate(‘decisions’,editingId,d);reloadTable(‘decisions’);}
-else{const row=await dbInsert(‘decisions’,{…d,date:now});if(row)prependDecision(row);}
-}
-if(currentModal===‘note’){
-const d={title:name,content:document.getElementById(‘f-notes’).value||’’,tag:document.getElementById(‘f-tag’).value,date:now};
-if(editingId){await dbUpdate(‘notes’,editingId,d);reloadTable(‘notes’);}
-else{const row=await dbInsert(‘notes’,d);if(row)appendNote(row);}
-}
-if(currentModal===‘quote’){
-const taskId = document.getElementById(‘f-task-id’).value;
-const taskName = taskId ? _cache.projects.find(p=>p.id==taskId)?.name||’’ : ‘General’;
-const d={
-contractor:name,
-task_id: taskId||null,
-task_name: taskName,
-amount: parseFloat(document.getElementById(‘f-amount’).value)||0,
-timeline: document.getElementById(‘f-timeline’).value||’’,
-notes: document.getElementById(‘f-notes’).value||’’,
-status: document.getElementById(‘f-status’).value,
-};
-if(editingId){await dbUpdate(‘quotes’,editingId,d);reloadTable(‘quotes’);}
-else{const row=await dbInsert(‘quotes’,d);if(row){_cache.quotes.push(row);renderQuotes();}}
-}
-document.getElementById(‘save-btn’).textContent=‘Save’;
-closeModal();
+  if(currentModal==='phase'){
+    const d={name,status:document.getElementById('f-status').value,description:document.getElementById('f-desc').value||'',progress:parseInt(document.getElementById('f-progress').value)||0};
+    if(editingId){
+      await dbUpdate('phases',editingId,d);
+      const updated={..._cache.phases.find(x=>x.id===editingId),...d};
+      _cache.phases=_cache.phases.map(x=>x.id===editingId?updated:x);
+      document.getElementById('phase-'+editingId)?.remove();
+      renderPhase(updated,null);
+      renderOverviewPhases(_cache.phases);
+    } else {
+      const row=await dbInsert('phases',{...d,sort_order:_cache.phases.length+1});
+      if(row){renderPhase(row,document.getElementById('phases-list'));_cache.phases.push(row);renderOverviewPhases(_cache.phases);}
+    }
+  }
+  if(currentModal==='shopping'){
+    const d={name,category:document.getElementById('f-cat').value,priority:document.getElementById('f-pri').value,cost:document.getElementById('f-cost').value||'—',link:document.getElementById('f-link').value||'',notes:document.getElementById('f-notes').value||''};
+    if(editingId){await dbUpdate('shopping',editingId,d);reloadTable('shopping');}
+    else{const row=await dbInsert('shopping',{...d,status:'Not Started'});if(row)appendShopping(row);}
+  }
+  if(currentModal==='project'){
+    const d={name,area:document.getElementById('f-area').value,contractor:document.getElementById('f-contractor').value||'TBD',cost:document.getElementById('f-cost').value||'—',due_date:document.getElementById('f-due').value||'',assigned_to:document.getElementById('f-assigned').value,notes:document.getElementById('f-notes').value||''};
+    if(editingId){await dbUpdate('projects',editingId,d);reloadTable('projects');}
+    else{const row=await dbInsert('projects',{...d,status:'Not Started'});if(row)appendProject(row);}
+  }
+  if(currentModal==='expense'){
+    const d={name,category:document.getElementById('f-cat').value,date:document.getElementById('f-date').value||now,amount:document.getElementById('f-amount').value||'0'};
+    if(editingId){await dbUpdate('expenses',editingId,d);reloadTable('expenses');}
+    else{const row=await dbInsert('expenses',d);if(row){_cache.expenses.push(row);appendExpense(row);updateBudget();}}
+  }
+  if(currentModal==='contact'){
+    const d={name,role:document.getElementById('f-role').value,company:document.getElementById('f-company').value||'—',contact:document.getElementById('f-contact').value||'—'};
+    if(editingId){await dbUpdate('contacts',editingId,d);reloadTable('contacts');}
+    else{const row=await dbInsert('contacts',d);if(row)appendContact(row);}
+  }
+  if(currentModal==='decision'){
+    const d={title:name,notes:document.getElementById('f-notes').value||'',status:document.getElementById('f-status').value};
+    if(editingId){await dbUpdate('decisions',editingId,d);reloadTable('decisions');}
+    else{const row=await dbInsert('decisions',{...d,date:now});if(row)prependDecision(row);}
+  }
+  if(currentModal==='note'){
+    const d={title:name,content:document.getElementById('f-notes').value||'',tag:document.getElementById('f-tag').value,date:now};
+    if(editingId){await dbUpdate('notes',editingId,d);reloadTable('notes');}
+    else{const row=await dbInsert('notes',d);if(row)appendNote(row);}
+  }
+  if(currentModal==='quote'){
+    const taskId = document.getElementById('f-task-id').value;
+    const taskName = taskId ? _cache.projects.find(p=>p.id==taskId)?.name||'' : 'General';
+    const d={
+      contractor:name,
+      task_id: taskId||null,
+      task_name: taskName,
+      amount: parseFloat(document.getElementById('f-amount').value)||0,
+      timeline: document.getElementById('f-timeline').value||'',
+      notes: document.getElementById('f-notes').value||'',
+      status: document.getElementById('f-status').value,
+    };
+    if(editingId){await dbUpdate('quotes',editingId,d);reloadTable('quotes');}
+    else{const row=await dbInsert('quotes',d);if(row){_cache.quotes.push(row);renderQuotes();}}
+  }
+  document.getElementById('save-btn').textContent='Save';
+  closeModal();
 }
 
 async function reloadTable(table){
-const data=await dbGet(table);_cache[table]=data;
-if(table===‘shopping’){document.getElementById(‘shopping-tbody’).innerHTML=’’;document.getElementById(‘shopping-done-tbody’).innerHTML=’’;data.forEach(appendShopping);updateShoppingCounts();}
-if(table===‘projects’){document.getElementById(‘projects-tbody’).innerHTML=’’;data.forEach(appendProject);}
-if(table===‘expenses’){document.getElementById(‘budget-tbody’).innerHTML=’’;_cache.expenses=data;data.forEach(appendExpense);updateBudget();}
-if(table===‘contacts’){document.getElementById(‘contacts-tbody’).innerHTML=’’;data.forEach(appendContact);}
-if(table===‘decisions’){document.getElementById(‘decisions-list’).innerHTML=’’;[…data].reverse().forEach(prependDecision);}
-if(table===‘notes’){document.getElementById(‘notes-list’).innerHTML=’’;data.forEach(appendNote);}
-if(table===‘quotes’){_cache.quotes=data;renderQuotes();}
+  const data=await dbGet(table);_cache[table]=data;
+  if(table==='shopping'){document.getElementById('shopping-tbody').innerHTML='';document.getElementById('shopping-done-tbody').innerHTML='';data.forEach(appendShopping);updateShoppingCounts();}
+  if(table==='projects'){document.getElementById('projects-tbody').innerHTML='';data.forEach(appendProject);}
+  if(table==='expenses'){document.getElementById('budget-tbody').innerHTML='';_cache.expenses=data;data.forEach(appendExpense);updateBudget();}
+  if(table==='contacts'){document.getElementById('contacts-tbody').innerHTML='';data.forEach(appendContact);}
+  if(table==='decisions'){document.getElementById('decisions-list').innerHTML='';[...data].reverse().forEach(prependDecision);}
+  if(table==='notes'){document.getElementById('notes-list').innerHTML='';data.forEach(appendNote);}
+  if(table==='quotes'){_cache.quotes=data;renderQuotes();}
 }
 
 function renderQuotes(){
-const container=document.getElementById(‘quotes-list’);
-if(!container)return;
-container.innerHTML=’’;
-if(!_cache.quotes||!_cache.quotes.length){container.innerHTML=’<p class="text-center text-stone-300 text-sm py-10">No quotes yet — add your first one.</p>’;return;}
-const groups={};
-_cache.quotes.forEach(q=>{const key=q.task_name||‘General’;if(!groups[key])groups[key]=[];groups[key].push(q);});
-Object.entries(groups).forEach(([taskName,quotes])=>{
-const selected=quotes.find(q=>q.status===‘Selected’);
-const lowest=quotes.reduce((a,b)=>a.amount<b.amount?a:b,quotes[0]);
-let html=`<div class="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden"> <div class="px-5 py-4 border-b border-stone-100 flex items-center justify-between"> <div><p class="font-semibold text-sm text-stone-800">${taskName}</p> <p class="text-xs text-stone-400 mt-0.5">${quotes.length} quote${quotes.length>1?'s':''} · Lowest: $${parseFloat(lowest.amount).toLocaleString()}</p></div> ${selected?`<span class="badge-green">✅ ${selected.contractor}</span>`:'<span class="badge-gray">No selection yet</span>'} </div> <table class="w-full text-sm"> <thead><tr class="bg-stone-50 text-xs text-stone-400 uppercase tracking-wider"> <th class="px-5 py-3 text-left">Contractor</th> <th class="px-3 py-3 text-left">Amount</th> <th class="px-3 py-3 text-left hidden md:table-cell">Timeline</th> <th class="px-3 py-3 text-left hidden md:table-cell">Notes</th> <th class="px-3 py-3 text-left">Status</th> <th class="px-3 py-3"></th> </tr></thead><tbody>`;
-quotes.sort((a,b)=>a.amount-b.amount).forEach(q=>{
-const isSelected=q.status===‘Selected’;
-const isLowest=quotes.length>1&&q.id===lowest.id;
-html+=`<tr class="border-t border-stone-50 hover:bg-stone-50${isSelected?' bg-green-50':''}"> <td class="px-5 py-3 font-medium${isSelected?' text-green-700':''}">${q.contractor}${isLowest?'<span class="ml-1 text-xs text-green-600 font-semibold">Lowest</span>':''}</td> <td class="px-3 py-3 font-semibold${isSelected?' text-green-700':''} ">$${parseFloat(q.amount||0).toLocaleString()}</td> <td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">${q.timeline||'—'}</td> <td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">${q.notes||'—'}</td> <td class="px-3 py-3"><select onchange="updateQuoteStatus(${q.id},this.value)" class="text-xs border border-stone-200 rounded-md px-2 py-1 bg-white text-stone-600 focus:outline-none"> ${['Received','Selected','Rejected'].map(s=>`<option${s===q.status?’ selected’:’’}>${s}</option>`).join('')} </select></td> <td class="px-3 py-3"><div class="flex gap-1"><button class="btn-edit" onclick="editQuote(${q.id})">✏️</button><button class="btn-del" onclick="deleteQuote(${q.id})">✕</button></div></td> </tr>`;
-});
-html+=`</tbody></table></div>`;
-container.insertAdjacentHTML(‘beforeend’,html);
-});
+  const container=document.getElementById('quotes-list');
+  if(!container)return;
+  container.innerHTML='';
+  if(!_cache.quotes||!_cache.quotes.length){container.innerHTML='<p class="text-center text-stone-300 text-sm py-10">No quotes yet — add your first one.</p>';return;}
+  const groups={};
+  _cache.quotes.forEach(q=>{const key=q.task_name||'General';if(!groups[key])groups[key]=[];groups[key].push(q);});
+  Object.entries(groups).forEach(([taskName,quotes])=>{
+    const selected=quotes.find(q=>q.status==='Selected');
+    const lowest=quotes.reduce((a,b)=>a.amount<b.amount?a:b,quotes[0]);
+    let html=`<div class="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
+      <div class="px-5 py-4 border-b border-stone-100 flex items-center justify-between">
+        <div><p class="font-semibold text-sm text-stone-800">${taskName}</p>
+        <p class="text-xs text-stone-400 mt-0.5">${quotes.length} quote${quotes.length>1?'s':''} · Lowest: $${parseFloat(lowest.amount).toLocaleString()}</p></div>
+        ${selected?`<span class="badge-green">✅ ${selected.contractor}</span>`:'<span class="badge-gray">No selection yet</span>'}
+      </div>
+      <table class="w-full text-sm">
+        <thead><tr class="bg-stone-50 text-xs text-stone-400 uppercase tracking-wider">
+          <th class="px-5 py-3 text-left">Contractor</th>
+          <th class="px-3 py-3 text-left">Amount</th>
+          <th class="px-3 py-3 text-left hidden md:table-cell">Timeline</th>
+          <th class="px-3 py-3 text-left hidden md:table-cell">Notes</th>
+          <th class="px-3 py-3 text-left">Status</th>
+          <th class="px-3 py-3"></th>
+        </tr></thead><tbody>`;
+    quotes.sort((a,b)=>a.amount-b.amount).forEach(q=>{
+      const isSelected=q.status==='Selected';
+      const isLowest=quotes.length>1&&q.id===lowest.id;
+      html+=`<tr class="border-t border-stone-50 hover:bg-stone-50${isSelected?' bg-green-50':''}">
+        <td class="px-5 py-3 font-medium${isSelected?' text-green-700':''}">${q.contractor}${isLowest?'<span class="ml-1 text-xs text-green-600 font-semibold">Lowest</span>':''}</td>
+        <td class="px-3 py-3 font-semibold${isSelected?' text-green-700':''} ">$${parseFloat(q.amount||0).toLocaleString()}</td>
+        <td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">${q.timeline||'—'}</td>
+        <td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">${q.notes||'—'}</td>
+        <td class="px-3 py-3"><select onchange="updateQuoteStatus(${q.id},this.value)" class="text-xs border border-stone-200 rounded-md px-2 py-1 bg-white text-stone-600 focus:outline-none">
+          ${['Received','Selected','Rejected'].map(s=>`<option${s===q.status?' selected':''}>${s}</option>`).join('')}
+        </select></td>
+        <td class="px-3 py-3"><div class="flex gap-1"><button class="btn-edit" onclick="editQuote(${q.id})">✏️</button><button class="btn-del" onclick="deleteQuote(${q.id})">✕</button></div></td>
+      </tr>`;
+    });
+    html+=`</tbody></table></div>`;
+    container.insertAdjacentHTML('beforeend',html);
+  });
 }
 
-function editQuote(id){const r=_cache.quotes.find(x=>x.id===id);if(r)openModal(‘quote’,r);}
-async function deleteQuote(id){if(!confirm(‘Delete this quote?’))return;await dbDelete(‘quotes’,id);_cache.quotes=_cache.quotes.filter(x=>x.id!==id);renderQuotes();}
-async function updateQuoteStatus(id,status){await dbUpdate(‘quotes’,id,{status});_cache.quotes=_cache.quotes.map(x=>x.id===id?{…x,status}:x);renderQuotes();}
+function editQuote(id){const r=_cache.quotes.find(x=>x.id===id);if(r)openModal('quote',r);}
+async function deleteQuote(id){if(!confirm('Delete this quote?'))return;await dbDelete('quotes',id);_cache.quotes=_cache.quotes.filter(x=>x.id!==id);renderQuotes();}
+async function updateQuoteStatus(id,status){await dbUpdate('quotes',id,{status});_cache.quotes=_cache.quotes.map(x=>x.id===id?{...x,status}:x);renderQuotes();}
 
 async function refreshAll(){
-const [s,p,e,c,d,n,ph,q]=await Promise.all([dbGet(‘shopping’),dbGet(‘projects’),dbGet(‘expenses’),dbGet(‘contacts’),dbGet(‘decisions’),dbGet(‘notes’),dbGet(‘phases’,‘sort_order.asc’),dbGet(‘quotes’)]);
-_cache={shopping:s,projects:p,expenses:e,contacts:c,decisions:d,notes:n||[],phases:ph||[],quotes:q||[]};
-document.getElementById(‘shopping-tbody’).innerHTML=’’;document.getElementById(‘shopping-done-tbody’).innerHTML=’’;s.forEach(appendShopping);updateShoppingCounts();
-document.getElementById(‘projects-tbody’).innerHTML=’’;p.forEach(appendProject);
-document.getElementById(‘budget-tbody’).innerHTML=’’;e.forEach(appendExpense);updateBudget();
-document.getElementById(‘contacts-tbody’).innerHTML=’’;c.forEach(appendContact);
-document.getElementById(‘decisions-list’).innerHTML=’’;[…d].reverse().forEach(prependDecision);
-document.getElementById(‘notes-list’).innerHTML=’’;(n||[]).forEach(appendNote);
-document.getElementById(‘phases-list’).innerHTML=’’;(ph||[]).forEach(r=>renderPhase(r,document.getElementById(‘phases-list’)));
-renderOverviewPhases(ph||[]);
-renderQuotes();
+  const [s,p,e,c,d,n,ph,q]=await Promise.all([dbGet('shopping'),dbGet('projects'),dbGet('expenses'),dbGet('contacts'),dbGet('decisions'),dbGet('notes'),dbGet('phases','sort_order.asc'),dbGet('quotes')]);
+  _cache={shopping:s,projects:p,expenses:e,contacts:c,decisions:d,notes:n||[],phases:ph||[],quotes:q||[]};
+  document.getElementById('shopping-tbody').innerHTML='';document.getElementById('shopping-done-tbody').innerHTML='';s.forEach(appendShopping);updateShoppingCounts();
+  document.getElementById('projects-tbody').innerHTML='';p.forEach(appendProject);
+  document.getElementById('budget-tbody').innerHTML='';e.forEach(appendExpense);updateBudget();
+  document.getElementById('contacts-tbody').innerHTML='';c.forEach(appendContact);
+  document.getElementById('decisions-list').innerHTML='';[...d].reverse().forEach(prependDecision);
+  document.getElementById('notes-list').innerHTML='';(n||[]).forEach(appendNote);
+  document.getElementById('phases-list').innerHTML='';(ph||[]).forEach(r=>renderPhase(r,document.getElementById('phases-list')));
+  renderOverviewPhases(ph||[]);
+  renderQuotes();
 }
 
-function editShopping(id){const r=_cache.shopping.find(x=>x.id===id);if(r)openModal(‘shopping’,r);}
-function editProject(id){const r=_cache.projects.find(x=>x.id===id);if(r)openModal(‘project’,r);}
-function editExpense(id){const r=_cache.expenses.find(x=>x.id===id);if(r)openModal(‘expense’,r);}
-function editContact(id){const r=_cache.contacts.find(x=>x.id===id);if(r)openModal(‘contact’,r);}
-function editDecision(id){const r=_cache.decisions.find(x=>x.id===id);if(r)openModal(‘decision’,r);}
-function editNote(id){const r=_cache.notes.find(x=>x.id===id);if(r)openModal(‘note’,r);}
+function editShopping(id){const r=_cache.shopping.find(x=>x.id===id);if(r)openModal('shopping',r);}
+function editProject(id){const r=_cache.projects.find(x=>x.id===id);if(r)openModal('project',r);}
+function editExpense(id){const r=_cache.expenses.find(x=>x.id===id);if(r)openModal('expense',r);}
+function editContact(id){const r=_cache.contacts.find(x=>x.id===id);if(r)openModal('contact',r);}
+function editDecision(id){const r=_cache.decisions.find(x=>x.id===id);if(r)openModal('decision',r);}
+function editNote(id){const r=_cache.notes.find(x=>x.id===id);if(r)openModal('note',r);}
 
 async function updateStatus(table,id,status){
-await dbUpdate(table,id,{status});
-if(table===‘shopping’){
-const item = _cache.shopping.find(x=>x.id===id);
-if(item){ item.status=status; appendShopping(item); }
-}
+  await dbUpdate(table,id,{status});
+  if(table==='shopping'){
+    const item = _cache.shopping.find(x=>x.id===id);
+    if(item){ item.status=status; appendShopping(item); }
+  }
 }
 
 async function deleteRow(table,id,el){
-if(!confirm(‘Delete this item?’))return;
-await dbDelete(table,id);
-_cache[table]=_cache[table].filter(x=>x.id!==id);
-el.closest(‘tr’)?.remove()||el.closest(’.card-item’)?.remove();
-if(table===‘expenses’)updateBudget();
+  if(!confirm('Delete this item?'))return;
+  await dbDelete(table,id);
+  _cache[table]=_cache[table].filter(x=>x.id!==id);
+  el.closest('tr')?.remove()||el.closest('.card-item')?.remove();
+  if(table==='expenses')updateBudget();
 }
 
 function toggleCompletedShopping(){
-const list = document.getElementById(‘completed-shopping-list’);
-const chevron = document.getElementById(‘completed-chevron’);
-const hidden = list.classList.contains(‘hidden’);
-list.classList.toggle(‘hidden’);
-chevron.textContent = hidden ? ‘▲ Hide’ : ‘▼ Show’;
+  const list = document.getElementById('completed-shopping-list');
+  const chevron = document.getElementById('completed-chevron');
+  const hidden = list.classList.contains('hidden');
+  list.classList.toggle('hidden');
+  chevron.textContent = hidden ? '▲ Hide' : '▼ Show';
 }
 
 function updateShoppingCounts(){
-const active = document.getElementById(‘shopping-tbody’).querySelectorAll(‘tr:not(#shopping-empty)’).length;
-const done = document.getElementById(‘shopping-done-tbody’).querySelectorAll(‘tr’).length;
-document.getElementById(‘active-count’).textContent = active ? `(${active})` : ‘’;
-document.getElementById(‘completed-count’).textContent = done ? `(${done})` : ‘’;
-// Show/hide empty state
-document.getElementById(‘shopping-empty’).style.display = active ? ‘none’ : ‘’;
-// Show/hide completed section
-if(done > 0) document.getElementById(‘completed-shopping-section’).classList.remove(‘hidden’);
-else document.getElementById(‘completed-shopping-section’).classList.add(‘hidden’);
+  const active = document.getElementById('shopping-tbody').querySelectorAll('tr:not(#shopping-empty)').length;
+  const done = document.getElementById('shopping-done-tbody').querySelectorAll('tr').length;
+  document.getElementById('active-count').textContent = active ? `(${active})` : '';
+  document.getElementById('completed-count').textContent = done ? `(${done})` : '';
+  // Show/hide empty state
+  document.getElementById('shopping-empty').style.display = active ? 'none' : '';
+  // Show/hide completed section
+  if(done > 0) document.getElementById('completed-shopping-section').classList.remove('hidden');
+  else document.getElementById('completed-shopping-section').classList.add('hidden');
 }
 
 function appendShopping(r){
-_cache.shopping=_cache.shopping.filter(x=>x.id!==r.id).concat(r);
-const noteHtml=r.notes?`<div class="note-text">${r.notes}</div>`:’’;
-const linkHtml=r.link?`<div class="link-text"><a href="${r.link}" target="_blank">🔗 View product</a></div>`:’’;
-const isDone = [‘Ordered’,‘Delivered’].includes(r.status);
+  _cache.shopping=_cache.shopping.filter(x=>x.id!==r.id).concat(r);
+  const noteHtml=r.notes?`<div class="note-text">${r.notes}</div>`:'';
+  const linkHtml=r.link?`<div class="link-text"><a href="${r.link}" target="_blank">🔗 View product</a></div>`:'';
+  const isDone = ['Ordered','Delivered'].includes(r.status);
 
-if(isDone){
-// Remove from active if exists
-document.getElementById(‘shopping-tbody’).querySelector(`tr[data-id="${r.id}"]`)?.remove();
-// Remove from done if exists (for updates)
-document.getElementById(‘shopping-done-tbody’).querySelector(`tr[data-id="${r.id}"]`)?.remove();
-document.getElementById(‘shopping-done-tbody’).insertAdjacentHTML(‘beforeend’,
-`<tr data-id="${r.id}" class="border-t border-stone-50 hover:bg-stone-50 opacity-70"> <td class="px-5 py-3 font-medium text-stone-500 line-through">${r.name}${noteHtml}${linkHtml}</td> <td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">${r.category}</td> <td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">${r.cost}</td> <td class="px-3 py-3">${statusSelect('shopping',r.id,r.status,['Not Started','Research','Approved','Ordered','Delivered'])}</td> <td class="px-3 py-3"><div class="flex gap-1"><button class="btn-edit" onclick="editShopping(${r.id})">✏️</button><button class="btn-del" onclick="deleteRow('shopping',${r.id},this)">✕</button></div></td> </tr>`);
-} else {
-// Remove from done if exists (status changed back)
-document.getElementById(‘shopping-done-tbody’).querySelector(`tr[data-id="${r.id}"]`)?.remove();
-// Remove from active if exists (for updates)
-document.getElementById(‘shopping-tbody’).querySelector(`tr[data-id="${r.id}"]`)?.remove();
-document.getElementById(‘shopping-tbody’).insertAdjacentHTML(‘beforeend’,
-`<tr data-id="${r.id}" class="border-t border-stone-50 hover:bg-stone-50"> <td class="px-5 py-3 font-medium">${r.name}${noteHtml}${linkHtml}</td> <td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">${r.category}</td> <td class="px-3 py-3">${badge(r.priority)}</td> <td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">${r.cost}</td> <td class="px-3 py-3">${statusSelect('shopping',r.id,r.status,['Not Started','Research','Approved','Ordered','Delivered'])}</td> <td class="px-3 py-3"><div class="flex gap-1"><button class="btn-edit" onclick="editShopping(${r.id})">✏️</button><button class="btn-del" onclick="deleteRow('shopping',${r.id},this)">✕</button></div></td> </tr>`);
-}
-updateShoppingCounts();
+  if(isDone){
+    // Remove from active if exists
+    document.getElementById('shopping-tbody').querySelector(`tr[data-id="${r.id}"]`)?.remove();
+    // Remove from done if exists (for updates)
+    document.getElementById('shopping-done-tbody').querySelector(`tr[data-id="${r.id}"]`)?.remove();
+    document.getElementById('shopping-done-tbody').insertAdjacentHTML('beforeend',
+      `<tr data-id="${r.id}" class="border-t border-stone-50 hover:bg-stone-50 opacity-70">
+        <td class="px-5 py-3 font-medium text-stone-500 line-through">${r.name}${noteHtml}${linkHtml}</td>
+        <td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">${r.category}</td>
+        <td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">${r.cost}</td>
+        <td class="px-3 py-3">${statusSelect('shopping',r.id,r.status,['Not Started','Research','Approved','Ordered','Delivered'])}</td>
+        <td class="px-3 py-3"><div class="flex gap-1"><button class="btn-edit" onclick="editShopping(${r.id})">✏️</button><button class="btn-del" onclick="deleteRow('shopping',${r.id},this)">✕</button></div></td>
+      </tr>`);
+  } else {
+    // Remove from done if exists (status changed back)
+    document.getElementById('shopping-done-tbody').querySelector(`tr[data-id="${r.id}"]`)?.remove();
+    // Remove from active if exists (for updates)
+    document.getElementById('shopping-tbody').querySelector(`tr[data-id="${r.id}"]`)?.remove();
+    document.getElementById('shopping-tbody').insertAdjacentHTML('beforeend',
+      `<tr data-id="${r.id}" class="border-t border-stone-50 hover:bg-stone-50">
+        <td class="px-5 py-3 font-medium">${r.name}${noteHtml}${linkHtml}</td>
+        <td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">${r.category}</td>
+        <td class="px-3 py-3">${badge(r.priority)}</td>
+        <td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">${r.cost}</td>
+        <td class="px-3 py-3">${statusSelect('shopping',r.id,r.status,['Not Started','Research','Approved','Ordered','Delivered'])}</td>
+        <td class="px-3 py-3"><div class="flex gap-1"><button class="btn-edit" onclick="editShopping(${r.id})">✏️</button><button class="btn-del" onclick="deleteRow('shopping',${r.id},this)">✕</button></div></td>
+      </tr>`);
+  }
+  updateShoppingCounts();
 }
 
 function appendProject(r){
-_cache.projects=_cache.projects.filter(x=>x.id!==r.id).concat(r);
-const noteHtml=r.notes?`<div class="note-text">${r.notes}</div>`:’’;
-document.getElementById(‘projects-tbody’).insertAdjacentHTML(‘beforeend’,`<tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3 font-medium">${r.name}<div class="text-xs text-stone-400 font-normal">${r.contractor||''} · ${r.cost||''}</div>${noteHtml}</td><td class="px-3 py-3 hidden md:table-cell">${formatDue(r.due_date)}</td><td class="px-3 py-3 hidden md:table-cell">${assignedBadge(r.assigned_to)}</td><td class="px-3 py-3">${statusSelect('projects',r.id,r.status,['Not Started','Pending','In Progress','Done'])}</td><td class="px-3 py-3"><div class="flex gap-1"><button class="btn-edit" onclick="editProject(${r.id})">✏️</button><button class="btn-del" onclick="deleteRow('projects',${r.id},this)">✕</button></div></td></tr>`);
+  _cache.projects=_cache.projects.filter(x=>x.id!==r.id).concat(r);
+  const noteHtml=r.notes?`<div class="note-text">${r.notes}</div>`:'';
+  document.getElementById('projects-tbody').insertAdjacentHTML('beforeend',`<tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3 font-medium">${r.name}<div class="text-xs text-stone-400 font-normal">${r.contractor||''} · ${r.cost||''}</div>${noteHtml}</td><td class="px-3 py-3 hidden md:table-cell">${formatDue(r.due_date)}</td><td class="px-3 py-3 hidden md:table-cell">${assignedBadge(r.assigned_to)}</td><td class="px-3 py-3">${statusSelect('projects',r.id,r.status,['Not Started','Pending','In Progress','Done'])}</td><td class="px-3 py-3"><div class="flex gap-1"><button class="btn-edit" onclick="editProject(${r.id})">✏️</button><button class="btn-del" onclick="deleteRow('projects',${r.id},this)">✕</button></div></td></tr>`);
 }
 
 function appendExpense(r){
-_cache.expenses=_cache.expenses.filter(x=>x.id!==r.id).concat(r);
-document.getElementById(‘budget-tbody’).insertAdjacentHTML(‘beforeend’,`<tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3 font-medium">${r.name}</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">${r.category}</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">${r.date}</td><td class="px-3 py-3 font-semibold">$${parseFloat(r.amount||0).toLocaleString()}</td><td class="px-3 py-3"><div class="flex gap-1"><button class="btn-edit" onclick="editExpense(${r.id})">✏️</button><button class="btn-del" onclick="deleteRow('expenses',${r.id},this)">✕</button></div></td></tr>`);
+  _cache.expenses=_cache.expenses.filter(x=>x.id!==r.id).concat(r);
+  document.getElementById('budget-tbody').insertAdjacentHTML('beforeend',`<tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3 font-medium">${r.name}</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">${r.category}</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">${r.date}</td><td class="px-3 py-3 font-semibold">$${parseFloat(r.amount||0).toLocaleString()}</td><td class="px-3 py-3"><div class="flex gap-1"><button class="btn-edit" onclick="editExpense(${r.id})">✏️</button><button class="btn-del" onclick="deleteRow('expenses',${r.id},this)">✕</button></div></td></tr>`);
 }
 
 function appendContact(r){
-_cache.contacts=_cache.contacts.filter(x=>x.id!==r.id).concat(r);
-document.getElementById(‘contacts-tbody’).insertAdjacentHTML(‘beforeend’,`<tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3 font-medium">${r.name}</td><td class="px-3 py-3">${badge(r.role)}</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">${r.company}</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">${r.contact}</td><td class="px-3 py-3"><div class="flex gap-1"><button class="btn-edit" onclick="editContact(${r.id})">✏️</button><button class="btn-del" onclick="deleteRow('contacts',${r.id},this)">✕</button></div></td></tr>`);
+  _cache.contacts=_cache.contacts.filter(x=>x.id!==r.id).concat(r);
+  document.getElementById('contacts-tbody').insertAdjacentHTML('beforeend',`<tr class="border-t border-stone-50 hover:bg-stone-50"><td class="px-5 py-3 font-medium">${r.name}</td><td class="px-3 py-3">${badge(r.role)}</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">${r.company}</td><td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">${r.contact}</td><td class="px-3 py-3"><div class="flex gap-1"><button class="btn-edit" onclick="editContact(${r.id})">✏️</button><button class="btn-del" onclick="deleteRow('contacts',${r.id},this)">✕</button></div></td></tr>`);
 }
 
 function prependDecision(r){
-_cache.decisions=_cache.decisions.filter(x=>x.id!==r.id).concat(r);
-const sm={Agreed:‘badge-green’,‘Review Later’:‘badge-amber’,Noted:‘badge-blue’,Pending:‘badge-red’};
-document.getElementById(‘decisions-list’).insertAdjacentHTML(‘afterbegin’,`<div class="card-item bg-white rounded-xl border border-stone-100 p-4 shadow-sm flex gap-4 items-start"><p class="text-xs font-mono text-stone-300 whitespace-nowrap pt-0.5 min-w-[90px]">${r.date}</p><div class="flex-1"><p class="text-sm font-medium text-stone-800 mb-1">${r.title}</p>${r.notes?`<p class="text-xs text-stone-400">${r.notes}</p>`:''}</div><div class="flex items-center gap-2 shrink-0"><span class="${sm[r.status]||'badge-gray'}">${r.status}</span><button class="btn-edit" onclick="editDecision(${r.id})">✏️</button><button class="btn-del" onclick="deleteRow('decisions',${r.id},this)">✕</button></div></div>`);
+  _cache.decisions=_cache.decisions.filter(x=>x.id!==r.id).concat(r);
+  const sm={Agreed:'badge-green','Review Later':'badge-amber',Noted:'badge-blue',Pending:'badge-red'};
+  document.getElementById('decisions-list').insertAdjacentHTML('afterbegin',`<div class="card-item bg-white rounded-xl border border-stone-100 p-4 shadow-sm flex gap-4 items-start"><p class="text-xs font-mono text-stone-300 whitespace-nowrap pt-0.5 min-w-[90px]">${r.date}</p><div class="flex-1"><p class="text-sm font-medium text-stone-800 mb-1">${r.title}</p>${r.notes?`<p class="text-xs text-stone-400">${r.notes}</p>`:''}</div><div class="flex items-center gap-2 shrink-0"><span class="${sm[r.status]||'badge-gray'}">${r.status}</span><button class="btn-edit" onclick="editDecision(${r.id})">✏️</button><button class="btn-del" onclick="deleteRow('decisions',${r.id},this)">✕</button></div></div>`);
 }
 
 function appendNote(r){
-_cache.notes=_cache.notes.filter(x=>x.id!==r.id).concat(r);
-const tc={General:‘badge-gray’,‘Contractor Quote’:‘badge-amber’,Idea:‘badge-blue’,Reminder:‘badge-red’,ADU:‘badge-purple’,‘Front House’:‘badge-green’};
-document.getElementById(‘notes-list’).insertAdjacentHTML(‘beforeend’,`<div class="card-item bg-white rounded-xl border border-stone-100 p-5 shadow-sm"><div class="flex items-start justify-between mb-2"><div><p class="text-sm font-semibold text-stone-800">${r.title}</p><p class="text-xs text-stone-300 font-mono mt-0.5">${r.date||''}</p></div><div class="flex items-center gap-2"><span class="${tc[r.tag]||'badge-gray'}">${r.tag||'General'}</span><button class="btn-edit" onclick="editNote(${r.id})">✏️</button><button class="btn-del" onclick="deleteRow('notes',${r.id},this)">✕</button></div></div>${r.content?`<p class="text-sm text-stone-500 leading-relaxed whitespace-pre-wrap">${r.content}</p>`:''}</div>`);
+  _cache.notes=_cache.notes.filter(x=>x.id!==r.id).concat(r);
+  const tc={General:'badge-gray','Contractor Quote':'badge-amber',Idea:'badge-blue',Reminder:'badge-red',ADU:'badge-purple','Front House':'badge-green'};
+  document.getElementById('notes-list').insertAdjacentHTML('beforeend',`<div class="card-item bg-white rounded-xl border border-stone-100 p-5 shadow-sm"><div class="flex items-start justify-between mb-2"><div><p class="text-sm font-semibold text-stone-800">${r.title}</p><p class="text-xs text-stone-300 font-mono mt-0.5">${r.date||''}</p></div><div class="flex items-center gap-2"><span class="${tc[r.tag]||'badge-gray'}">${r.tag||'General'}</span><button class="btn-edit" onclick="editNote(${r.id})">✏️</button><button class="btn-del" onclick="deleteRow('notes',${r.id},this)">✕</button></div></div>${r.content?`<p class="text-sm text-stone-500 leading-relaxed whitespace-pre-wrap">${r.content}</p>`:''}</div>`);
 }
 
 function updateBudget(){
-let total=0,cats={};
-_cache.expenses.forEach(e=>{const a=parseFloat(e.amount||0);total+=a;cats[e.category]=(cats[e.category]||0)+a;});
-document.getElementById(‘total-spent’).textContent=’$’+total.toLocaleString();
-document.getElementById(‘total-remaining’).textContent=’$’+Math.max(0,50000-total).toLocaleString();
-const pct=Math.min(100,Math.round((total/50000)*100));
-document.getElementById(‘budget-pct’).textContent=pct+’% spent’;
-document.getElementById(‘budget-bar’).style.width=pct+’%’;
-const ctx=document.getElementById(‘budget-chart’);
-if(ctx){if(budgetChart)budgetChart.destroy();const labels=Object.keys(cats),vals=Object.values(cats);if(labels.length>0){budgetChart=new Chart(ctx,{type:‘doughnut’,data:{labels,datasets:[{data:vals,backgroundColor:[’#f59e0b’,’#3b82f6’,’#10b981’,’#f43f5e’,’#8b5cf6’,’#64748b’],borderWidth:2,borderColor:’#fff’}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:‘right’,labels:{font:{size:11},padding:12}}}}});}}
+  let total=0,cats={};
+  _cache.expenses.forEach(e=>{const a=parseFloat(e.amount||0);total+=a;cats[e.category]=(cats[e.category]||0)+a;});
+  document.getElementById('total-spent').textContent='$'+total.toLocaleString();
+  document.getElementById('total-remaining').textContent='$'+Math.max(0,50000-total).toLocaleString();
+  const pct=Math.min(100,Math.round((total/50000)*100));
+  document.getElementById('budget-pct').textContent=pct+'% spent';
+  document.getElementById('budget-bar').style.width=pct+'%';
+  const ctx=document.getElementById('budget-chart');
+  if(ctx){if(budgetChart)budgetChart.destroy();const labels=Object.keys(cats),vals=Object.values(cats);if(labels.length>0){budgetChart=new Chart(ctx,{type:'doughnut',data:{labels,datasets:[{data:vals,backgroundColor:['#f59e0b','#3b82f6','#10b981','#f43f5e','#8b5cf6','#64748b'],borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{font:{size:11},padding:12}}}}});}}
 }
 
-function closeMoreMenu(){document.getElementById(‘more-menu’).classList.add(‘hidden’);}
+function closeMoreMenu(){document.getElementById('more-menu').classList.add('hidden');}
 
 function switchTab(name){
-if(name===‘more’){document.getElementById(‘more-menu’).classList.remove(‘hidden’);return;}
-document.querySelectorAll(’.tab-content’).forEach(t=>t.classList.add(‘hidden’));
-document.querySelectorAll(’.nav-btn’).forEach(b=>b.classList.remove(‘nav-active’));
-document.querySelectorAll(’.bottom-nav-btn’).forEach(b=>{b.style.color=’’;});
-document.getElementById(‘tab-’+name)?.classList.remove(‘hidden’);
-document.querySelector(`.nav-btn[data-tab="${name}"]`)?.classList.add(‘nav-active’);
-const activeBottom=document.querySelector(`.bottom-nav-btn[data-tab="${name}"]`);
-if(activeBottom) activeBottom.style.color=’#b45309’;
+  if(name==='more'){document.getElementById('more-menu').classList.remove('hidden');return;}
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.add('hidden'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('nav-active'));
+  document.querySelectorAll('.bottom-nav-btn').forEach(b=>{b.style.color='';});
+  document.getElementById('tab-'+name)?.classList.remove('hidden');
+  document.querySelector(`.nav-btn[data-tab="${name}"]`)?.classList.add('nav-active');
+  const activeBottom=document.querySelector(`.bottom-nav-btn[data-tab="${name}"]`);
+  if(activeBottom) activeBottom.style.color='#b45309';
 }
 
 async function init(){
-switchTab(‘overview’);
-try{
-let [s,p,e,c,d,n,ph,q]=await Promise.all([dbGet(‘shopping’),dbGet(‘projects’),dbGet(‘expenses’),dbGet(‘contacts’),dbGet(‘decisions’),dbGet(‘notes’),dbGet(‘phases’,‘sort_order.asc’),dbGet(‘quotes’)]);
-if(!Array.isArray(n))n=[];
-if(!Array.isArray(ph))ph=[];
-if(!Array.isArray(q))q=[];
+  switchTab('overview');
+  try{
+    let [s,p,e,c,d,n,ph,q]=await Promise.all([dbGet('shopping'),dbGet('projects'),dbGet('expenses'),dbGet('contacts'),dbGet('decisions'),dbGet('notes'),dbGet('phases','sort_order.asc'),dbGet('quotes')]);
+    if(!Array.isArray(n))n=[];
+    if(!Array.isArray(ph))ph=[];
+    if(!Array.isArray(q))q=[];
 
-```
-if(s.length===0&&p.length===0){
-  await Promise.all([
-    ...DEFAULT.shopping.map(i=>dbInsert('shopping',i)),
-    ...DEFAULT.projects.map(i=>dbInsert('projects',i)),
-    ...DEFAULT.contacts.map(i=>dbInsert('contacts',i)),
-    ...DEFAULT.decisions.map(i=>dbInsert('decisions',i)),
-  ]);
-  [s,p,e,c,d]=await Promise.all([dbGet('shopping'),dbGet('projects'),dbGet('expenses'),dbGet('contacts'),dbGet('decisions')]);
+    if(s.length===0&&p.length===0){
+      await Promise.all([
+        ...DEFAULT.shopping.map(i=>dbInsert('shopping',i)),
+        ...DEFAULT.projects.map(i=>dbInsert('projects',i)),
+        ...DEFAULT.contacts.map(i=>dbInsert('contacts',i)),
+        ...DEFAULT.decisions.map(i=>dbInsert('decisions',i)),
+      ]);
+      [s,p,e,c,d]=await Promise.all([dbGet('shopping'),dbGet('projects'),dbGet('expenses'),dbGet('contacts'),dbGet('decisions')]);
+    }
+
+    if(ph.length===0){
+      await Promise.all(DEFAULT_PHASES.map(i=>dbInsert('phases',i)));
+      ph=await dbGet('phases','sort_order.asc');
+    }
+
+    _cache={shopping:s,projects:p,expenses:e,contacts:c,decisions:d,notes:n,phases:ph,quotes:q};
+    s.forEach(appendShopping);p.forEach(appendProject);e.forEach(appendExpense);c.forEach(appendContact);
+    [...d].reverse().forEach(prependDecision);n.forEach(appendNote);
+    const phList=document.getElementById('phases-list');
+    ph.forEach(r=>renderPhase(r,phList));
+    renderOverviewPhases(ph);
+    updateBudget();
+    updateShoppingCounts();
+    renderQuotes();
+
+    document.getElementById('db-dot').className='w-1.5 h-1.5 rounded-full bg-green-400';
+    document.getElementById('db-status').textContent='Live — synced';
+    document.getElementById('db-status').className='text-xs text-green-600';
+  }catch(err){
+    document.getElementById('db-dot').className='w-1.5 h-1.5 rounded-full bg-red-400';
+    document.getElementById('db-status').textContent='Connection error';
+    document.getElementById('db-status').className='text-xs text-red-500';
+  }
 }
 
-if(ph.length===0){
-  await Promise.all(DEFAULT_PHASES.map(i=>dbInsert('phases',i)));
-  ph=await dbGet('phases','sort_order.asc');
-}
-
-_cache={shopping:s,projects:p,expenses:e,contacts:c,decisions:d,notes:n,phases:ph,quotes:q};
-s.forEach(appendShopping);p.forEach(appendProject);e.forEach(appendExpense);c.forEach(appendContact);
-[...d].reverse().forEach(prependDecision);n.forEach(appendNote);
-const phList=document.getElementById('phases-list');
-ph.forEach(r=>renderPhase(r,phList));
-renderOverviewPhases(ph);
-updateBudget();
-updateShoppingCounts();
-renderQuotes();
-
-document.getElementById('db-dot').className='w-1.5 h-1.5 rounded-full bg-green-400';
-document.getElementById('db-status').textContent='Live — synced';
-document.getElementById('db-status').className='text-xs text-green-600';
-```
-
-}catch(err){
-document.getElementById(‘db-dot’).className=‘w-1.5 h-1.5 rounded-full bg-red-400’;
-document.getElementById(‘db-status’).textContent=‘Connection error’;
-document.getElementById(‘db-status’).className=‘text-xs text-red-500’;
-}
-}
-
-// –– GOOGLE OAUTH + DRIVE ––
-const GOOGLE_CLIENT_ID = ‘81763487292-jhvqbjvmcdvasudv9952rsd3a6vemrhl.apps.googleusercontent.com’;
-const GOOGLE_API_KEY = ‘AIzaSyBK6IM7rXWnzo2kpEMy9dQ1IZPTdgDmlYw’;
-const RECEIPTS_FOLDER_ID = ‘1svhEYGsiVuUHA7_R88hOheXaQYtFeCrk’;
-const SCOPES = ‘https://www.googleapis.com/auth/drive.file’;
+// ---- GOOGLE OAUTH + DRIVE ----
+const GOOGLE_CLIENT_ID = '81763487292-jhvqbjvmcdvasudv9952rsd3a6vemrhl.apps.googleusercontent.com';
+const GOOGLE_API_KEY = 'AIzaSyBK6IM7rXWnzo2kpEMy9dQ1IZPTdgDmlYw';
+const RECEIPTS_FOLDER_ID = '1svhEYGsiVuUHA7_R88hOheXaQYtFeCrk';
+const SCOPES = 'https://www.googleapis.com/auth/drive.file';
 
 let googleAccessToken = null;
 
 function initGoogleAuth() {
-const client = google.accounts.oauth2.initTokenClient({
-client_id: GOOGLE_CLIENT_ID,
-scope: SCOPES,
-callback: (response) => {
-if (response.access_token) {
-googleAccessToken = response.access_token;
-document.getElementById(‘gdrive-status’).textContent = ‘✅ Connected to Google Drive’;
-document.getElementById(‘gdrive-status’).className = ‘text-xs text-green-600 mt-1’;
-}
-},
-});
-return client;
+  const client = google.accounts.oauth2.initTokenClient({
+    client_id: GOOGLE_CLIENT_ID,
+    scope: SCOPES,
+    callback: (response) => {
+      if (response.access_token) {
+        googleAccessToken = response.access_token;
+        document.getElementById('gdrive-status').textContent = '✅ Connected to Google Drive';
+        document.getElementById('gdrive-status').className = 'text-xs text-green-600 mt-1';
+      }
+    },
+  });
+  return client;
 }
 
 let gAuthClient = null;
 
 function connectGoogleDrive() {
-if (!gAuthClient) gAuthClient = initGoogleAuth();
-gAuthClient.requestAccessToken();
+  if (!gAuthClient) gAuthClient = initGoogleAuth();
+  gAuthClient.requestAccessToken();
 }
 
-// –– IMAGE COMPRESSION ––
+// ---- IMAGE COMPRESSION ----
 async function compressImage(file, maxWidth=1200, quality=0.75) {
-return new Promise((resolve) => {
-const img = new Image();
-const url = URL.createObjectURL(file);
-img.onload = () => {
-const canvas = document.createElement(‘canvas’);
-let w = img.width, h = img.height;
-if (w > maxWidth) { h = Math.round(h * maxWidth / w); w = maxWidth; }
-canvas.width = w; canvas.height = h;
-const ctx = canvas.getContext(‘2d’);
-ctx.drawImage(img, 0, 0, w, h);
-canvas.toBlob((blob) => { URL.revokeObjectURL(url); resolve(blob); }, ‘image/jpeg’, quality);
-};
-img.src = url;
-});
+  return new Promise((resolve) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      let w = img.width, h = img.height;
+      if (w > maxWidth) { h = Math.round(h * maxWidth / w); w = maxWidth; }
+      canvas.width = w; canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, w, h);
+      canvas.toBlob((blob) => { URL.revokeObjectURL(url); resolve(blob); }, 'image/jpeg', quality);
+    };
+    img.src = url;
+  });
 }
 
-// –– GOOGLE CLOUD VISION OCR ––
+// ---- GOOGLE CLOUD VISION OCR ----
 async function readReceiptWithVision(imageBlob) {
-const reader = new FileReader();
-return new Promise((resolve, reject) => {
-reader.onload = async () => {
-const base64 = reader.result.split(’,’)[1];
-try {
-const res = await fetch(`https://vision.googleapis.com/v1/images:annotate?key=${GOOGLE_API_KEY}`, {
-method: ‘POST’,
-headers: { ‘Content-Type’: ‘application/json’ },
-body: JSON.stringify({
-requests: [{
-image: { content: base64 },
-features: [{ type: ‘TEXT_DETECTION’, maxResults: 1 }]
-}]
-})
-});
-const data = await res.json();
-const text = data.responses?.[0]?.fullTextAnnotation?.text || ‘’;
-resolve(text);
-} catch(e) { reject(e); }
-};
-reader.readAsDataURL(imageBlob);
-});
+  const reader = new FileReader();
+  return new Promise((resolve, reject) => {
+    reader.onload = async () => {
+      const base64 = reader.result.split(',')[1];
+      try {
+        const res = await fetch(`https://vision.googleapis.com/v1/images:annotate?key=${GOOGLE_API_KEY}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            requests: [{
+              image: { content: base64 },
+              features: [{ type: 'TEXT_DETECTION', maxResults: 1 }]
+            }]
+          })
+        });
+        const data = await res.json();
+        const text = data.responses?.[0]?.fullTextAnnotation?.text || '';
+        resolve(text);
+      } catch(e) { reject(e); }
+    };
+    reader.readAsDataURL(imageBlob);
+  });
 }
 
 async function uploadToDrive(blob, filename) {
-if (!googleAccessToken) return null;
-const metadata = { name: filename, parents: [RECEIPTS_FOLDER_ID] };
-const form = new FormData();
-form.append(‘metadata’, new Blob([JSON.stringify(metadata)], { type: ‘application/json’ }));
-form.append(‘file’, blob);
-const res = await fetch(‘https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart’, {
-method: ‘POST’,
-headers: { Authorization: `Bearer ${googleAccessToken}` },
-body: form,
-});
-return res.ok ? await res.json() : null;
+  if (!googleAccessToken) return null;
+  const metadata = { name: filename, parents: [RECEIPTS_FOLDER_ID] };
+  const form = new FormData();
+  form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
+  form.append('file', blob);
+  const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${googleAccessToken}` },
+    body: form,
+  });
+  return res.ok ? await res.json() : null;
 }
 
-// –– RECEIPT SCANNER ––
+// ---- RECEIPT SCANNER ----
 function openReceiptScanner() {
-document.getElementById(‘receipt-scanner’).classList.remove(‘hidden’);
-document.getElementById(‘receipt-scanner’).classList.add(‘flex’);
-resetScanner();
+  document.getElementById('receipt-scanner').classList.remove('hidden');
+  document.getElementById('receipt-scanner').classList.add('flex');
+  resetScanner();
 }
 
 function closeReceiptScanner() {
-document.getElementById(‘receipt-scanner’).classList.add(‘hidden’);
-document.getElementById(‘receipt-scanner’).classList.remove(‘flex’);
-resetScanner();
+  document.getElementById('receipt-scanner').classList.add('hidden');
+  document.getElementById('receipt-scanner').classList.remove('flex');
+  resetScanner();
 }
 
 function resetScanner() {
-document.getElementById(‘receipt-preview’).classList.add(‘hidden’);
-document.getElementById(‘receipt-preview’).src = ‘’;
-document.getElementById(‘ocr-status’).textContent = ‘’;
-document.getElementById(‘ocr-results’).classList.add(‘hidden’);
-document.getElementById(‘receipt-file’).value = ‘’;
-document.getElementById(‘r-name’).value = ‘’;
-document.getElementById(‘r-amount’).value = ‘’;
-document.getElementById(‘r-date’).value = ‘’;
-document.getElementById(‘save-receipt-btn’).textContent = ‘Save Receipt’;
+  document.getElementById('receipt-preview').classList.add('hidden');
+  document.getElementById('receipt-preview').src = '';
+  document.getElementById('ocr-status').textContent = '';
+  document.getElementById('ocr-results').classList.add('hidden');
+  document.getElementById('receipt-file').value = '';
+  document.getElementById('r-name').value = '';
+  document.getElementById('r-amount').value = '';
+  document.getElementById('r-date').value = '';
+  document.getElementById('save-receipt-btn').textContent = 'Save Receipt';
 }
 
 let compressedBlob = null;
 
 async function handleReceiptPhoto(input) {
-const file = input.files[0];
-if (!file) return;
+  const file = input.files[0];
+  if (!file) return;
 
-document.getElementById(‘ocr-status’).textContent = ‘🗜️ Compressing image…’;
-document.getElementById(‘ocr-status’).className = ‘text-xs text-amber-600 mt-2’;
+  document.getElementById('ocr-status').textContent = '🗜️ Compressing image...';
+  document.getElementById('ocr-status').className = 'text-xs text-amber-600 mt-2';
 
-// Compress first
-compressedBlob = await compressImage(file, 1200, 0.75);
-const sizeMB = (compressedBlob.size / 1024 / 1024).toFixed(2);
+  // Compress first
+  compressedBlob = await compressImage(file, 1200, 0.75);
+  const sizeMB = (compressedBlob.size / 1024 / 1024).toFixed(2);
 
-// Show preview
-const url = URL.createObjectURL(compressedBlob);
-const preview = document.getElementById(‘receipt-preview’);
-preview.src = url;
-preview.classList.remove(‘hidden’);
+  // Show preview
+  const url = URL.createObjectURL(compressedBlob);
+  const preview = document.getElementById('receipt-preview');
+  preview.src = url;
+  preview.classList.remove('hidden');
 
-document.getElementById(‘ocr-status’).textContent = `🔍 Reading receipt (compressed to ${sizeMB}MB)...`;
+  document.getElementById('ocr-status').textContent = `🔍 Reading receipt (compressed to ${sizeMB}MB)...`;
 
-try {
-const text = await readReceiptWithVision(compressedBlob);
-if (!text) throw new Error(‘No text found’);
-parseReceipt(text);
-} catch(e) {
-document.getElementById(‘ocr-status’).textContent = ‘⚠️ Could not read receipt — please fill in manually.’;
-document.getElementById(‘ocr-status’).className = ‘text-xs text-red-500 mt-2’;
-document.getElementById(‘ocr-results’).classList.remove(‘hidden’);
-}
+  try {
+    const text = await readReceiptWithVision(compressedBlob);
+    if (!text) throw new Error('No text found');
+    parseReceipt(text);
+  } catch(e) {
+    document.getElementById('ocr-status').textContent = '⚠️ Could not read receipt — please fill in manually.';
+    document.getElementById('ocr-status').className = 'text-xs text-red-500 mt-2';
+    document.getElementById('ocr-results').classList.remove('hidden');
+  }
 }
 
 function parseReceipt(text) {
-const lines = text.split(’\n’).map(l => l.trim()).filter(Boolean);
+  const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
 
-// Extract largest dollar amount (likely the total)
-const amounts = [];
-text.replace(/$?\d+.\d{2}/g, m => amounts.push(parseFloat(m.replace(’$’,’’))));
-const amount = amounts.length ? Math.max(…amounts).toFixed(2) : ‘’;
+  // Extract largest dollar amount (likely the total)
+  const amounts = [];
+  text.replace(/\$?\d+\.\d{2}/g, m => amounts.push(parseFloat(m.replace('$',''))));
+  const amount = amounts.length ? Math.max(...amounts).toFixed(2) : '';
 
-// Extract date
-const dateMatch = text.match(/\d{1,2}[/-]\d{1,2}[/-]\d{2,4}/);
-const date = dateMatch ? dateMatch[0] : new Date().toLocaleDateString(‘en-US’,{month:‘short’,day:‘numeric’,year:‘numeric’});
+  // Extract date
+  const dateMatch = text.match(/\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}/);
+  const date = dateMatch ? dateMatch[0] : new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
 
-// Merchant = first meaningful line (skip very short lines)
-const merchant = lines.find(l => l.length > 3) || ‘’;
+  // Merchant = first meaningful line (skip very short lines)
+  const merchant = lines.find(l => l.length > 3) || '';
 
-document.getElementById(‘r-name’).value = merchant;
-document.getElementById(‘r-amount’).value = amount;
-document.getElementById(‘r-date’).value = date;
-document.getElementById(‘ocr-status’).textContent = ‘✅ Receipt read — review and confirm below.’;
-document.getElementById(‘ocr-status’).className = ‘text-xs text-green-600 mt-2’;
-document.getElementById(‘ocr-results’).classList.remove(‘hidden’);
+  document.getElementById('r-name').value = merchant;
+  document.getElementById('r-amount').value = amount;
+  document.getElementById('r-date').value = date;
+  document.getElementById('ocr-status').textContent = '✅ Receipt read — review and confirm below.';
+  document.getElementById('ocr-status').className = 'text-xs text-green-600 mt-2';
+  document.getElementById('ocr-results').classList.remove('hidden');
 }
 
 async function saveReceipt() {
-const name = document.getElementById(‘r-name’).value.trim() || ‘Receipt’;
-const amount = document.getElementById(‘r-amount’).value.trim();
-const date = document.getElementById(‘r-date’).value.trim();
-const category = document.getElementById(‘r-category’).value;
-if (!amount) { alert(‘Please enter an amount.’); return; }
+  const name = document.getElementById('r-name').value.trim() || 'Receipt';
+  const amount = document.getElementById('r-amount').value.trim();
+  const date = document.getElementById('r-date').value.trim();
+  const category = document.getElementById('r-category').value;
+  if (!amount) { alert('Please enter an amount.'); return; }
 
-document.getElementById(‘save-receipt-btn’).textContent = ‘Saving…’;
-const now = new Date().toLocaleDateString(‘en-US’,{month:‘short’,day:‘numeric’,year:‘numeric’});
+  document.getElementById('save-receipt-btn').textContent = 'Saving...';
+  const now = new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
 
-// Save to Supabase
-const row = await dbInsert(‘expenses’, { name, category, date: date||now, amount });
-if (row) { _cache.expenses.push(row); appendExpense(row); updateBudget(); }
+  // Save to Supabase
+  const row = await dbInsert('expenses', { name, category, date: date||now, amount });
+  if (row) { _cache.expenses.push(row); appendExpense(row); updateBudget(); }
 
-// Upload compressed photo to Drive if connected
-if (googleAccessToken && compressedBlob) {
-const filename = `Receipt_${name.replace(/\s+/g,'_')}_${Date.now()}.jpg`;
-const uploaded = await uploadToDrive(compressedBlob, filename);
-document.getElementById(‘save-receipt-btn’).textContent = uploaded ? ‘✅ Saved + Uploaded to Drive!’ : ‘✅ Saved (Drive upload failed)’;
-} else {
-document.getElementById(‘save-receipt-btn’).textContent = ‘✅ Saved to Budget!’;
+  // Upload compressed photo to Drive if connected
+  if (googleAccessToken && compressedBlob) {
+    const filename = `Receipt_${name.replace(/\s+/g,'_')}_${Date.now()}.jpg`;
+    const uploaded = await uploadToDrive(compressedBlob, filename);
+    document.getElementById('save-receipt-btn').textContent = uploaded ? '✅ Saved + Uploaded to Drive!' : '✅ Saved (Drive upload failed)';
+  } else {
+    document.getElementById('save-receipt-btn').textContent = '✅ Saved to Budget!';
+  }
+
+  setTimeout(() => { closeReceiptScanner(); switchTab('budget'); }, 1500);
 }
-
-setTimeout(() => { closeReceiptScanner(); switchTab(‘budget’); }, 1500);
-}
-const PASS = “2022”;
+const PASS = "2022";
 
 function checkAuth(){
-const val = document.getElementById(‘auth-input’).value;
-if(val === PASS){
-sessionStorage.setItem(‘berryman_auth’,‘1’);
-document.getElementById(‘auth-screen’).style.display=‘none’;
-document.getElementById(‘app’).style.display=‘flex’;
-init();
-} else {
-document.getElementById(‘auth-error’).classList.remove(‘hidden’);
-document.getElementById(‘auth-input’).value=’’;
-document.getElementById(‘auth-input’).focus();
-}
+  const val = document.getElementById('auth-input').value;
+  if(val === PASS){
+    sessionStorage.setItem('berryman_auth','1');
+    document.getElementById('auth-screen').classList.add('hidden');
+    document.getElementById('app').classList.remove('hidden');
+    init();
+  } else {
+    document.getElementById('auth-error').classList.remove('hidden');
+    document.getElementById('auth-input').value='';
+    document.getElementById('auth-input').focus();
+  }
 }
 
 // Check if already authenticated this session
-if(sessionStorage.getItem(‘berryman_auth’)===‘1’){
-document.getElementById(‘auth-screen’).style.display=‘none’;
-document.getElementById(‘app’).style.display=‘flex’;
-init();
+if(sessionStorage.getItem('berryman_auth')==='1'){
+  document.getElementById('auth-screen').classList.add('hidden');
+  document.getElementById('app').classList.remove('hidden');
 } else {
-setTimeout(()=>document.getElementById(‘auth-input’)?.focus(), 100);
+  // Don't auto-init — wait for password
+  setTimeout(()=>document.getElementById('auth-input')?.focus(), 100);
 }
 </script>
-
 </body>
 </html>
