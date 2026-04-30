@@ -1251,6 +1251,7 @@ document.getElementById(‘auth-input’).focus();
 if(sessionStorage.getItem(‘berryman_auth’)===‘1’){
 document.getElementById(‘auth-screen’).classList.add(‘hidden’);
 document.getElementById(‘app’).classList.remove(‘hidden’);
+init();
 } else {
 // Don’t auto-init — wait for password
 setTimeout(()=>document.getElementById(‘auth-input’)?.focus(), 100);
