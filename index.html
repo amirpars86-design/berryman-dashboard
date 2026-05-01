@@ -88,6 +88,8 @@
       <button onclick="switchTab('budget')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-stone-500 hover:bg-stone-50 hover:text-stone-800 transition-all" data-tab="budget">💰 Budget</button>
       <button onclick="switchTab('notes')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-stone-500 hover:bg-stone-50 hover:text-stone-800 transition-all" data-tab="notes">📝 Shared Notes</button>
       <button onclick="switchTab('quotes')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-stone-500 hover:bg-stone-50 hover:text-stone-800 transition-all" data-tab="quotes">💬 Quotes</button>
+      <button onclick="switchTab('materials')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-stone-500 hover:bg-stone-50 hover:text-stone-800 transition-all" data-tab="materials">🧱 Materials</button>
+      <button onclick="switchTab('calculator')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-stone-500 hover:bg-stone-50 hover:text-stone-800 transition-all" data-tab="calculator">🧮 Calculator</button>
       <button onclick="switchTab('contacts')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-stone-500 hover:bg-stone-50 hover:text-stone-800 transition-all" data-tab="contacts">📞 Contacts</button>
       <button onclick="switchTab('docs')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-stone-500 hover:bg-stone-50 hover:text-stone-800 transition-all" data-tab="docs">📁 Documents</button>
     </nav>
@@ -126,27 +128,27 @@
             </div>
             <button onclick="refreshAll()" class="text-stone-500 hover:text-amber-400 transition-colors text-xl mt-1" title="Refresh">↻</button>
           </div>
-          <!-- Key stats row -->
+          <!-- Key stats row — live data -->
           <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
             <div class="bg-white/5 backdrop-blur rounded-2xl p-4 border border-white/10">
-              <p class="text-stone-500 text-xs uppercase tracking-wider mb-1">Purchase Price</p>
-              <p class="serif text-2xl font-semibold text-white">$1.133M</p>
-              <p class="text-stone-500 text-xs mt-1">Closed Apr 28, 2026</p>
+              <p class="text-stone-500 text-xs uppercase tracking-wider mb-1">Budget Remaining</p>
+              <p class="serif text-2xl font-semibold text-white" id="hero-budget">—</p>
+              <p class="text-stone-500 text-xs mt-1" id="hero-budget-sub">of $50,000 budget</p>
             </div>
             <div class="bg-white/5 backdrop-blur rounded-2xl p-4 border border-white/10">
-              <p class="text-stone-500 text-xs uppercase tracking-wider mb-1">Monthly Payment</p>
-              <p class="serif text-2xl font-semibold text-white">$7,387</p>
-              <p class="text-stone-500 text-xs mt-1">P&I + taxes/insurance</p>
+              <p class="text-stone-500 text-xs uppercase tracking-wider mb-1">Open Tasks</p>
+              <p class="serif text-2xl font-semibold text-white" id="hero-tasks">—</p>
+              <p class="text-stone-500 text-xs mt-1" id="hero-tasks-sub">tasks in progress</p>
             </div>
             <div class="bg-amber-500/20 backdrop-blur rounded-2xl p-4 border border-amber-500/30">
-              <p class="text-amber-300 text-xs uppercase tracking-wider mb-1">Reno Budget</p>
-              <p class="serif text-2xl font-semibold text-amber-300">$50,000</p>
-              <p class="text-amber-400/60 text-xs mt-1">Front house livability</p>
+              <p class="text-amber-300 text-xs uppercase tracking-wider mb-1">Quotes Pending</p>
+              <p class="serif text-2xl font-semibold text-amber-300" id="hero-quotes">—</p>
+              <p class="text-amber-400/60 text-xs mt-1">awaiting decision</p>
             </div>
             <div class="bg-white/5 backdrop-blur rounded-2xl p-4 border border-white/10">
-              <p class="text-stone-500 text-xs uppercase tracking-wider mb-1">ADU Potential</p>
-              <p class="serif text-2xl font-semibold text-white">$3,200+</p>
-              <p class="text-stone-500 text-xs mt-1">Est. monthly rental</p>
+              <p class="text-stone-500 text-xs uppercase tracking-wider mb-1">Current Phase</p>
+              <p class="serif text-lg font-semibold text-white leading-tight" id="hero-phase">—</p>
+              <p class="text-stone-500 text-xs mt-1" id="hero-phase-sub">active phase</p>
             </div>
           </div>
         </div>
@@ -394,6 +396,105 @@
       <div id="quotes-list" class="space-y-4"></div>
     </div>
 
+    <!-- MATERIALS -->
+    <div id="tab-materials" class="tab-content hidden">
+      <div class="flex items-center justify-between mb-1">
+        <h2 class="serif text-3xl font-semibold">Materials</h2>
+        <button onclick="openModal('material')" class="bg-amber-700 text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-amber-800">+ Add Material</button>
+      </div>
+      <p class="text-stone-400 text-sm mb-8">Track paint colors, tiles, lumber, and everything you buy. Never forget what you used.</p>
+      <div class="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
+        <table class="w-full text-sm"><thead><tr class="bg-stone-50 text-xs text-stone-400 uppercase tracking-wider">
+          <th class="px-5 py-3 text-left">Material</th>
+          <th class="px-3 py-3 text-left hidden md:table-cell">Brand</th>
+          <th class="px-3 py-3 text-left hidden md:table-cell">Color / Code</th>
+          <th class="px-3 py-3 text-left">Quantity</th>
+          <th class="px-3 py-3 text-left hidden md:table-cell">Store</th>
+          <th class="px-3 py-3"></th>
+        </tr></thead>
+        <tbody id="materials-tbody">
+          <tr><td colspan="6" class="text-center py-10 text-stone-300 text-sm">No materials logged yet.</td></tr>
+        </tbody></table>
+      </div>
+    </div>
+
+    <!-- CALCULATOR -->
+    <div id="tab-calculator" class="tab-content hidden">
+      <h2 class="serif text-3xl font-semibold mb-1">Cost Calculator</h2>
+      <p class="text-stone-400 text-sm mb-8">Estimate renovation costs and check if contractor quotes are reasonable for Los Angeles.</p>
+
+      <!-- Cost per sq ft calculator -->
+      <div class="bg-white rounded-2xl border border-stone-100 shadow-sm p-6 mb-6">
+        <p class="font-semibold text-stone-800 mb-1">💵 Cost per Square Foot Checker</p>
+        <p class="text-xs text-stone-400 mb-4">Enter a quote amount and project type to see if it's in range for LA.</p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+          <div><label class="field-label">Project Type</label>
+            <select class="field-input" id="calc-type" onchange="runCalculator()">
+              <option value="bathroom">Bathroom Remodel</option>
+              <option value="kitchen">Kitchen Remodel</option>
+              <option value="adu_conversion">ADU Garage Conversion</option>
+              <option value="adu_new">ADU New Construction</option>
+              <option value="painting">Interior Painting</option>
+              <option value="flooring">Flooring</option>
+              <option value="roofing">Roofing</option>
+              <option value="foundation">Foundation / Subfloor</option>
+              <option value="termite">Termite Fumigation</option>
+            </select>
+          </div>
+          <div><label class="field-label">Quote Amount ($)</label>
+            <input class="field-input" type="number" id="calc-amount" placeholder="e.g. 15000" oninput="runCalculator()">
+          </div>
+          <div><label class="field-label">Area (sq ft) — if applicable</label>
+            <input class="field-input" type="number" id="calc-sqft" placeholder="e.g. 100" oninput="runCalculator()">
+          </div>
+        </div>
+        <div id="calc-result" class="hidden bg-stone-50 rounded-xl p-4">
+          <div class="grid grid-cols-3 gap-4 text-center">
+            <div><p class="text-xs text-stone-400 mb-1">Your Quote</p><p class="serif text-xl font-semibold text-stone-800" id="calc-your">—</p></div>
+            <div><p class="text-xs text-stone-400 mb-1">LA Range</p><p class="serif text-xl font-semibold text-stone-800" id="calc-range">—</p></div>
+            <div><p class="text-xs text-stone-400 mb-1">Assessment</p><p class="serif text-xl font-semibold" id="calc-verdict">—</p></div>
+          </div>
+          <p class="text-xs text-stone-400 mt-3 text-center" id="calc-note"></p>
+        </div>
+      </div>
+
+      <!-- ADU ROI Calculator -->
+      <div class="bg-white rounded-2xl border border-stone-100 shadow-sm p-6">
+        <p class="font-semibold text-stone-800 mb-1">🏠 ADU Return on Investment</p>
+        <p class="text-xs text-stone-400 mb-4">Project your ADU investment return over time.</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div><label class="field-label">ADU Construction Cost ($)</label>
+            <input class="field-input" type="number" id="roi-cost" placeholder="e.g. 200000" oninput="runROI()">
+          </div>
+          <div><label class="field-label">Expected Monthly Rent ($)</label>
+            <input class="field-input" type="number" id="roi-rent" placeholder="e.g. 3000" oninput="runROI()">
+          </div>
+          <div><label class="field-label">Vacancy Rate (%)</label>
+            <input class="field-input" type="number" id="roi-vacancy" placeholder="e.g. 5" value="5" oninput="runROI()">
+          </div>
+          <div><label class="field-label">Annual Expenses ($)</label>
+            <input class="field-input" type="number" id="roi-expenses" placeholder="e.g. 2400" value="2400" oninput="runROI()">
+          </div>
+        </div>
+        <div id="roi-result" class="hidden bg-stone-50 rounded-xl p-5">
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center mb-4">
+            <div><p class="text-xs text-stone-400 mb-1">Annual Income</p><p class="serif text-lg font-semibold text-stone-800" id="roi-annual">—</p></div>
+            <div><p class="text-xs text-stone-400 mb-1">Net Annual</p><p class="serif text-lg font-semibold text-green-700" id="roi-net">—</p></div>
+            <div><p class="text-xs text-stone-400 mb-1">Payback Period</p><p class="serif text-lg font-semibold text-amber-700" id="roi-payback">—</p></div>
+            <div><p class="text-xs text-stone-400 mb-1">Annual ROI</p><p class="serif text-lg font-semibold text-blue-700" id="roi-pct">—</p></div>
+          </div>
+          <div class="border-t border-stone-200 pt-4">
+            <p class="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-3">10-Year Projection</p>
+            <div class="grid grid-cols-3 gap-3 text-center">
+              <div class="bg-white rounded-xl p-3"><p class="text-xs text-stone-400">5 Years</p><p class="font-semibold text-stone-800" id="roi-5yr">—</p></div>
+              <div class="bg-white rounded-xl p-3"><p class="text-xs text-stone-400">10 Years</p><p class="font-semibold text-stone-800" id="roi-10yr">—</p></div>
+              <div class="bg-white rounded-xl p-3"><p class="text-xs text-stone-400">Total Income</p><p class="font-semibold text-green-700" id="roi-total">—</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- CONTACTS -->
     <div id="tab-contacts" class="tab-content hidden">
       <div class="flex items-center justify-between mb-1">
@@ -495,6 +596,12 @@
       </button>
       <button onclick="switchTab('quotes');closeMoreMenu()" class="flex flex-col items-center gap-2 p-3 rounded-2xl hover:bg-stone-50">
         <span class="text-2xl">💬</span><span class="text-xs font-medium text-stone-600">Quotes</span>
+      </button>
+      <button onclick="switchTab('materials');closeMoreMenu()" class="flex flex-col items-center gap-2 p-3 rounded-2xl hover:bg-stone-50">
+        <span class="text-2xl">🧱</span><span class="text-xs font-medium text-stone-600">Materials</span>
+      </button>
+      <button onclick="switchTab('calculator');closeMoreMenu()" class="flex flex-col items-center gap-2 p-3 rounded-2xl hover:bg-stone-50">
+        <span class="text-2xl">🧮</span><span class="text-xs font-medium text-stone-600">Calculator</span>
       </button>
       <button onclick="switchTab('contacts');closeMoreMenu()" class="flex flex-col items-center gap-2 p-3 rounded-2xl hover:bg-stone-50">
         <span class="text-2xl">📞</span><span class="text-xs font-medium text-stone-600">Contacts</span>
@@ -633,7 +740,7 @@ const DEFAULT={
   ],
 };
 
-let _cache={shopping:[],projects:[],expenses:[],contacts:[],decisions:[],notes:[],phases:[],quotes:[]};
+let _cache={shopping:[],projects:[],expenses:[],contacts:[],decisions:[],notes:[],phases:[],quotes:[],materials:[]};
 let budgetChart=null;
 
 function badge(t){const m={High:"badge-red",Medium:"badge-blue",Low:"badge-gray","Not Started":"badge-gray",Pending:"badge-amber",Research:"badge-amber","In Progress":"badge-blue",Done:"badge-green",Completed:"badge-green",Agreed:"badge-green","Review Later":"badge-amber",Noted:"badge-blue",Ordered:"badge-purple",Delivered:"badge-green",Escrow:"badge-blue",Termite:"badge-amber",Lender:"badge-purple",Agent:"badge-green",Contractor:"badge-amber",Inspector:"badge-red",Architect:"badge-purple",Other:"badge-gray"};return`<span class="${m[t]||'badge-gray'}">${t}</span>`}
@@ -705,7 +812,7 @@ let currentModal='',editingId=null;
 
 function openModal(type,data=null){
   currentModal=type;editingId=data?data.id:null;
-  const titles={shopping:data?'Edit Item':'Add Shopping Item',project:data?'Edit Task':'Add Task',expense:data?'Edit Expense':'Add Expense',contact:data?'Edit Contact':'Add Contact',decision:data?'Edit Decision':'Log Decision',note:data?'Edit Note':'Add Note',phase:data?'Edit Phase':'Add Phase',quote:data?'Edit Quote':'Add Quote'};
+  const titles={shopping:data?'Edit Item':'Add Shopping Item',project:data?'Edit Task':'Add Task',expense:data?'Edit Expense':'Add Expense',contact:data?'Edit Contact':'Add Contact',decision:data?'Edit Decision':'Log Decision',note:data?'Edit Note':'Add Note',phase:data?'Edit Phase':'Add Phase',quote:data?'Edit Quote':'Add Quote',material:data?'Edit Material':'Add Material'};
   document.getElementById('modal-title').textContent=titles[type];
   const v=(k,def='')=>data?(data[k]??def)??def:def;
   const sel=(id,opts,val)=>`<select class="field-input" id="${id}">${opts.map(o=>`<option${o===val?' selected':''}>${o}</option>`).join('')}</select>`;
@@ -721,7 +828,14 @@ function openModal(type,data=null){
     contact:`<div><label class="field-label">Name</label><input class="field-input" id="f-name" value="${v('name')}" placeholder="Full name"></div><div><label class="field-label">Role</label>${sel('f-role',['Agent','Contractor','Escrow','Lender','Inspector','Architect','Other'],v('role','Other'))}</div><div><label class="field-label">Company</label><input class="field-input" id="f-company" value="${v('company')}" placeholder="Company name"></div><div><label class="field-label">Phone / Email</label><input class="field-input" id="f-contact" value="${v('contact')}" placeholder="Contact info"></div>`,
     decision:`<div><label class="field-label">Decision</label><input class="field-input" id="f-name" value="${v('title')}" placeholder="What was decided?"></div><div><label class="field-label">Notes</label><textarea class="field-input" id="f-notes" style="min-height:72px;resize:vertical">${v('notes')}</textarea></div><div><label class="field-label">Status</label>${sel('f-status',['Agreed','Review Later','Noted','Pending'],v('status','Agreed'))}</div>`,
     note:`<div><label class="field-label">Title</label><input class="field-input" id="f-name" value="${v('title')}" placeholder="e.g. Contractor quote from John"></div><div><label class="field-label">Note</label><textarea class="field-input" id="f-notes" style="min-height:100px;resize:vertical">${v('content')}</textarea></div><div><label class="field-label">Tag</label>${sel('f-tag',['General','Contractor Quote','Idea','Reminder','ADU','Front House'],v('tag','General'))}</div>`,
-    quote:`<div><label class="field-label">Contractor Name</label><input class="field-input" id="f-name" value="${v('contractor')}" placeholder="e.g. ABC Roofing"></div>
+    material:`<div><label class="field-label">Material Name</label><input class="field-input" id="f-name" value="${v('name')}" placeholder="e.g. Wall Paint — Living Room"></div>
+    <div><label class="field-label">Category</label>${sel('f-cat',['Paint','Flooring','Tile','Lumber','Fixtures','Hardware','Electrical','Plumbing','Insulation','Other'],v('category','Paint'))}</div>
+    <div><label class="field-label">Brand</label><input class="field-input" id="f-brand" value="${v('brand')}" placeholder="e.g. Sherwin-Williams"></div>
+    <div><label class="field-label">Color / Code</label><input class="field-input" id="f-color" value="${v('color_code')}" placeholder="e.g. SW 7015 Repose Gray"></div>
+    <div><label class="field-label">Quantity</label><input class="field-input" id="f-qty" value="${v('quantity')}" placeholder="e.g. 2"></div>
+    <div><label class="field-label">Unit</label>${sel('f-unit',['gallons','sq ft','boxes','pieces','bags','sheets','linear ft','other'],v('unit','gallons'))}</div>
+    <div><label class="field-label">Store / Purchased From</label><input class="field-input" id="f-store" value="${v('store')}" placeholder="e.g. Home Depot, Lowe's"></div>
+    <div><label class="field-label">Notes</label><textarea class="field-input" id="f-notes" style="min-height:60px;resize:vertical" placeholder="Any extra details...">${v('notes')}</textarea></div>`,
     <div><label class="field-label">Job / Task</label><select class="field-input" id="f-task-id"><option value="">— General / No specific task —</option>${_cache.projects.map(p=>`<option value="${p.id}"${v('task_id')==p.id?' selected':''}>${p.name}</option>`).join('')}</select></div>
     <div><label class="field-label">Amount ($)</label><input class="field-input" type="number" id="f-amount" value="${v('amount')}" placeholder="0"></div>
     <div><label class="field-label">Timeline</label><input class="field-input" id="f-timeline" value="${v('timeline')}" placeholder="e.g. 3 days, 2 weeks"></div>
@@ -801,6 +915,11 @@ async function saveModal(){
     if(editingId){await dbUpdate('quotes',editingId,d);reloadTable('quotes');}
     else{const row=await dbInsert('quotes',d);if(row){_cache.quotes.push(row);renderQuotes();}}
   }
+  if(currentModal==='material'){
+    const d={name,category:document.getElementById('f-cat').value,brand:document.getElementById('f-brand').value||'',color_code:document.getElementById('f-color').value||'',quantity:document.getElementById('f-qty').value||'',unit:document.getElementById('f-unit').value||'',store:document.getElementById('f-store').value||'',notes:document.getElementById('f-notes').value||''};
+    if(editingId){await dbUpdate('materials',editingId,d);reloadTable('materials');}
+    else{const row=await dbInsert('materials',d);if(row)appendMaterial(row);}
+  }
   document.getElementById('save-btn').textContent='Save';
   closeModal();
 }
@@ -814,6 +933,8 @@ async function reloadTable(table){
   if(table==='decisions'){document.getElementById('decisions-list').innerHTML='';[...data].reverse().forEach(prependDecision);}
   if(table==='notes'){document.getElementById('notes-list').innerHTML='';data.forEach(appendNote);}
   if(table==='quotes'){_cache.quotes=data;renderQuotes();}
+  if(table==='materials'){_cache.materials=data;document.getElementById('materials-tbody').innerHTML='';data.forEach(appendMaterial);}
+  updateHeroStats();
 }
 
 function renderQuotes(){
@@ -862,11 +983,145 @@ function renderQuotes(){
 
 function editQuote(id){const r=_cache.quotes.find(x=>x.id===id);if(r)openModal('quote',r);}
 async function deleteQuote(id){if(!confirm('Delete this quote?'))return;await dbDelete('quotes',id);_cache.quotes=_cache.quotes.filter(x=>x.id!==id);renderQuotes();}
-async function updateQuoteStatus(id,status){await dbUpdate('quotes',id,{status});_cache.quotes=_cache.quotes.map(x=>x.id===id?{...x,status}:x);renderQuotes();}
+async function updateQuoteStatus(id,status){
+  await dbUpdate('quotes',id,{status});
+  _cache.quotes=_cache.quotes.map(x=>x.id===id?{...x,status}:x);
+  // If selected, offer to add to budget
+  if(status==='Selected'){
+    const q=_cache.quotes.find(x=>x.id===id);
+    if(q && confirm(`Add "${q.contractor}" quote of $${q.amount.toLocaleString()} to your budget tracker?`)){
+      const row=await dbInsert('expenses',{name:`${q.contractor} — ${q.task_name}`,category:'Renovation',date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),amount:q.amount});
+      if(row){_cache.expenses.push(row);appendExpense(row);updateBudget();}
+    }
+  }
+  renderQuotes();
+}
+
+// ---- MATERIALS ----
+function appendMaterial(r){
+  _cache.materials=_cache.materials.filter(x=>x.id!==r.id).concat(r);
+  const tb=document.getElementById('materials-tbody');
+  if(tb.querySelector('td[colspan]'))tb.innerHTML='';
+  tb.insertAdjacentHTML('beforeend',`<tr class="border-t border-stone-50 hover:bg-stone-50">
+    <td class="px-5 py-3 font-medium">${r.name}<div class="text-xs text-stone-400">${r.category}</div></td>
+    <td class="px-3 py-3 text-stone-500 text-xs hidden md:table-cell">${r.brand||'—'}</td>
+    <td class="px-3 py-3 hidden md:table-cell"><span class="text-xs font-mono bg-stone-100 px-2 py-1 rounded">${r.color_code||'—'}</span></td>
+    <td class="px-3 py-3 text-stone-500 text-xs">${r.quantity||'—'} ${r.unit||''}</td>
+    <td class="px-3 py-3 text-stone-400 text-xs hidden md:table-cell">${r.store||'—'}</td>
+    <td class="px-3 py-3"><div class="flex gap-1">
+      <button class="btn-edit" onclick="editMaterial(${r.id})">✏️</button>
+      <button class="btn-del" onclick="deleteMaterial(${r.id})">✕</button>
+    </div></td>
+  </tr>`);
+}
+
+function editMaterial(id){const r=_cache.materials.find(x=>x.id===id);if(r)openModal('material',r);}
+async function deleteMaterial(id){if(!confirm('Delete this material?'))return;await dbDelete('materials',id);_cache.materials=_cache.materials.filter(x=>x.id!==id);document.querySelector(`#materials-tbody tr[data-id="${id}"]`)?.remove();reloadTable('materials');}
+
+// ---- HERO STATS (live) ----
+function updateHeroStats(){
+  // Budget remaining
+  const spent=_cache.expenses.reduce((s,e)=>s+parseFloat(e.amount||0),0);
+  const remaining=Math.max(0,50000-spent);
+  const el=document.getElementById('hero-budget');
+  if(el){
+    el.textContent='$'+remaining.toLocaleString();
+    document.getElementById('hero-budget-sub').textContent=`$${spent.toLocaleString()} spent of $50,000`;
+  }
+  // Open tasks
+  const openTasks=_cache.projects.filter(p=>!['Done'].includes(p.status)).length;
+  const doneTasks=_cache.projects.filter(p=>p.status==='Done').length;
+  const ht=document.getElementById('hero-tasks');
+  if(ht){ht.textContent=openTasks;document.getElementById('hero-tasks-sub').textContent=`${doneTasks} completed`;}
+  // Quotes pending
+  const pendingQuotes=_cache.quotes.filter(q=>q.status==='Received').length;
+  const hq=document.getElementById('hero-quotes');
+  if(hq){hq.textContent=pendingQuotes||'—';document.getElementById('hero-tasks-sub');}
+  // Active phase
+  const activePhase=_cache.phases.find(p=>p.status==='In Progress');
+  const hp=document.getElementById('hero-phase');
+  if(hp){
+    hp.textContent=activePhase?activePhase.name.replace(/Phase \d+ — /,''):'All clear';
+    document.getElementById('hero-phase-sub').textContent=activePhase?`${activePhase.progress||0}% complete`:'No active phase';
+  }
+}
+
+// ---- COST CALCULATOR ----
+const LA_RATES={
+  bathroom:{low:12000,high:35000,unit:'flat',label:'Bathroom Remodel'},
+  kitchen:{low:20000,high:80000,unit:'flat',label:'Kitchen Remodel'},
+  adu_conversion:{low:120000,high:200000,unit:'flat',label:'ADU Garage Conversion'},
+  adu_new:{low:200000,high:350000,unit:'flat',label:'ADU New Construction'},
+  painting:{low:3,high:7,unit:'sqft',label:'Interior Painting'},
+  flooring:{low:8,high:20,unit:'sqft',label:'Flooring'},
+  roofing:{low:8000,high:20000,unit:'flat',label:'Roofing'},
+  foundation:{low:4000,high:12000,unit:'flat',label:'Foundation / Subfloor'},
+  termite:{low:3000,high:8000,unit:'flat',label:'Termite Fumigation'},
+};
+
+function runCalculator(){
+  const type=document.getElementById('calc-type').value;
+  const amount=parseFloat(document.getElementById('calc-amount').value)||0;
+  const sqft=parseFloat(document.getElementById('calc-sqft').value)||0;
+  if(!amount)return;
+  const rate=LA_RATES[type];
+  if(!rate)return;
+  const result=document.getElementById('calc-result');
+  result.classList.remove('hidden');
+  let low=rate.low,high=rate.high,yourVal=amount,rangeStr,yourStr;
+  if(rate.unit==='sqft'&&sqft>0){
+    const perSqft=(amount/sqft).toFixed(2);
+    yourStr=`$${perSqft}/sq ft`;
+    rangeStr=`$${rate.low}–$${rate.high}/sq ft`;
+    low=rate.low*sqft;high=rate.high*sqft;
+  } else {
+    yourStr='$'+amount.toLocaleString();
+    rangeStr=`$${rate.low.toLocaleString()}–$${rate.high.toLocaleString()}`;
+  }
+  document.getElementById('calc-your').textContent=yourStr;
+  document.getElementById('calc-range').textContent=rangeStr;
+  const verdict=document.getElementById('calc-verdict');
+  const note=document.getElementById('calc-note');
+  if(amount<low*0.85){verdict.textContent='🟢 Low';verdict.className='serif text-xl font-semibold text-green-600';note.textContent='Below LA average — verify scope is complete.';}
+  else if(amount<=high*1.1){verdict.textContent='🟡 Fair';verdict.className='serif text-xl font-semibold text-amber-600';note.textContent='Within typical LA range for this work.';}
+  else{verdict.textContent='🔴 High';verdict.className='serif text-xl font-semibold text-red-600';note.textContent='Above LA average — get at least 2 more quotes.';}
+}
+
+function runROI(){
+  const cost=parseFloat(document.getElementById('roi-cost').value)||0;
+  const rent=parseFloat(document.getElementById('roi-rent').value)||0;
+  const vacancy=(parseFloat(document.getElementById('roi-vacancy').value)||5)/100;
+  const expenses=parseFloat(document.getElementById('roi-expenses').value)||0;
+  if(!cost||!rent)return;
+  const annualGross=rent*12*(1-vacancy);
+  const annualNet=annualGross-expenses;
+  const payback=annualNet>0?(cost/annualNet).toFixed(1):'∞';
+  const roi=((annualNet/cost)*100).toFixed(1);
+  const result=document.getElementById('roi-result');
+  result.classList.remove('hidden');
+  document.getElementById('roi-annual').textContent='$'+Math.round(annualGross).toLocaleString();
+  document.getElementById('roi-net').textContent='$'+Math.round(annualNet).toLocaleString();
+  document.getElementById('roi-payback').textContent=payback+' yrs';
+  document.getElementById('roi-pct').textContent=roi+'%';
+  document.getElementById('roi-5yr').textContent='$'+Math.round(annualNet*5).toLocaleString();
+  document.getElementById('roi-10yr').textContent='$'+Math.round(annualNet*10).toLocaleString();
+  document.getElementById('roi-total').textContent='$'+Math.round(annualNet*10-cost).toLocaleString();
+}
+
+// ---- SMART RECEIPT CATEGORIZATION ----
+function smartCategory(merchantName){
+  const m=merchantName.toLowerCase();
+  if(m.includes('home depot')||m.includes('lowe')||m.includes('ace hardware')||m.includes('harbor freight'))return'Renovation';
+  if(m.includes('ikea')||m.includes('target')||m.includes('amazon')||m.includes('wayfair')||m.includes('bed bath'))return'Shopping';
+  if(m.includes('insurance')||m.includes('bamboo')||m.includes('mercury'))return'Insurance';
+  if(m.includes('escrow')||m.includes('title')||m.includes('notary'))return'Closing';
+  if(m.includes('inspection')||m.includes('termite')||m.includes('pest')||m.includes('roof'))return'Inspection';
+  return'Other';
+}
 
 async function refreshAll(){
-  const [s,p,e,c,d,n,ph,q]=await Promise.all([dbGet('shopping'),dbGet('projects'),dbGet('expenses'),dbGet('contacts'),dbGet('decisions'),dbGet('notes'),dbGet('phases','sort_order.asc'),dbGet('quotes')]);
-  _cache={shopping:s,projects:p,expenses:e,contacts:c,decisions:d,notes:n||[],phases:ph||[],quotes:q||[]};
+  const [s,p,e,c,d,n,ph,q,m]=await Promise.all([dbGet('shopping'),dbGet('projects'),dbGet('expenses'),dbGet('contacts'),dbGet('decisions'),dbGet('notes'),dbGet('phases','sort_order.asc'),dbGet('quotes'),dbGet('materials')]);
+  _cache={shopping:s,projects:p,expenses:e,contacts:c,decisions:d,notes:n||[],phases:ph||[],quotes:q||[],materials:m||[]};
   document.getElementById('shopping-tbody').innerHTML='';document.getElementById('shopping-done-tbody').innerHTML='';s.forEach(appendShopping);updateShoppingCounts();
   document.getElementById('projects-tbody').innerHTML='';p.forEach(appendProject);
   document.getElementById('budget-tbody').innerHTML='';e.forEach(appendExpense);updateBudget();
@@ -876,6 +1131,8 @@ async function refreshAll(){
   document.getElementById('phases-list').innerHTML='';(ph||[]).forEach(r=>renderPhase(r,document.getElementById('phases-list')));
   renderOverviewPhases(ph||[]);
   renderQuotes();
+  document.getElementById('materials-tbody').innerHTML='';(m||[]).forEach(appendMaterial);
+  updateHeroStats();
 }
 
 function editShopping(id){const r=_cache.shopping.find(x=>x.id===id);if(r)openModal('shopping',r);}
@@ -1014,10 +1271,11 @@ function switchTab(name){
 async function init(){
   switchTab('overview');
   try{
-    let [s,p,e,c,d,n,ph,q]=await Promise.all([dbGet('shopping'),dbGet('projects'),dbGet('expenses'),dbGet('contacts'),dbGet('decisions'),dbGet('notes'),dbGet('phases','sort_order.asc'),dbGet('quotes')]);
+    let [s,p,e,c,d,n,ph,q,m]=await Promise.all([dbGet('shopping'),dbGet('projects'),dbGet('expenses'),dbGet('contacts'),dbGet('decisions'),dbGet('notes'),dbGet('phases','sort_order.asc'),dbGet('quotes'),dbGet('materials')]);
     if(!Array.isArray(n))n=[];
     if(!Array.isArray(ph))ph=[];
     if(!Array.isArray(q))q=[];
+    if(!Array.isArray(m))m=[];
 
     if(s.length===0&&p.length===0){
       await Promise.all([
@@ -1034,7 +1292,7 @@ async function init(){
       ph=await dbGet('phases','sort_order.asc');
     }
 
-    _cache={shopping:s,projects:p,expenses:e,contacts:c,decisions:d,notes:n,phases:ph,quotes:q};
+    _cache={shopping:s,projects:p,expenses:e,contacts:c,decisions:d,notes:n,phases:ph,quotes:q,materials:m};
     s.forEach(appendShopping);p.forEach(appendProject);e.forEach(appendExpense);c.forEach(appendContact);
     [...d].reverse().forEach(prependDecision);n.forEach(appendNote);
     const phList=document.getElementById('phases-list');
@@ -1043,6 +1301,8 @@ async function init(){
     updateBudget();
     updateShoppingCounts();
     renderQuotes();
+    m.forEach(appendMaterial);
+    updateHeroStats();
 
     document.getElementById('db-dot').className='w-1.5 h-1.5 rounded-full bg-green-400';
     document.getElementById('db-status').textContent='Live — synced';
@@ -1217,6 +1477,8 @@ function parseReceipt(text) {
   document.getElementById('r-name').value = merchant;
   document.getElementById('r-amount').value = amount;
   document.getElementById('r-date').value = date;
+  // Smart category
+  if(merchant) document.getElementById('r-category').value = smartCategory(merchant);
   document.getElementById('ocr-status').textContent = '✅ Receipt read — review and confirm below.';
   document.getElementById('ocr-status').className = 'text-xs text-green-600 mt-2';
   document.getElementById('ocr-results').classList.remove('hidden');
