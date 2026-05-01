@@ -57,9 +57,8 @@
     <h1 class="serif text-2xl font-semibold text-stone-800 mb-1">3967 Berryman</h1>
     <p class="text-stone-400 text-sm mb-8">Enter your password to continue</p>
     <input type="password" id="auth-input" placeholder="Password"
-      class="w-full border border-stone-200 rounded-xl px-4 py-3 text-center text-stone-800 text-lg outline-none focus:border-amber-500 mb-3 font-sans"
-      onkeydown="if(event.key==='Enter')checkAuth()">
-    <button onclick="checkAuth()" class="w-full bg-amber-700 text-white font-semibold py-3 rounded-xl hover:bg-amber-800 transition-colors">
+      class="w-full border border-stone-200 rounded-xl px-4 py-3 text-center text-stone-800 text-lg outline-none focus:border-amber-500 mb-3 font-sans">
+    <button id="auth-btn" class="w-full bg-amber-700 text-white font-semibold py-3 rounded-xl hover:bg-amber-800 transition-colors">
       Enter
     </button>
     <p id="auth-error" class="text-red-500 text-xs mt-3 hidden">Incorrect password. Try again.</p>
@@ -836,6 +835,7 @@ function openModal(type,data=null){
     <div><label class="field-label">Unit</label>${sel('f-unit',['gallons','sq ft','boxes','pieces','bags','sheets','linear ft','other'],v('unit','gallons'))}</div>
     <div><label class="field-label">Store / Purchased From</label><input class="field-input" id="f-store" value="${v('store')}" placeholder="e.g. Home Depot, Lowe's"></div>
     <div><label class="field-label">Notes</label><textarea class="field-input" id="f-notes" style="min-height:60px;resize:vertical" placeholder="Any extra details...">${v('notes')}</textarea></div>`,
+    quote:`<div><label class="field-label">Contractor Name</label><input class="field-input" id="f-name" value="${v('contractor')}" placeholder="e.g. ABC Roofing"></div>
     <div><label class="field-label">Job / Task</label><select class="field-input" id="f-task-id"><option value="">— General / No specific task —</option>${_cache.projects.map(p=>`<option value="${p.id}"${v('task_id')==p.id?' selected':''}>${p.name}</option>`).join('')}</select></div>
     <div><label class="field-label">Amount ($)</label><input class="field-input" type="number" id="f-amount" value="${v('amount')}" placeholder="0"></div>
     <div><label class="field-label">Timeline</label><input class="field-input" id="f-timeline" value="${v('timeline')}" placeholder="e.g. 3 days, 2 weeks"></div>
@@ -1533,6 +1533,12 @@ if(sessionStorage.getItem('berryman_auth')==='1'){
 } else {
   setTimeout(()=>document.getElementById('auth-input')?.focus(), 100);
 }
+
+// Auth event listeners — wired here so checkAuth is definitely defined
+document.getElementById('auth-btn').addEventListener('click', checkAuth);
+document.getElementById('auth-input').addEventListener('keydown', function(e){
+  if(e.key==='Enter') checkAuth();
+});
 </script>
 </body>
 </html>
