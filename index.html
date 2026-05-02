@@ -61,12 +61,42 @@
     <p class="text-stone-400 text-sm mb-8">Enter your password to continue</p>
     <input type="password" id="auth-input" placeholder="Password"
       class="w-full border border-stone-200 rounded-xl px-4 py-3 text-center text-stone-800 text-lg outline-none focus:border-amber-500 mb-3 font-sans">
-    <button id="auth-btn" class="w-full bg-amber-700 text-white font-semibold py-3 rounded-xl hover:bg-amber-800 transition-colors">
+    <button onclick="doAuth()" class="w-full bg-amber-700 text-white font-semibold py-3 rounded-xl hover:bg-amber-800 transition-colors">
       Enter
     </button>
     <p id="auth-error" class="text-red-500 text-xs mt-3 hidden">Incorrect password. Try again.</p>
   </div>
 </div>
+<script>
+// Self-contained auth — runs immediately, no dependencies
+const _PASS = "2022";
+function doAuth(){
+  const val = document.getElementById('auth-input').value;
+  if(val === _PASS){
+    sessionStorage.setItem('berryman_auth','1');
+    document.getElementById('auth-screen').style.display='none';
+    document.getElementById('app').style.display='flex';
+    if(typeof init === 'function') init();
+  } else {
+    document.getElementById('auth-error').classList.remove('hidden');
+    document.getElementById('auth-input').value='';
+    document.getElementById('auth-input').focus();
+  }
+}
+document.getElementById('auth-input').addEventListener('keydown',function(e){
+  if(e.key==='Enter') doAuth();
+});
+// Auto-login if already authenticated
+if(sessionStorage.getItem('berryman_auth')==='1'){
+  document.getElementById('auth-screen').style.display='none';
+  document.getElementById('app').style.display='flex';
+  window.addEventListener('DOMContentLoaded', function(){
+    if(typeof init === 'function') init();
+  });
+} else {
+  document.getElementById('auth-input').focus();
+}
+</script>
 
 <div id="app" style="display:none;min-height:100vh" class="flex">
 
@@ -1734,36 +1764,7 @@ document.getElementById(‘save-receipt-btn’).textContent = ‘✅ Saved to Bu
 
 setTimeout(() => { closeReceiptScanner(); switchTab(‘budget’); }, 1500);
 }
-const PASS = “2022”;
-
-function checkAuth(){
-const val = document.getElementById(‘auth-input’).value;
-if(val === PASS){
-sessionStorage.setItem(‘berryman_auth’,‘1’);
-document.getElementById(‘auth-screen’).style.display=‘none’;
-document.getElementById(‘app’).style.display=‘flex’;
-init();
-} else {
-document.getElementById(‘auth-error’).classList.remove(‘hidden’);
-document.getElementById(‘auth-input’).value=’’;
-document.getElementById(‘auth-input’).focus();
-}
-}
-
-// Check if already authenticated this session
-if(sessionStorage.getItem(‘berryman_auth’)===‘1’){
-document.getElementById(‘auth-screen’).style.display=‘none’;
-document.getElementById(‘app’).style.display=‘flex’;
-init();
-} else {
-setTimeout(()=>document.getElementById(‘auth-input’)?.focus(), 100);
-}
-
-// Auth event listeners — wired here so checkAuth is definitely defined
-document.getElementById(‘auth-btn’).addEventListener(‘click’, checkAuth);
-document.getElementById(‘auth-input’).addEventListener(‘keydown’, function(e){
-if(e.key===‘Enter’) checkAuth();
-});
+// Auth is handled by inline script above the app div
 </script>
 
 <!-- FLOATING CHATBOT -->
