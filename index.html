@@ -76,7 +76,12 @@ function doAuth(){
     sessionStorage.setItem('berryman_auth','1');
     document.getElementById('auth-screen').style.display='none';
     document.getElementById('app').style.display='flex';
-    if(typeof init === 'function') init();
+    // Wait for all scripts to load before calling init
+    if(document.readyState === 'complete'){
+      if(typeof init === 'function') init();
+    } else {
+      window.addEventListener('load', function(){ if(typeof init === 'function') init(); });
+    }
   } else {
     document.getElementById('auth-error').classList.remove('hidden');
     document.getElementById('auth-input').value='';
@@ -90,11 +95,7 @@ document.getElementById('auth-input').addEventListener('keydown',function(e){
 if(sessionStorage.getItem('berryman_auth')==='1'){
   document.getElementById('auth-screen').style.display='none';
   document.getElementById('app').style.display='flex';
-  window.addEventListener('DOMContentLoaded', function(){
-    if(typeof init === 'function') init();
-  });
-} else {
-  document.getElementById('auth-input').focus();
+  // init() will be called at bottom of main script
 }
 </script>
 
@@ -1765,6 +1766,10 @@ document.getElementById(‘save-receipt-btn’).textContent = ‘✅ Saved to Bu
 setTimeout(() => { closeReceiptScanner(); switchTab(‘budget’); }, 1500);
 }
 // Auth is handled by inline script above the app div
+// Call init if already authenticated
+if(sessionStorage.getItem(‘berryman_auth’)===‘1’){
+init();
+}
 </script>
 
 <!-- FLOATING CHATBOT -->
