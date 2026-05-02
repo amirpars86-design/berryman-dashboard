@@ -1828,7 +1828,7 @@ async function sendChatMessage(){
     });
 
     const data = await response.json();
-    const reply = data.content?.[0]?.text || 'Sorry, I could not get a response.';
+    const reply = data.content?.[0]?.text || `Error: ${data.error?.message || JSON.stringify(data)}`;
 
     // Replace loading message
     loadingDiv.querySelector('div').textContent = reply;
