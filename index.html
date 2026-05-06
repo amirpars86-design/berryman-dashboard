@@ -794,11 +794,13 @@ if(sessionStorage.getItem('berryman_auth')==='1'){
         <input class="field-input" id="r-date" placeholder="e.g. Apr 28, 2026"></div>
       <div><label class="field-label">Category</label>
         <select class="field-input" id="r-category">
-          <option>Renovation</option>
+          <option>Tools</option>
+          <option>Construction Material</option>
+          <option>Contractors & Labor</option>
+          <option>Front House</option>
+          <option>Back House / Garage</option>
+          <option>Landscape</option>
           <option>Shopping</option>
-          <option>Inspection</option>
-          <option>Closing</option>
-          <option>Insurance</option>
           <option>Other</option>
         </select>
       </div>
@@ -961,7 +963,7 @@ function openModal(type,data=null){
     <input type="range" min="0" max="100" value="${v('progress',0)}" id="f-progress" oninput="document.getElementById('prog-label').textContent=this.value+'%'" class="mt-2"></div>`,
     shopping:`<div><label class="field-label">Item Name</label><input class="field-input" id="f-name" value="${v('name')}" placeholder="e.g. Refrigerator"></div><div><label class="field-label">Category</label>${sel('f-cat',['Kitchen','Bathroom','Laundry','Bedroom','Living Room','Outdoor','Other'],v('category','Kitchen'))}</div><div><label class="field-label">Priority</label>${sel('f-pri',['High','Medium','Low'],v('priority','Medium'))}</div><div><label class="field-label">Estimated Cost</label><input class="field-input" id="f-cost" value="${v('cost')}" placeholder="e.g. $500–800"></div><div><label class="field-label">Product Link</label><input class="field-input" id="f-link" value="${v('link')}" placeholder="https://..."></div><div><label class="field-label">Notes</label><textarea class="field-input" id="f-notes" style="min-height:60px;resize:vertical">${v('notes')}</textarea></div>`,
     project:`<div><label class="field-label">Task Name</label><input class="field-input" id="f-name" value="${v('name')}" placeholder="e.g. Paint living room"></div><div><label class="field-label">Area</label>${sel('f-area',['Front House','Bathroom','Kitchen','Garage/ADU','Exterior','Whole Property'],v('area','Front House'))}</div><div><label class="field-label">Contractor</label><input class="field-input" id="f-contractor" value="${v('contractor')}" placeholder="Name or TBD"></div><div><label class="field-label">Estimated Cost</label><input class="field-input" id="f-cost" value="${v('cost')}" placeholder="e.g. $2,000–4,000"></div><div><label class="field-label">Due Date</label><input class="field-input" type="date" id="f-due" value="${v('due_date')}"></div><div><label class="field-label">Assigned To</label>${sel('f-assigned',['Amir','Rose','Both'],v('assigned_to','Both'))}</div><div><label class="field-label">Notes</label><textarea class="field-input" id="f-notes" style="min-height:60px;resize:vertical">${v('notes')}</textarea></div>`,
-    expense:`<div><label class="field-label">Description</label><input class="field-input" id="f-name" value="${v('name')}" placeholder="What was paid for"></div><div><label class="field-label">Category</label>${sel('f-cat',['Renovation','Shopping','Inspection','Closing','Insurance','Other'],v('category','Renovation'))}</div><div><label class="field-label">Date</label><input class="field-input" id="f-date" value="${v('date')}" placeholder="e.g. Apr 28, 2026"></div><div><label class="field-label">Amount ($)</label><input class="field-input" type="number" id="f-amount" value="${v('amount','0')}"></div>`,
+    expense:`<div><label class="field-label">Description</label><input class="field-input" id="f-name" value="${v('name')}" placeholder="What was paid for"></div><div><label class="field-label">Category</label>${sel('f-cat',['Tools','Construction Material','Contractors & Labor','Front House','Back House / Garage','Landscape','Shopping','Other'],v('category','Other'))}</div><div><label class="field-label">Date</label><input class="field-input" id="f-date" value="${v('date')}" placeholder="e.g. Apr 28, 2026"></div><div><label class="field-label">Amount ($)</label><input class="field-input" type="number" id="f-amount" value="${v('amount','0')}"></div>`,
     contact:`<div><label class="field-label">Name</label><input class="field-input" id="f-name" value="${v('name')}" placeholder="Full name"></div><div><label class="field-label">Role</label>${sel('f-role',['Agent','Contractor','Escrow','Lender','Inspector','Architect','Other'],v('role','Other'))}</div><div><label class="field-label">Company</label><input class="field-input" id="f-company" value="${v('company')}" placeholder="Company name"></div><div><label class="field-label">Phone / Email</label><input class="field-input" id="f-contact" value="${v('contact')}" placeholder="Contact info"></div>`,
     decision:`<div><label class="field-label">Decision</label><input class="field-input" id="f-name" value="${v('title')}" placeholder="What was decided?"></div><div><label class="field-label">Notes</label><textarea class="field-input" id="f-notes" style="min-height:72px;resize:vertical">${v('notes')}</textarea></div><div><label class="field-label">Status</label>${sel('f-status',['Agreed','Review Later','Noted','Pending'],v('status','Agreed'))}</div>`,
     note:`<div><label class="field-label">Title</label><input class="field-input" id="f-name" value="${v('title')}" placeholder="e.g. Contractor quote from John"></div><div><label class="field-label">Note</label><textarea class="field-input" id="f-notes" style="min-height:100px;resize:vertical">${v('content')}</textarea></div><div><label class="field-label">Tag</label>${sel('f-tag',['General','Contractor Quote','Idea','Reminder','ADU','Front House'],v('tag','General'))}</div>`,
@@ -1254,11 +1256,11 @@ function runROI(){
 // ---- SMART RECEIPT CATEGORIZATION ----
 function smartCategory(merchantName){
   const m=merchantName.toLowerCase();
-  if(m.includes('home depot')||m.includes('lowe')||m.includes('ace hardware')||m.includes('harbor freight'))return'Renovation';
+  if(m.includes('home depot')||m.includes('lowe')||m.includes('ace hardware')||m.includes('harbor freight')||m.includes('tool'))return'Tools';
+  if(m.includes('lumber')||m.includes('concrete')||m.includes('tile')||m.includes('flooring')||m.includes('paint')||m.includes('sherwin'))return'Construction Material';
+  if(m.includes('contractor')||m.includes('plumb')||m.includes('electric')||m.includes('roofing')||m.includes('pest')||m.includes('termite'))return'Contractors & Labor';
   if(m.includes('ikea')||m.includes('target')||m.includes('amazon')||m.includes('wayfair')||m.includes('bed bath'))return'Shopping';
-  if(m.includes('insurance')||m.includes('bamboo')||m.includes('mercury'))return'Insurance';
-  if(m.includes('escrow')||m.includes('title')||m.includes('notary'))return'Closing';
-  if(m.includes('inspection')||m.includes('termite')||m.includes('pest')||m.includes('roof'))return'Inspection';
+  if(m.includes('nursery')||m.includes('garden')||m.includes('landscape')||m.includes('plant'))return'Landscape';
   return'Other';
 }
 
@@ -1539,7 +1541,53 @@ async function extractPDFText(file){
     const content = await page.getTextContent();
     text += content.items.map(item=>item.str).join(' ') + '\n';
   }
-  return text.trim();
+  text = text.trim();
+
+  // If no text extracted, it's a scanned PDF — use Vision OCR
+  if(text.length < 50){
+    document.getElementById('kb-extract-status').textContent = '🔍 Scanned PDF detected — using Google Vision OCR...';
+    text = await extractPDFWithVision(file, pdf);
+  }
+  return text;
+}
+
+async function extractPDFWithVision(file, pdf){
+  let allText = '';
+  const totalPages = Math.min(pdf.numPages, 10); // limit to 10 pages
+
+  for(let i=1; i<=totalPages; i++){
+    document.getElementById('kb-extract-status').textContent = `🔍 OCR reading page ${i} of ${totalPages}...`;
+    try {
+      const page = await pdf.getPage(i);
+      const viewport = page.getViewport({scale: 2.0});
+      const canvas = document.createElement('canvas');
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
+      const ctx = canvas.getContext('2d');
+      await page.render({canvasContext: ctx, viewport}).promise;
+
+      // Convert canvas to base64
+      const base64 = canvas.toDataURL('image/jpeg', 0.85).split(',')[1];
+
+      // Send to Vision API
+      const res = await fetch(`https://vision.googleapis.com/v1/images:annotate?key=${GOOGLE_API_KEY}`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          requests:[{
+            image:{content: base64},
+            features:[{type:'TEXT_DETECTION', maxResults:1}]
+          }]
+        })
+      });
+      const data = await res.json();
+      const pageText = data.responses?.[0]?.fullTextAnnotation?.text || '';
+      allText += `\n--- Page ${i} ---\n` + pageText;
+    } catch(e) {
+      console.error(`Page ${i} OCR failed:`, e);
+    }
+  }
+  return allText.trim();
 }
 
 async function handleKBFile(input){
@@ -1547,6 +1595,7 @@ async function handleKBFile(input){
   if(!file) return;
   const status = document.getElementById('kb-extract-status');
   status.textContent = '🔍 Extracting text...';
+  status.className = 'text-xs text-amber-600 mt-1';
   try {
     let text = '';
     if(file.type === 'application/pdf'){
@@ -1556,10 +1605,15 @@ async function handleKBFile(input){
     }
     document.getElementById('kb-text').value = text;
     if(!document.getElementById('kb-name').value) document.getElementById('kb-name').value = file.name.replace(/\.[^/.]+$/, '');
-    status.textContent = `✅ Extracted ${text.length.toLocaleString()} characters`;
-    status.className = 'text-xs text-green-600 mt-1';
+    if(text.length > 0){
+      status.textContent = `✅ Extracted ${text.length.toLocaleString()} characters`;
+      status.className = 'text-xs text-green-600 mt-1';
+    } else {
+      status.textContent = '⚠️ Could not extract text — paste content manually';
+      status.className = 'text-xs text-red-500 mt-1';
+    }
   } catch(e) {
-    status.textContent = '⚠️ Could not extract — paste text manually';
+    status.textContent = '⚠️ Error reading file — paste text manually';
     status.className = 'text-xs text-red-500 mt-1';
   }
 }
