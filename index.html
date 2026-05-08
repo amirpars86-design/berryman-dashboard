@@ -1022,8 +1022,9 @@ async function saveModal(){
   }
   if(currentModal==='expense'){
     const d={name,category:document.getElementById('f-cat').value,date:document.getElementById('f-date').value||now,amount:document.getElementById('f-amount').value||'0',notes:document.getElementById('f-notes').value||''};
+    console.log('Saving expense:', d);
     if(editingId){await dbUpdate('expenses',editingId,d);reloadTable('expenses');}
-    else{const row=await dbInsert('expenses',d);if(row){_cache.expenses.push(row);appendExpense(row);updateBudget();}}
+    else{const row=await dbInsert('expenses',d);console.log('Saved row:', row);if(row){_cache.expenses.push(row);appendExpense(row);updateBudget();}}
   }
   if(currentModal==='contact'){
     const d={name,role:document.getElementById('f-role').value,company:document.getElementById('f-company').value||'—',contact:document.getElementById('f-contact').value||'—'};
